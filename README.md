@@ -21,10 +21,10 @@ I'd like to help or try to help, where do I start? Setting up the project is jus
 
 # Credits
 This generally would not be possible without some open source projects, wheather its just looking how thing works inorder to reverse translate them, looking at their code to see how thing work, and or copying a little bit of their. We apperiate all these project.s
-- [Protocol] (https://github.com/CloudburstMC/Protocol)
-- [Nukkit] (https://github.com/CloudburstMC/Nukkit)
-- [Geyser] (https://github.com/GeyserMC/Geyser)
-- [gophertunnel] (https://github.com/Sandertv/gophertunnel)
+- [Protocol](https://github.com/CloudburstMC/Protocol)
+- [Nukkit](https://github.com/CloudburstMC/Nukkit)
+- [Geyser](https://github.com/GeyserMC/Geyser)
+- [gophertunnel](https://github.com/Sandertv/gophertunnel)
 
 # How can I try it
 You currently can not, we are still in development and a lot has not been added yet.
