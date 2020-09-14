@@ -55,8 +55,8 @@ public class MixinClientConnection {
 			if (packet instanceof ParticleS2CPacket || packet instanceof QueryResponseS2CPacket || packet instanceof QueryPongS2CPacket) {
 				return;
 			}
-
-			System.out.println("got packet " + packet.getClass());//ChunkRenderDistanceCenterS2CPacket
+			
+			System.out.println("got packet " + packet.getClass());
 		}
 	}
 

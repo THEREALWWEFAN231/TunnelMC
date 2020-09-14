@@ -13,6 +13,7 @@ import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayerListPacketTranslato
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePackStackPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePacksInfoPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.StartGamePacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.TextPacketTranslator;
 
 public class PacketTranslatorManager {
 
@@ -29,6 +30,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new ResourcePackStackPacketTranslator());
 		this.addTranslator(new AddPlayerPacketTranslator());
 		this.addTranslator(new PlayerListPacketTranslator());
+		this.addTranslator(new TextPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {

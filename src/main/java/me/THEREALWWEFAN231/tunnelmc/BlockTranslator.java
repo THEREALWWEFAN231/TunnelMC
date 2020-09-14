@@ -82,7 +82,7 @@ public class BlockTranslator {
 
 		String textInFile = null;
 		try {
-			textInFile = TunnelMC.instance.fileManagement.getTextFromFile(new File("C://users/THEREALWWEFAN231/downloads/TunnelMC/src/main/resources/java block states.json"));
+			textInFile = TunnelMC.instance.fileManagement.getTextFromFile(new File("C://users/THEREALWWEFAN231/desktop/TunnelMC/src/main/resources/java block states.json"));
 		} catch (Exception e) {
 			System.out.println("Failed to read java block states.json");
 			return;

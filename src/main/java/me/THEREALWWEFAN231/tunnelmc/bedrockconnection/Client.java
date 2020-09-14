@@ -70,7 +70,6 @@ public class Client {
 			LoginPacket loginPacket = new LoginPacket();
 
 			AsciiString chainData = new AsciiString(Auth.getOfflineChainData(TunnelMC.mc.getSession().getUsername()));
-			//AsciiString skinData = new AsciiString(Files.readAllBytes(new File("C://users/THEREALWWEFAN231/downloads/fbedrock server/skindata").toPath()));
 			AsciiString skinData = new AsciiString(SkinData.getSkinData(this.ip + ":" + this.port, TunnelMC.mc.getSession().getUsername()));
 			loginPacket.setProtocolVersion(bedrockSession.getPacketCodec().getProtocolVersion());
 			loginPacket.setChainData(chainData);
