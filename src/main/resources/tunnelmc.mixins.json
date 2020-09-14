@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.THEREALWWEFAN231.tunnelmc.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+  	"interfaces.IMixinDimensionType",
+  	"interfaces.IMixinPlayerListS2CPacket",
+  	"interfaces.IMixinEntity",
+  	"interfaces.IMixinPlayerInteractEntityC2SPacket",
+  	"MixinMinecraftClient",
+  	"MixinMultiplayerScreen",
+  	"MixinClientConnection",
+  	"MixinKeyboard",
+  	"MixinAbstractClientPlayerEntity"
+  ]
+}
