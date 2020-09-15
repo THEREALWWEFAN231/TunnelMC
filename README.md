@@ -56,3 +56,9 @@ You currently can not, we are still in development and a lot has not been added 
 
 # [Discord](https://discord.gg/qH6GqxW)
 We might post some screen shots or information about TunnelMC in there, or if you'd like to help out, you can join and we can see whats crackin.
+
+# Pictures
+This is a picture of the Java Edition on a Bedrock Edition server
+![](/pictures/JavaEdition.png)
+This is a picture of what it looks like on the Bedrock Edition
+![](/pictures/Windows10Edition.png)
