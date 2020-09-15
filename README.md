@@ -21,7 +21,7 @@ Yeah well, thats not the correct question to ask, we just recently started devel
 # Contributing
 I'd like to help or try to help, where do I start? Setting up the project is just like any other [Fabric Mod](https://fabricmc.net/) for eclipse you need to run the gradlew genSources command, then gradlew eclipse, then import it as an existing project into eclipse, if your using another IDE please look at the [Fabric Wiki](https://fabricmc.net/wiki/tutorial:setup).
 
-Also it would be appericated if you coded in this style
+Also it would be appreciated if you coded in this style
 ```java
 if(x) {
   doSomething();
@@ -44,7 +44,7 @@ x.forEach((x) -> {
 ```
 
 # Credits
-This generally would not be possible without some open source projects, wheather its just looking how thing works inorder to reverse translate them, looking at their code to see how thing work, and or copying a little bit of their. We apperiate all these project.s
+This generally would not be possible without some open source projects, wheather its just looking how thing works inorder to reverse translate them, looking at their code to see how thing work, and or copying a little bit of their code. We apperiate all these projects.
 - [Protocol](https://github.com/CloudburstMC/Protocol)
 - [Nukkit](https://github.com/CloudburstMC/Nukkit)
 - [Geyser](https://github.com/GeyserMC/Geyser)
