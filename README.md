@@ -39,7 +39,7 @@ rather then
 if(x)
   doSomething();
 x.forEach((x) -> {
-  X();
+  doSomething();
 });
 ```
 Also if you have any knowledge on xbox live/the api it would be cool if you added xbox live authentication and or joining worlds from invites.😎
@@ -53,3 +53,6 @@ This generally would not be possible without some open source projects, wheather
 
 # How can I try it
 You currently can not, we are still in development and a lot has not been added yet.
+
+# [Discord](https://discord.gg/qH6GqxW)
+We might post some screen shots or information about TunnelMC in there, or if you'd like to help out, you can join and we can see whats crackin.
