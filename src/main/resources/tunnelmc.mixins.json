@@ -12,6 +12,7 @@
   	"MixinMultiplayerScreen",
   	"MixinClientConnection",
   	"MixinKeyboard",
-  	"MixinAbstractClientPlayerEntity"
+  	"MixinAbstractClientPlayerEntity",
+  	"MixinGameRenderer"
   ]
 }

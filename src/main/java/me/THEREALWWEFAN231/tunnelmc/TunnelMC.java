@@ -16,7 +16,7 @@ public class TunnelMC {
 	public void initialize() {
 		this.fileManagement = new FileManagement();
 		this.packetTranslatorManager = new PacketTranslatorManager();
-		
+
 		BlockStateTranslator.load();
 	}
 
