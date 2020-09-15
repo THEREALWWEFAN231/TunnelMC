@@ -7,7 +7,6 @@ import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
-import me.THEREALWWEFAN231.tunnelmc.mixins.interfaces.IMixinEntity;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnS2CPacket;
@@ -25,11 +24,10 @@ public class AddPlayerPacketTranslator extends PacketTranslator<AddPlayerPacket>
 		double z = packet.getPosition().getZ();
 		float pitch = packet.getRotation().getX();//TODO: not sure about these
 		float yaw = packet.getRotation().getY();
-		int entityData = 0;//TODO: figured what this does, appears its a referance to other entities for some entity types
 		Vec3d velocity = new Vec3d(packet.getMotion().getX(), packet.getMotion().getY(), packet.getMotion().getZ());
 
 		OtherClientPlayerEntity player = new OtherClientPlayerEntity(TunnelMC.mc.world, new GameProfile(uuid, name));
-		((IMixinEntity) player).setEntityId(id);
+		player.setEntityId(id);
 		player.setPos(x, y, z);
 		player.yaw = yaw;
 		player.pitch = pitch;

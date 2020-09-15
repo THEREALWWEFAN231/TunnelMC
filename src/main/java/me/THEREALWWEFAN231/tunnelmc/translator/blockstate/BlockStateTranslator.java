@@ -1,6 +1,5 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.blockstate;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,13 +26,8 @@ public class BlockStateTranslator {
 
 	public static void load() {
 
-		InputStream inputStream = BlockStateTranslator.class.getClassLoader().getResourceAsStream("geyser/blocks.json");
-
-		JsonObject jsonObject = null;
-		try {
-			jsonObject = TunnelMC.instance.fileManagement.jsonParser.parse(TunnelMC.instance.fileManagement.getTextFromInputStream(inputStream)).getAsJsonObject();
-		} catch (Exception e) {
-			System.out.println("Failed to read blocks.json");
+		JsonObject jsonObject = TunnelMC.instance.fileManagement.getJsonObjectFromResource("geyser/blocks.json");
+		if(jsonObject == null) {
 			return;
 		}
 

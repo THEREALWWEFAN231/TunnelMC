@@ -6,7 +6,6 @@
   "client": [
   	"interfaces.IMixinDimensionType",
   	"interfaces.IMixinPlayerListS2CPacket",
-  	"interfaces.IMixinEntity",
   	"interfaces.IMixinPlayerInteractEntityC2SPacket",
   	"MixinMinecraftClient",
   	"MixinMultiplayerScreen",
