@@ -1,11 +1,8 @@
 package me.THEREALWWEFAN231.tunnelmc.utils;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 
 import com.google.gson.Gson;
@@ -19,16 +16,18 @@ public class FileManagement {
 	public JsonParser jsonParser = new JsonParser();
 	
 	public String getTextFromInputStream(InputStream inputStream) throws Exception {
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-		String textInFile = "";
-
-		String line;
-		while ((line = bufferedReader.readLine()) != null) {
-			textInFile += line;
+		//this is "super fast"
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = inputStream.read(buffer)) != -1) {
+		    byteArrayOutputStream.write(buffer, 0, length);
 		}
-		bufferedReader.close();
 		
-		return textInFile;
+		byteArrayOutputStream.close();//says it does nothing, but who cares
+		inputStream.close();
+		
+		return byteArrayOutputStream.toString("UTF-8");
 	}
 	
 	public String getTextFromFile(File file) throws Exception {

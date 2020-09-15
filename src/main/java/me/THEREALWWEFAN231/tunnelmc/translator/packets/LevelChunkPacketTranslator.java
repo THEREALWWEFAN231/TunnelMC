@@ -5,12 +5,12 @@ import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import me.THEREALWWEFAN231.tunnelmc.BlockTranslator;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArray;
 import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArrayVersion;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.ServerBlockPaletteTranslator;
 import net.minecraft.block.BlockState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
@@ -142,7 +142,7 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 								int mcbeBlockId = sectionPalette[paletteIndex];
 								if (mcbeBlockId != 0) {//air?
 
-									BlockState blockState = BlockTranslator.RUNTIMEID_BLOCKSTATE_MAP.get(mcbeBlockId);
+									BlockState blockState = ServerBlockPaletteTranslator.RUNTIME_ID_TO_BLOCK_STATE.get(mcbeBlockId);
 
 									chunkSections[sectionIndex].setBlockState(x, y, z, blockState);
 								}

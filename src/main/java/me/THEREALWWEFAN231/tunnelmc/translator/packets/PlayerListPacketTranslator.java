@@ -37,6 +37,7 @@ public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacke
 			if (add) {
 				//im sure this could be improved and this generally shouldn't be the way we do this
 				try {
+					//also a note, we could put the native image stuff on another thread, but uploading to opengl cant
 					ImageData skinData = entry.getSkin().getSkinData();
 					NativeImage nativeImage = new NativeImage(skinData.getWidth(), skinData.getHeight(), false/*not really sure*/);
 					ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(skinData.getImage());

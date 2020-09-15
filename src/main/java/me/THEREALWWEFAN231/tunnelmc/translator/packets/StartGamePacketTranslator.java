@@ -5,9 +5,9 @@ import java.util.Set;
 
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket;
 
-import me.THEREALWWEFAN231.tunnelmc.BlockTranslator;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.ServerBlockPaletteTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.dimension.DimensionTranslator;
 import net.minecraft.network.packet.s2c.play.ChunkRenderDistanceCenterS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
@@ -26,9 +26,7 @@ public class StartGamePacketTranslator extends PacketTranslator<StartGamePacket>
 
 	@Override
 	public void translate(StartGamePacket packet) {
-		
-		//BlockTranslator.createDevelopmentJson(packet.getBlockPalette());
-		BlockTranslator.loadMap();
+		ServerBlockPaletteTranslator.loadMap(packet.getBlockPalette());
 		
 		int playerEntityId = (int) packet.getRuntimeEntityId();//not sure if we are suppose to use runtime id or unique id
 		
