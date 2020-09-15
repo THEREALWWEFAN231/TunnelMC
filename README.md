@@ -42,6 +42,7 @@ x.forEach((x) -> {
   X();
 });
 ```
+Also if you have any knowledge on xbox live/the api it would be cool if you added xbox live authentication and or joining worlds from invites.😎
 
 # Credits
 This generally would not be possible without some open source projects, wheather its just looking how thing works inorder to reverse translate them, looking at their code to see how thing work, and or copying a little bit of their code. We apperiate all these projects.
