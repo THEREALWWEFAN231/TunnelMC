@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.ChatMessageC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.HandSwingC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.UpdateSelectedSlotC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerMoveC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.network.Packet;
@@ -16,6 +17,7 @@ public class JavaPacketTranslatorManager {
 		this.addTranslator(new HandSwingC2SPacketTranslator());
 		this.addTranslator(new PlayerMoveC2SPacketTranslator());
 		this.addTranslator(new ChatMessageC2SPacketTranslator());
+		this.addTranslator(new UpdateSelectedSlotC2SPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {

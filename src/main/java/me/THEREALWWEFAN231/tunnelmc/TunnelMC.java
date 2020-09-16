@@ -3,6 +3,7 @@ package me.THEREALWWEFAN231.tunnelmc;
 import me.THEREALWWEFAN231.tunnelmc.translator.EntityTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslatorManager;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockStateTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.item.ItemTranslator;
 import me.THEREALWWEFAN231.tunnelmc.utils.FileManagement;
 import net.minecraft.client.MinecraftClient;
 
@@ -20,6 +21,7 @@ public class TunnelMC {
 
 		BlockStateTranslator.load();
 		EntityTranslator.load();
+		ItemTranslator.load();
 	}
 
 }

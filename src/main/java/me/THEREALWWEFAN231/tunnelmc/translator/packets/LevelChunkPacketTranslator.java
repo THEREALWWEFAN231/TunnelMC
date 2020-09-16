@@ -140,7 +140,7 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 							for (int y = 0; y < 16; y++) {
 								int paletteIndex = bitArray.get(index);
 								int mcbeBlockId = sectionPalette[paletteIndex];
-								if (mcbeBlockId != 0) {//air?
+								if (mcbeBlockId != 0) {//air? probably want to check with the ServerBlockPaletteTranslator, but for now we will do this
 
 									BlockState blockState = ServerBlockPaletteTranslator.RUNTIME_ID_TO_BLOCK_STATE.get(mcbeBlockId);
 

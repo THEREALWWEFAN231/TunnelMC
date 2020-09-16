@@ -5,8 +5,10 @@ import java.util.HashMap;
 
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddEntityPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddPlayerPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.ChunkRadiusUpdatedPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.InventorySlotPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.LevelChunkPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayStatusPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayerListPacketTranslator;
@@ -14,7 +16,6 @@ import me.THEREALWWEFAN231.tunnelmc.translator.packets.RemoveEntityPacketTransla
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePackStackPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePacksInfoPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.SetTimePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddEntityPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.StartGamePacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.TextPacketTranslator;
 
@@ -37,6 +38,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new AddEntityPacketTranslator());
 		this.addTranslator(new SetTimePacketTranslator());
 		this.addTranslator(new RemoveEntityPacketTranslator());
+		this.addTranslator(new InventorySlotPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {

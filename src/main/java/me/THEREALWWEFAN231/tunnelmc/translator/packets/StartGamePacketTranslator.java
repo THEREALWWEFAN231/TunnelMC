@@ -9,6 +9,7 @@ import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.ServerBlockPaletteTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.dimension.DimensionTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.gamemode.GameModeTranslator;
 import net.minecraft.network.packet.s2c.play.ChunkRenderDistanceCenterS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
@@ -32,9 +33,7 @@ public class StartGamePacketTranslator extends PacketTranslator<StartGamePacket>
 		
 		StartGamePacketTranslator.lastRunTimeId = playerEntityId;
 		
-		//TODO: uncomment this
-		//GameMode gameMode = GameModeTranslator.bedrockToJava(packet.getPlayerGameType(), packet.getLevelGameType());
-		GameMode gameMode = GameMode.CREATIVE;
+		GameMode gameMode = GameModeTranslator.bedrockToJava(packet.getPlayerGameType(), packet.getLevelGameType());
 		GameMode previousGameMode = GameMode.NOT_SET;
 		long sha256Seed = packet.getSeed();
 		boolean hardcore = false;
