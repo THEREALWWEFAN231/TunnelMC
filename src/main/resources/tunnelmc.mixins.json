@@ -7,6 +7,8 @@
   	"interfaces.IMixinDimensionType",
   	"interfaces.IMixinPlayerListS2CPacket",
   	"interfaces.IMixinPlayerInteractEntityC2SPacket",
+  	"interfaces.IMixinEntityPositionS2CPacket",
+  	"interfaces.IMixinEntitySetHeadYawS2CPacket",
   	"MixinMinecraftClient",
   	"MixinMultiplayerScreen",
   	"MixinClientConnection",

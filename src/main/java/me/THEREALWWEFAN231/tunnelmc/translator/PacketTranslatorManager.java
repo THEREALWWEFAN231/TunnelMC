@@ -11,6 +11,7 @@ import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddPlayerPacketTranslator
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.ChunkRadiusUpdatedPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.InventorySlotPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.LevelChunkPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.MovePlayerPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayStatusPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayerListPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.RemoveEntityPacketTranslator;
@@ -41,6 +42,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new RemoveEntityPacketTranslator());
 		this.addTranslator(new InventorySlotPacketTranslator());
 		this.addTranslator(new AddItemEntityPacketTranslator());
+		this.addTranslator(new MovePlayerPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {
