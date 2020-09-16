@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddEntityPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddItemEntityPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddPlayerPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.ChunkRadiusUpdatedPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.InventorySlotPacketTranslator;
@@ -39,6 +40,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new SetTimePacketTranslator());
 		this.addTranslator(new RemoveEntityPacketTranslator());
 		this.addTranslator(new InventorySlotPacketTranslator());
+		this.addTranslator(new AddItemEntityPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {
