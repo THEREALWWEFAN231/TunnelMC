@@ -4,8 +4,12 @@ import java.util.HashMap;
 
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.ChatMessageC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.HandSwingC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerActionC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.UpdateSelectedSlotC2SPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerMoveC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.movement.BothTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.movement.LookOnlyTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.movement.PlayerMoveC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.movement.PositionOnlyTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.network.Packet;
 
@@ -16,8 +20,12 @@ public class JavaPacketTranslatorManager {
 	public JavaPacketTranslatorManager() {
 		this.addTranslator(new HandSwingC2SPacketTranslator());
 		this.addTranslator(new PlayerMoveC2SPacketTranslator());
+		this.addTranslator(new LookOnlyTranslator());
+		this.addTranslator(new PositionOnlyTranslator());
+		this.addTranslator(new BothTranslator());
 		this.addTranslator(new ChatMessageC2SPacketTranslator());
 		this.addTranslator(new UpdateSelectedSlotC2SPacketTranslator());
+		this.addTranslator(new PlayerActionC2SPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {

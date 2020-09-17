@@ -2,6 +2,7 @@ package me.THEREALWWEFAN231.tunnelmc.translator.packets;
 
 import com.nukkitx.protocol.bedrock.packet.MovePlayerPacket;
 
+import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.mixins.interfaces.IMixinEntityPositionS2CPacket;
 import me.THEREALWWEFAN231.tunnelmc.mixins.interfaces.IMixinEntitySetHeadYawS2CPacket;
@@ -16,7 +17,7 @@ public class MovePlayerPacketTranslator extends PacketTranslator<MovePlayerPacke
 
 		int id = (int) packet.getRuntimeEntityId();
 		double x = packet.getPosition().getX();
-		double y = packet.getPosition().getY() - 1.62;//geyser says this is the players height..? :thinking: weird
+		double y = packet.getPosition().getY() - TunnelMC.mc.player.getStandingEyeHeight();
 		double z = packet.getPosition().getZ();
 
 		float realYaw = packet.getRotation().getY();

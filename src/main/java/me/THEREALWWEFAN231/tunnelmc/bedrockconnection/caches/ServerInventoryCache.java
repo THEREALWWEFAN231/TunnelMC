@@ -26,7 +26,7 @@ public class ServerInventoryCache {
 	public static ItemData getItemFromInventory(int inventoryId, int slotId) {
 		BedrockInventory inventory = INVENTORIES.get(inventoryId);
 		if (inventory == null) {
-			return null;
+			return ItemData.AIR;
 		}
 
 		ItemData theItem = inventory.contents.get(slotId);
