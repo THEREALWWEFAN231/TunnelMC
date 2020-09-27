@@ -104,7 +104,7 @@ public class Auth {
 
 		JsonObject importantCahinDataObject = TunnelMC.instance.fileManagement.jsonParser.parse(importantChainData).getAsJsonObject();
 		JsonObject extraData = importantCahinDataObject.get("extraData").getAsJsonObject();
-		String xuid = extraData.get("XUID").getAsString();
+		String xuid = extraData.has("XUID") ? extraData.get("XUID").getAsString() : "";//for offline sessions
 		UUID identity = UUID.fromString(extraData.get("identity").getAsString());
 		String displayName = extraData.get("displayName").getAsString();
 

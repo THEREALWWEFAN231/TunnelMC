@@ -22,6 +22,7 @@ import me.THEREALWWEFAN231.tunnelmc.translator.packets.ServerToClientHandshakePa
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.SetTimePacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.StartGamePacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.packets.TextPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.UpdateBlockPacketTranslator;
 
 public class PacketTranslatorManager {
 
@@ -47,6 +48,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new MovePlayerPacketTranslator());
 		this.addTranslator(new MoveEntityAbsolutePacketTranslator());
 		this.addTranslator(new ServerToClientHandshakePacketTranslator());
+		this.addTranslator(new UpdateBlockPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {

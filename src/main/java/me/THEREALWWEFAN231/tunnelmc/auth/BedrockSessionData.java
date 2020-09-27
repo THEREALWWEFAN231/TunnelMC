@@ -12,10 +12,6 @@ public class BedrockSessionData {
 		this.xuid = xuid;
 		this.identity = identity;
 		this.displayName = displayName;
-		
-		if(this.xuid == null) {//offline
-			this.xuid = "";
-		}
 	}
 
 	public String getXuid() {
