@@ -12,7 +12,7 @@ import com.google.gson.JsonParser;
 
 public class FileManagement {
 
-	public Gson normalGson = new GsonBuilder().create();
+	public Gson normalGson = new GsonBuilder().disableHtmlEscaping().create();
 	public Gson formattedGson = new GsonBuilder().setPrettyPrinting().create();
 	public JsonParser jsonParser = new JsonParser();
 

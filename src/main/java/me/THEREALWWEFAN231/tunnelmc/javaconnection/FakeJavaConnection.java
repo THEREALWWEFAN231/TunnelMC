@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
+import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
@@ -20,7 +21,7 @@ public class FakeJavaConnection {
 
 	public FakeJavaConnection() {
 		this.clientConnection = new ClientConnection(NetworkSide.CLIENTBOUND);
-		this.clientPlayNetworkHandler = new ClientPlayNetworkHandler(TunnelMC.mc, null, this.clientConnection, new GameProfile(UUID.fromString(TunnelMC.mc.getSession().getUuid()), TunnelMC.mc.getSession().getUsername()));
+		this.clientPlayNetworkHandler = new ClientPlayNetworkHandler(TunnelMC.mc, null, this.clientConnection, new GameProfile(Client.instance.currentSessionData.getIdentity(), Client.instance.currentSessionData.getDisplayName()));
 		this.packetTranslatorManager = new JavaPacketTranslatorManager();
 	}
 

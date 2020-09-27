@@ -14,18 +14,19 @@ import net.minecraft.util.Identifier;
 public class MixinAbstractClientPlayerEntity {
 
 	//TODO: probably want to use PlayerSkinProvider.loadSkin instead, it should work with PlayerListHud as well
+	//disabled these because they crash often, kind of
 	@Inject(method = "getSkinTexture", at = @At("HEAD"), cancellable = true)
 	public void getSkinTexture(CallbackInfoReturnable<Identifier> callbackInfoReturnable) {
 		if (Client.instance.isConnectionOpen()) {
-			callbackInfoReturnable.setReturnValue(PlayerListPacketTranslator.skins.get(AbstractClientPlayerEntity.class.cast(this).getGameProfile().getName()).texture);
+			//callbackInfoReturnable.setReturnValue(PlayerListPacketTranslator.skins.get(AbstractClientPlayerEntity.class.cast(this).getGameProfile().getName()).texture);
 		}
 	}
 
 	@Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
 	public void getModel(CallbackInfoReturnable<String> callbackInfoReturnable) {
 		if (Client.instance.isConnectionOpen()) {
-			boolean isSlim = PlayerListPacketTranslator.skins.get(AbstractClientPlayerEntity.class.cast(this).getGameProfile().getName()).slim;
-			callbackInfoReturnable.setReturnValue(isSlim ? "slim" : "default");
+			//boolean isSlim = PlayerListPacketTranslator.skins.get(AbstractClientPlayerEntity.class.cast(this).getGameProfile().getName()).slim;
+			//callbackInfoReturnable.setReturnValue(isSlim ? "slim" : "default");
 		}
 	}
 

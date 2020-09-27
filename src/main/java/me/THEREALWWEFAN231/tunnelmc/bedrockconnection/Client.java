@@ -18,6 +18,7 @@ import com.nukkitx.protocol.bedrock.v408.Bedrock_v408;
 import io.netty.util.AsciiString;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.auth.Auth;
+import me.THEREALWWEFAN231.tunnelmc.auth.BedrockSessionData;
 import me.THEREALWWEFAN231.tunnelmc.auth.SkinData;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.FakeJavaConnection;
 
@@ -28,6 +29,7 @@ public class Client {
 	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v408.V408_CODEC;
 	private String ip;
 	private int port;
+	public BedrockSessionData currentSessionData;
 	public BedrockClient bedrockClient;
 	public FakeJavaConnection javaConnection;
 
@@ -68,12 +70,13 @@ public class Client {
 
 		try {
 			LoginPacket loginPacket = new LoginPacket();
-
-			AsciiString chainData = new AsciiString(Auth.getOfflineChainData(TunnelMC.mc.getSession().getUsername()));
-			AsciiString skinData = new AsciiString(SkinData.getSkinData(this.ip + ":" + this.port, TunnelMC.mc.getSession().getUsername()));
+			
+			String chainData = Auth.getOfflineChainData(TunnelMC.mc.getSession().getUsername());
+			this.currentSessionData = Auth.getSessionDataFromChainData(chainData);
+			
 			loginPacket.setProtocolVersion(bedrockSession.getPacketCodec().getProtocolVersion());
-			loginPacket.setChainData(chainData);
-			loginPacket.setSkinData(skinData);
+			loginPacket.setChainData(new AsciiString(chainData));
+			loginPacket.setSkinData(new AsciiString(SkinData.getSkinData(this.ip + ":" + this.port, this.currentSessionData.getDisplayName())));
 			this.sendPacketImmediately(loginPacket);
 
 			this.javaConnection = new FakeJavaConnection();
