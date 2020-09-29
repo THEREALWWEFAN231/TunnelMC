@@ -1,6 +1,7 @@
 plugins {
 	id 'fabric-loom' version '0.4-SNAPSHOT'
 	id 'maven-publish'
+	id 'com.github.johnrengelman.shadow' version '6.0.0' //https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -27,7 +28,15 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
-	compile group: 'com.nukkitx.protocol', name: 'bedrock-v408', version: '2.6.0-SNAPSHOT'
+	//compile group: 'com.nukkitx.protocol', name: 'bedrock-v408', version: '2.6.0-SNAPSHOT'
+	compile("com.nukkitx.protocol:bedrock-v408:2.6.0-SNAPSHOT") {
+		exclude group: 'com.nukkitx.fastutil'
+		exclude group: 'io.netty'
+	}
+	shadow ('com.nukkitx.protocol:bedrock-v408:2.6.0-SNAPSHOT') {
+		exclude group: 'com.nukkitx.fastutil'
+		exclude group: 'io.netty'
+	}
 }
 
 processResources {
@@ -58,6 +67,11 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.allSource
 }
 
+shadowJar {
+	configurations = [project.configurations.shadow]
+    classifier = "shadow"
+}
+
 jar {
 	from "LICENSE"
 }
@@ -81,4 +95,9 @@ publishing {
 		// uncomment to publish to the local maven
 		// mavenLocal()
 	}
+}
+
+remapJar {
+	dependsOn(shadowJar)
+	input.set shadowJar.archiveFile.get()
 }
