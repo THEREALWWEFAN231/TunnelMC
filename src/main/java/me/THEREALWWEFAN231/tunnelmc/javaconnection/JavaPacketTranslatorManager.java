@@ -5,6 +5,9 @@ import java.util.HashMap;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.ChatMessageC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.HandSwingC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerActionC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerInteractBlockC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerInteractEntityC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerInteractItemC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.UpdateSelectedSlotC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.movement.BothTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.movement.LookOnlyTranslator;
@@ -26,6 +29,9 @@ public class JavaPacketTranslatorManager {
 		this.addTranslator(new ChatMessageC2SPacketTranslator());
 		this.addTranslator(new UpdateSelectedSlotC2SPacketTranslator());
 		this.addTranslator(new PlayerActionC2SPacketTranslator());
+		this.addTranslator(new PlayerInteractBlockC2SPacketTranslator());
+		this.addTranslator(new PlayerInteractItemC2SPacketTranslator());
+		this.addTranslator(new PlayerInteractEntityC2SPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {
