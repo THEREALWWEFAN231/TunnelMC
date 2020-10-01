@@ -7,6 +7,7 @@ import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.mixins.interfaces.IMixinEntityPositionS2CPacket;
 import me.THEREALWWEFAN231.tunnelmc.mixins.interfaces.IMixinEntitySetHeadYawS2CPacket;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntitySetHeadYawS2CPacket;
 
@@ -17,7 +18,7 @@ public class MovePlayerPacketTranslator extends PacketTranslator<MovePlayerPacke
 
 		int id = (int) packet.getRuntimeEntityId();
 		double x = packet.getPosition().getX();
-		double y = packet.getPosition().getY() - TunnelMC.mc.player.getStandingEyeHeight();
+		double y = packet.getPosition().getY() - TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING);
 		double z = packet.getPosition().getZ();
 
 		float realYaw = packet.getRotation().getY();

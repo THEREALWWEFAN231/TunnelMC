@@ -10,6 +10,7 @@ import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.ServerInventoryCache;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -34,7 +35,7 @@ public class PlayerInteractBlockC2SPacketTranslator extends PacketTranslator<Pla
 		placeInventoryTransactionPacket.setBlockFace(packet.getBlockHitResult().getSide().ordinal());
 		placeInventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
 		placeInventoryTransactionPacket.setItemInHand(placingItem);
-		placeInventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y + TunnelMC.mc.player.getStandingEyeHeight(), TunnelMC.mc.player.getPos().z));
+		placeInventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y + TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING), TunnelMC.mc.player.getPos().z));
 		placeInventoryTransactionPacket.setClickPosition(Vector3f.from(sideHitOffset.x, sideHitOffset.y, sideHitOffset.z));
 		placeInventoryTransactionPacket.setBlockRuntimeId(0);//TODO: get the runtime id of the block we are holding(i actually think its the block we are right clicking not holding, in that case its easier), currently works(on nukkit) with it being zero, but we *should* do it correctly
 		Client.instance.sendPacket(placeInventoryTransactionPacket);
@@ -47,7 +48,7 @@ public class PlayerInteractBlockC2SPacketTranslator extends PacketTranslator<Pla
 		idkInventoryTransactionPacket.setBlockFace(255);
 		idkInventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
 		idkInventoryTransactionPacket.setItemInHand(placingItem);
-		idkInventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y + TunnelMC.mc.player.getStandingEyeHeight(), TunnelMC.mc.player.getPos().z));
+		idkInventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y + TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING), TunnelMC.mc.player.getPos().z));
 		idkInventoryTransactionPacket.setClickPosition(Vector3f.ZERO);
 		idkInventoryTransactionPacket.setBlockRuntimeId(0);
 

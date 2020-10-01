@@ -69,7 +69,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 shadowJar {
 	configurations = [project.configurations.shadow]
-    classifier = "shadow"
+	classifier = "shadow"
 }
 
 jar {

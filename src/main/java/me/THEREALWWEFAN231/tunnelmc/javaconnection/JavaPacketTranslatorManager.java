@@ -3,6 +3,7 @@ package me.THEREALWWEFAN231.tunnelmc.javaconnection;
 import java.util.HashMap;
 
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.ChatMessageC2SPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.ClientCommandC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.HandSwingC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerActionC2SPacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators.PlayerInteractBlockC2SPacketTranslator;
@@ -32,6 +33,7 @@ public class JavaPacketTranslatorManager {
 		this.addTranslator(new PlayerInteractBlockC2SPacketTranslator());
 		this.addTranslator(new PlayerInteractItemC2SPacketTranslator());
 		this.addTranslator(new PlayerInteractEntityC2SPacketTranslator());
+		this.addTranslator(new ClientCommandC2SPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {
