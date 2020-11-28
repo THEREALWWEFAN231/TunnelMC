@@ -5,26 +5,7 @@ import java.util.HashMap;
 
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddItemEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddPlayerPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ChunkRadiusUpdatedPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.InventorySlotPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.LevelChunkPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.MoveEntityAbsolutePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.MovePlayerPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayStatusPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayerListPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.RemoveEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePackStackPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePacksInfoPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ServerToClientHandshakePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.SetEntityMotionPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.SetTimePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.StartGamePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.TakeItemEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.TextPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.UpdateBlockPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.*;
 
 public class PacketTranslatorManager {
 
@@ -53,6 +34,8 @@ public class PacketTranslatorManager {
 		this.addTranslator(new UpdateBlockPacketTranslator());
 		this.addTranslator(new SetEntityMotionPacketTranslator());
 		this.addTranslator(new TakeItemEntityPacketTranslator());
+		this.addTranslator(new NetworkChunkPublisherUpdatePacketTranslator());
+		this.addTranslator(new SetEntityDataPacketTranslator());
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {
@@ -62,6 +45,7 @@ public class PacketTranslatorManager {
 	}
 
 	public void translatePacket(BedrockPacket bedrockPacket) {
+		System.out.println(bedrockPacket.toString());
 		PacketTranslator packetTranslator = this.packetTranslatorsByPacketClass.get(bedrockPacket.getClass());
 		if (packetTranslator != null) {
 			packetTranslator.translate(bedrockPacket);

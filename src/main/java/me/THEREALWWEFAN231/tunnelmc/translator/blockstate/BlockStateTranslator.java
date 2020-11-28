@@ -1,5 +1,7 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.blockstate;
 
+import java.io.DataInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -8,7 +10,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import com.nukkitx.nbt.NBTInputStream;
+import com.nukkitx.nbt.NbtList;
+import com.nukkitx.nbt.NbtMap;
+import com.nukkitx.nbt.NbtType;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
+import me.THEREALWWEFAN231.tunnelmc.utils.FileManagement;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -18,7 +25,7 @@ import net.minecraft.util.registry.Registry;
 
 public class BlockStateTranslator {
 
-	//TODO: create an override file, which allows us to override the blocks.json information and or create new information, once we do that fix all the printlns' from ServerBlockPaletteTranslator
+	//TODO: create an override file, which allows us to override the blocks.json information and or create new information, once we do that fix all the printlns' from BlockPaletteTranslator
 	//TODO: i also dont think water logged blocks work, i cant test right now as i cant connect to a dedicated bedrock server
 	
 	
@@ -70,6 +77,20 @@ public class BlockStateTranslator {
 			BEDROCK_BLOCK_STATE_STRING_TO_JAVA_BLOCK_STATE.put(bedrockBlockState.toString(), blockState);
 
 		}
+
+		InputStream stream = FileManagement.class.getClassLoader().getResourceAsStream("tunnelmc/blockpalette.nbt");
+		if (stream == null) {
+			throw new RuntimeException("Could not find the block palette file!");
+		}
+
+		NbtList<NbtMap> blocksTag;
+		try (NBTInputStream nbtInputStream = new NBTInputStream(new DataInputStream(stream))) {
+			NbtMap blockPalette = (NbtMap) nbtInputStream.readTag();
+			blocksTag = (NbtList<NbtMap>) blockPalette.getList("blocks", NbtType.COMPOUND);
+		} catch (Exception e) {
+			throw new AssertionError("Unable to get blocks from runtime block states", e);
+		}
+		BlockPaletteTranslator.loadMap(blocksTag);
 
 	}
 
