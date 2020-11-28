@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import com.nukkitx.protocol.bedrock.v419.Bedrock_v419;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +27,7 @@ public class Client {
 
 	public static Client instance = new Client();
 	private Logger logger = LogManager.getLogger(ClientBatchHandler.class);
-	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v408.V408_CODEC;
+	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v419.V419_CODEC;
 	private String ip;
 	private int port;
 	public BedrockSessionData currentSessionData;

@@ -10,10 +10,11 @@ import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArray;
 import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArrayVersion;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.ServerBlockPaletteTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockPaletteTranslator;
 import net.minecraft.block.BlockState;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
+import net.minecraft.network.packet.s2c.play.ChunkRenderDistanceCenterS2CPacket;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -82,7 +83,7 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 		 * thats an example, the block palettes' values(air, stone, diamond_ore) aren't actual strings they are integers, the blocks mcbe "runtimeId".
 		 * 
 		 * So after we get the size of the block palette(x) we then read x VarInts to get the palette information, so now we have an int array which are be referred
-		 * to by index to get the runtime id of any block in the section. We then have todo that, we iterate though the x, then z, then y coordinate of the chunk section
+		 * to by index to get the runtime id of any block in the section. We then have to do that, we iterate though the x, then z, then y coordinate of the chunk section
 		 * we use the BitArray(which has "words") the get the "decompressed" block palette index, once we have this, we refer to the block palette, and get the mcbe runtimeId
 		 * or the specific xyz coordinate, which we then translate to java.
 		 * 
@@ -93,14 +94,22 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 		 * 
 		 */
 
+		if (TunnelMC.mc.player != null) {
+			//make sure far away chunks load
+			ChunkRenderDistanceCenterS2CPacket renderDistanceCenterPacket = new ChunkRenderDistanceCenterS2CPacket((int) TunnelMC.mc.player.getX() >> 4, (int) TunnelMC.mc.player.getZ() >> 4);
+			Client.instance.javaConnection.processServerToClientPacket(renderDistanceCenterPacket);
+		}
+
 		ChunkSection[] chunkSections = new ChunkSection[16];
 
 		int chunkX = packet.getChunkX();
 		int chunkZ = packet.getChunkZ();
 
-		if (Math.abs(chunkX - (MathHelper.floor(128) >> 4)) > TunnelMC.mc.options.viewDistance || Math.abs(chunkZ - (MathHelper.floor(128) >> 4)) > TunnelMC.mc.options.viewDistance) {
-			return;
-		}
+		// From Camotoy: I won't remove this, but I don't think you need it. Or you at least need to change it, or else chunks won't load.
+//		if (Math.abs(chunkX - (MathHelper.floor(128) >> 4)) > TunnelMC.mc.options.viewDistance || Math.abs(chunkZ - (MathHelper.floor(128) >> 4)) > TunnelMC.mc.options.viewDistance) {
+//			System.out.println("thonk");
+//			return;
+//		}
 
 		ByteBuf byteBuf = Unpooled.buffer();
 		byteBuf.writeBytes(packet.getData());
@@ -140,9 +149,9 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 							for (int y = 0; y < 16; y++) {
 								int paletteIndex = bitArray.get(index);
 								int mcbeBlockId = sectionPalette[paletteIndex];
-								if (mcbeBlockId != 0) {//air? probably want to check with the ServerBlockPaletteTranslator, but for now we will do this
+								if (mcbeBlockId != BlockPaletteTranslator.AIR_BEDROCK_BLOCK_ID) {
 
-									BlockState blockState = ServerBlockPaletteTranslator.RUNTIME_ID_TO_BLOCK_STATE.get(mcbeBlockId);
+									BlockState blockState = BlockPaletteTranslator.RUNTIME_ID_TO_BLOCK_STATE.get(mcbeBlockId);
 
 									chunkSections[sectionIndex].setBlockState(x, y, z, blockState);
 								}
