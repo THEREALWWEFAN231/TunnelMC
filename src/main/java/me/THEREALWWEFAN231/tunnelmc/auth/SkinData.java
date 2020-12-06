@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.security.KeyPair;
-import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Random;
 import java.util.UUID;
@@ -15,7 +13,6 @@ import javax.imageio.ImageIO;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
@@ -27,58 +24,67 @@ public class SkinData {
 	//i mean if you want to edit this, sure what ever, not sure if it'd work but :shrug:
 	private static final String SKIN_GEOMETRY_DATA = "{\"format_version\":\"1.12.0\",\"minecraft:geometry\":[{\"bones\":[{\"name\":\"body\",\"parent\":\"waist\",\"pivot\":[0,24,0]},{\"name\":\"waist\",\"pivot\":[0,12,0]},{\"cubes\":[{\"origin\":[-5,8,3],\"size\":[10,16,1],\"uv\":[0,0]}],\"name\":\"cape\",\"parent\":\"body\",\"pivot\":[0,24,3],\"rotation\":[0,180,0]}],\"description\":{\"identifier\":\"geometry.cape\",\"texture_height\":32,\"texture_width\":64}},{\"bones\":[{\"name\":\"root\",\"pivot\":[0,0,0]},{\"cubes\":[{\"origin\":[-4,12,-2],\"size\":[8,12,4],\"uv\":[16,16]}],\"name\":\"body\",\"parent\":\"waist\",\"pivot\":[0,24,0]},{\"name\":\"waist\",\"parent\":\"root\",\"pivot\":[0,12,0]},{\"cubes\":[{\"origin\":[-4,24,-4],\"size\":[8,8,8],\"uv\":[0,0]}],\"name\":\"head\",\"parent\":\"body\",\"pivot\":[0,24,0]},{\"name\":\"cape\",\"parent\":\"body\",\"pivot\":[0,24,3]},{\"cubes\":[{\"inflate\":0.5,\"origin\":[-4,24,-4],\"size\":[8,8,8],\"uv\":[32,0]}],\"name\":\"hat\",\"parent\":\"head\",\"pivot\":[0,24,0]},{\"cubes\":[{\"origin\":[4,12,-2],\"size\":[4,12,4],\"uv\":[32,48]}],\"name\":\"leftArm\",\"parent\":\"body\",\"pivot\":[5,22,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[4,12,-2],\"size\":[4,12,4],\"uv\":[48,48]}],\"name\":\"leftSleeve\",\"parent\":\"leftArm\",\"pivot\":[5,22,0]},{\"name\":\"leftItem\",\"parent\":\"leftArm\",\"pivot\":[6,15,1]},{\"cubes\":[{\"origin\":[-8,12,-2],\"size\":[4,12,4],\"uv\":[40,16]}],\"name\":\"rightArm\",\"parent\":\"body\",\"pivot\":[-5,22,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-8,12,-2],\"size\":[4,12,4],\"uv\":[40,32]}],\"name\":\"rightSleeve\",\"parent\":\"rightArm\",\"pivot\":[-5,22,0]},{\"locators\":{\"lead_hold\":[-6,15,1]},\"name\":\"rightItem\",\"parent\":\"rightArm\",\"pivot\":[-6,15,1]},{\"cubes\":[{\"origin\":[-0.1,0,-2],\"size\":[4,12,4],\"uv\":[16,48]}],\"name\":\"leftLeg\",\"parent\":\"root\",\"pivot\":[1.9,12,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-0.1,0,-2],\"size\":[4,12,4],\"uv\":[0,48]}],\"name\":\"leftPants\",\"parent\":\"leftLeg\",\"pivot\":[1.9,12,0]},{\"cubes\":[{\"origin\":[-3.9,0,-2],\"size\":[4,12,4],\"uv\":[0,16]}],\"name\":\"rightLeg\",\"parent\":\"root\",\"pivot\":[-1.9,12,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-3.9,0,-2],\"size\":[4,12,4],\"uv\":[0,32]}],\"name\":\"rightPants\",\"parent\":\"rightLeg\",\"pivot\":[-1.9,12,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-4,12,-2],\"size\":[8,12,4],\"uv\":[16,32]}],\"name\":\"jacket\",\"parent\":\"body\",\"pivot\":[0,24,0]}],\"description\":{\"identifier\":\"geometry.humanoid.custom\",\"texture_height\":64,\"texture_width\":64,\"visible_bounds_height\":2,\"visible_bounds_offset\":[0,1,0],\"visible_bounds_width\":1}},{\"bones\":[{\"name\":\"root\",\"pivot\":[0,0,0]},{\"name\":\"waist\",\"parent\":\"root\",\"pivot\":[0,12,0]},{\"cubes\":[{\"origin\":[-4,12,-2],\"size\":[8,12,4],\"uv\":[16,16]}],\"name\":\"body\",\"parent\":\"waist\",\"pivot\":[0,24,0]},{\"cubes\":[{\"origin\":[-4,24,-4],\"size\":[8,8,8],\"uv\":[0,0]}],\"name\":\"head\",\"parent\":\"body\",\"pivot\":[0,24,0]},{\"cubes\":[{\"inflate\":0.5,\"origin\":[-4,24,-4],\"size\":[8,8,8],\"uv\":[32,0]}],\"name\":\"hat\",\"parent\":\"head\",\"pivot\":[0,24,0]},{\"cubes\":[{\"origin\":[-3.9,0,-2],\"size\":[4,12,4],\"uv\":[0,16]}],\"name\":\"rightLeg\",\"parent\":\"root\",\"pivot\":[-1.9,12,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-3.9,0,-2],\"size\":[4,12,4],\"uv\":[0,32]}],\"name\":\"rightPants\",\"parent\":\"rightLeg\",\"pivot\":[-1.9,12,0]},{\"cubes\":[{\"origin\":[-0.1,0,-2],\"size\":[4,12,4],\"uv\":[16,48]}],\"mirror\":true,\"name\":\"leftLeg\",\"parent\":\"root\",\"pivot\":[1.9,12,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-0.1,0,-2],\"size\":[4,12,4],\"uv\":[0,48]}],\"name\":\"leftPants\",\"parent\":\"leftLeg\",\"pivot\":[1.9,12,0]},{\"cubes\":[{\"origin\":[4,11.5,-2],\"size\":[3,12,4],\"uv\":[32,48]}],\"name\":\"leftArm\",\"parent\":\"body\",\"pivot\":[5,21.5,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[4,11.5,-2],\"size\":[3,12,4],\"uv\":[48,48]}],\"name\":\"leftSleeve\",\"parent\":\"leftArm\",\"pivot\":[5,21.5,0]},{\"name\":\"leftItem\",\"parent\":\"leftArm\",\"pivot\":[6,14.5,1]},{\"cubes\":[{\"origin\":[-7,11.5,-2],\"size\":[3,12,4],\"uv\":[40,16]}],\"name\":\"rightArm\",\"parent\":\"body\",\"pivot\":[-5,21.5,0]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-7,11.5,-2],\"size\":[3,12,4],\"uv\":[40,32]}],\"name\":\"rightSleeve\",\"parent\":\"rightArm\",\"pivot\":[-5,21.5,0]},{\"locators\":{\"lead_hold\":[-6,14.5,1]},\"name\":\"rightItem\",\"parent\":\"rightArm\",\"pivot\":[-6,14.5,1]},{\"cubes\":[{\"inflate\":0.25,\"origin\":[-4,12,-2],\"size\":[8,12,4],\"uv\":[16,32]}],\"name\":\"jacket\",\"parent\":\"body\",\"pivot\":[0,24,0]},{\"name\":\"cape\",\"parent\":\"body\",\"pivot\":[0,24,-3]}],\"description\":{\"identifier\":\"geometry.humanoid.customSlim\",\"texture_height\":64,\"texture_width\":64,\"visible_bounds_height\":2,\"visible_bounds_offset\":[0,1,0],\"visible_bounds_width\":1}}]}";
 
-	public static String getSkinData(String serverAddress, String username) {
-		Gson gson = TunnelMC.instance.fileManagement.normalGson;
-		KeyPair keyPair = EncryptionUtils.createKeyPair();
-		PublicKey publicKey = keyPair.getPublic();
+	public static String getSkinData(String serverAddress) {
+		try {
+			Gson gson = TunnelMC.instance.fileManagement.normalGson;
 
-		String publicKeyBase64 = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+			String publicKeyBase64 = Base64.getEncoder().encodeToString(Client.instance.authData.getPublicKey().getEncoded());
 
-		JsonObject jwtHeader = new JsonObject();
-		jwtHeader.addProperty("x5u", publicKeyBase64);
-		jwtHeader.addProperty("alg", "ES384");
+			JsonObject jwtHeader = new JsonObject();
+			jwtHeader.addProperty("alg", "ES384");
+			jwtHeader.addProperty("x5u", publicKeyBase64);
 
-		JsonObject skinData = new JsonObject();
+			JsonObject skinData = new JsonObject();
 
-		skinData.add("AnimatedImageData", new JsonArray());
-		skinData.addProperty("ArmSize", "");
-		skinData.addProperty("CapeData", "");
-		skinData.addProperty("CapeId", "");
-		skinData.addProperty("CapeImageHeight", 0);
-		skinData.addProperty("CapeImageWidth", 0);
-		skinData.addProperty("CapeOnClassicSkin", false);
-		skinData.addProperty("ClientRandomId", new Random().nextLong());//erm? i hope this works?
-		skinData.addProperty("CurrentInputMode", 1);
-		skinData.addProperty("DefaultInputMode", 1);
-		skinData.addProperty("DeviceId", UUID.randomUUID().toString());
-		skinData.addProperty("DeviceModel", "");
-		skinData.addProperty("DeviceOS", 7);//windows 10?
-		skinData.addProperty("GameVersion", Client.instance.bedrockPacketCodec.getMinecraftVersion());
-		skinData.addProperty("GuiScale", 0);
-		skinData.addProperty("LanguageCode", "en_US");
-		skinData.add("PersonaPieces", new JsonArray());
-		skinData.addProperty("PersonaSkin", false);
-		skinData.add("PieceTintColors", new JsonArray());
-		skinData.addProperty("PlatformOfflineId", "");
-		skinData.addProperty("PlatformOnlineId", "");
-		skinData.addProperty("PremiumSkin", false);
-		skinData.addProperty("SelfSignedId", UUID.randomUUID().toString());//erm? i hope this works?
-		skinData.addProperty("ServerAddress", serverAddress);
-		skinData.addProperty("SkinAnimationData", "");
-		skinData.addProperty("SkinColor", "#0");
-		skinData.addProperty("SkinData", SkinData.SKIN_DATA_BASE_64);
-		skinData.addProperty("SkinGeometryData", Auth.base64Encode(SkinData.SKIN_GEOMETRY_DATA));
-		skinData.addProperty("SkinId", UUID.randomUUID() + ".Custom" + UUID.randomUUID());//ok..? :shrug:
-		skinData.addProperty("SkinImageHeight", 64);
-		skinData.addProperty("SkinImageWidth", 64);
-		skinData.addProperty("SkinResourcePatch", "ewogICAiZ2VvbWV0cnkiIDogewogICAgICAiZGVmYXVsdCIgOiAiZ2VvbWV0cnkuaHVtYW5vaWQuY3VzdG9tIgogICB9Cn0K");//base 64 of course
-		skinData.addProperty("ThirdPartyName", username);
-		skinData.addProperty("ThirdPartyNameOnly", false);
-		skinData.addProperty("UIProfile", 0);
+			skinData.add("AnimatedImageData", new JsonArray());
+			skinData.addProperty("ArmSize", "");
+			skinData.addProperty("CapeData", "");
+			skinData.addProperty("CapeId", "");
+			skinData.addProperty("CapeImageHeight", 0);
+			skinData.addProperty("CapeImageWidth", 0);
+			skinData.addProperty("CapeOnClassicSkin", false);
+			skinData.addProperty("ClientRandomId", new Random().nextLong());//erm? i hope this works?
+			skinData.addProperty("CurrentInputMode", 1);
+			skinData.addProperty("DefaultInputMode", 1);
+			skinData.addProperty("DeviceId", UUID.randomUUID().toString());
+			skinData.addProperty("DeviceModel", "");
+			skinData.addProperty("DeviceOS", 7);//windows 10?
+			skinData.addProperty("GameVersion", Client.instance.bedrockPacketCodec.getMinecraftVersion());
+			skinData.addProperty("GuiScale", 0);
+			skinData.addProperty("LanguageCode", "en_US");
+			skinData.add("PersonaPieces", new JsonArray());
+			skinData.addProperty("PersonaSkin", false);
+			skinData.add("PieceTintColors", new JsonArray());
+			skinData.addProperty("PlatformOfflineId", "");
+			skinData.addProperty("PlatformOnlineId", "");
+			skinData.addProperty("PremiumSkin", false);
+			skinData.addProperty("SelfSignedId", UUID.randomUUID().toString());//erm? i hope this works?
+			skinData.addProperty("ServerAddress", serverAddress);
+			skinData.addProperty("SkinAnimationData", "");
+			skinData.addProperty("SkinColor", "#0");
+			skinData.addProperty("SkinData", SkinData.SKIN_DATA_BASE_64);
+			skinData.addProperty("SkinGeometryData", Base64.getEncoder().encodeToString(SkinData.SKIN_GEOMETRY_DATA.getBytes()));
+			skinData.addProperty("SkinId", UUID.randomUUID() + ".Custom" + UUID.randomUUID());//ok..? :shrug:
+			skinData.addProperty("SkinImageHeight", 64);
+			skinData.addProperty("SkinImageWidth", 64);
+			skinData.addProperty("SkinResourcePatch", "ewogICAiZ2VvbWV0cnkiIDogewogICAgICAiZGVmYXVsdCIgOiAiZ2VvbWV0cnkuaHVtYW5vaWQuY3VzdG9tIgogICB9Cn0K");//base 64 of course
+			skinData.addProperty("ThirdPartyName", Client.instance.authData.getDisplayName());
+			skinData.addProperty("ThirdPartyNameOnly", false);
+			skinData.addProperty("UIProfile", 0);
 
-		String jwt = Auth.base64Encode(gson.toJson(jwtHeader)) + "." + Auth.base64Encode(gson.toJson(skinData)) + "." + Auth.base64Encode(new String(publicKey.getEncoded()));
+			String header = Base64.getUrlEncoder().withoutPadding().encodeToString(gson.toJson(jwtHeader).getBytes());
+			String payload = Base64.getUrlEncoder().withoutPadding().encodeToString(gson.toJson(skinData).getBytes());
 
-		return jwt;
+			byte[] dataToSign = (header + "." + payload).getBytes();
+			String signatureString = Client.instance.authData.signBytes(dataToSign);
+
+			String jwt = header + "." + payload + "." + signatureString;
+
+			return jwt;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	//this is just a simple way...

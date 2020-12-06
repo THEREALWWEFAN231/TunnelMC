@@ -1,7 +1,5 @@
 package me.THEREALWWEFAN231.tunnelmc.javaconnection;
 
-import java.util.UUID;
-
 import com.mojang.authlib.GameProfile;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
@@ -21,7 +19,7 @@ public class FakeJavaConnection {
 
 	public FakeJavaConnection() {
 		this.clientConnection = new ClientConnection(NetworkSide.CLIENTBOUND);
-		this.clientPlayNetworkHandler = new ClientPlayNetworkHandler(TunnelMC.mc, null, this.clientConnection, new GameProfile(Client.instance.currentSessionData.getIdentity(), Client.instance.currentSessionData.getDisplayName()));
+		this.clientPlayNetworkHandler = new ClientPlayNetworkHandler(TunnelMC.mc, null, this.clientConnection, new GameProfile(Client.instance.authData.getIdentity(), Client.instance.authData.getDisplayName()));
 		this.packetTranslatorManager = new JavaPacketTranslatorManager();
 	}
 

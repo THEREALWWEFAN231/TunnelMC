@@ -44,4 +44,9 @@ public class InventorySlotPacketTranslator extends PacketTranslator<InventorySlo
 		return InventorySlotPacket.class;
 	}
 
+	@Override
+	public boolean idleUntil() {
+		return TunnelMC.mc.player != null;
+	}
+
 }

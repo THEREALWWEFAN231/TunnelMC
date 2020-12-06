@@ -2,6 +2,7 @@ package me.THEREALWWEFAN231.tunnelmc.translator.packets;
 
 import com.nukkitx.protocol.bedrock.packet.SetTimePacket;
 
+import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
@@ -17,6 +18,11 @@ public class SetTimePacketTranslator extends PacketTranslator<SetTimePacket> {
 	@Override
 	public Class<?> getPacketClass() {
 		return SetTimePacket.class;
+	}
+	
+	@Override
+	public boolean idleUntil() {
+		return TunnelMC.mc.world != null;
 	}
 
 }

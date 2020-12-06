@@ -1,5 +1,9 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.packets;
 
+import java.util.ArrayList;
+
+import com.darkmagician6.eventapi.EventManager;
+import com.darkmagician6.eventapi.EventTarget;
 import com.nukkitx.network.VarInts;
 import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket;
 
@@ -7,14 +11,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
+import me.THEREALWWEFAN231.tunnelmc.events.EventPlayerTick;
 import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArray;
 import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArrayVersion;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockPaletteTranslator;
 import net.minecraft.block.BlockState;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
-import net.minecraft.network.packet.s2c.play.ChunkRenderDistanceCenterS2CPacket;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -24,40 +27,14 @@ import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
 public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacket> {
-	
-	//TODO: block entities, biomes, and probably lighting
 
-	//was used for testing the java chunk data, probably can be removed
-	public static void deobfuscateChunk(ChunkDataS2CPacket packet) {
-		int verticalStripBitmask = packet.getVerticalStripBitmask();
-		PacketByteBuf byteBuf = new PacketByteBuf(packet.getReadBuffer().copy());
-		ChunkSection[] chunkSections = new ChunkSection[16];
-		boolean bl = packet.getBiomeArray() != null;
+	private ArrayList<LevelChunkPacket> chunksOutOfRenderDistance = new ArrayList<LevelChunkPacket>();
 
-		for (int i = 0; i < chunkSections.length; ++i) {
-			ChunkSection chunkSection = chunkSections[i];
-			if ((verticalStripBitmask & 1 << i) == 0) {
-				if (bl && chunkSection != WorldChunk.EMPTY_SECTION) {
-					chunkSections[i] = WorldChunk.EMPTY_SECTION;
-				}
-			} else {
-				if (chunkSection == WorldChunk.EMPTY_SECTION) {
-					chunkSection = new ChunkSection(i << 4);
-					chunkSections[i] = chunkSection;
-				}
-
-				chunkSection.fromPacket(byteBuf);
-				for (int x = 0; x < 16; x++) {
-					for (int y = 0; y < 16; y++) {
-						for (int z = 0; z < 16; z++) {
-							BlockState blockState = chunkSection.getBlockState(x, y, z);
-						}
-					}
-				}
-				break;
-			}
-		}
+	public LevelChunkPacketTranslator() {
+		EventManager.register(this);
 	}
+
+	//TODO: block entities, biomes, and probably lighting
 
 	@Override
 	public void translate(LevelChunkPacket packet) {
@@ -94,22 +71,24 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 		 * 
 		 */
 
-		if (TunnelMC.mc.player != null) {
+		//I like setting it in PlayerMoveC2SPacketTranslator, better this this
+		/*if (TunnelMC.mc.player != null) {
 			//make sure far away chunks load
-			ChunkRenderDistanceCenterS2CPacket renderDistanceCenterPacket = new ChunkRenderDistanceCenterS2CPacket((int) TunnelMC.mc.player.getX() >> 4, (int) TunnelMC.mc.player.getZ() >> 4);
+			ChunkRenderDistanceCenterS2CPacket renderDistanceCenterPacket = new ChunkRenderDistanceCenterS2CPacket(MathHelper.floor(TunnelMC.mc.player.getX()) >> 4, MathHelper.floor(TunnelMC.mc.player.getZ()) >> 4);
 			Client.instance.javaConnection.processServerToClientPacket(renderDistanceCenterPacket);
-		}
+		}*/
 
 		ChunkSection[] chunkSections = new ChunkSection[16];
 
 		int chunkX = packet.getChunkX();
 		int chunkZ = packet.getChunkZ();
 
-		// From Camotoy: I won't remove this, but I don't think you need it. Or you at least need to change it, or else chunks won't load.
-//		if (Math.abs(chunkX - (MathHelper.floor(128) >> 4)) > TunnelMC.mc.options.viewDistance || Math.abs(chunkZ - (MathHelper.floor(128) >> 4)) > TunnelMC.mc.options.viewDistance) {
-//			System.out.println("thonk");
-//			return;
-//		}
+		if (TunnelMC.mc.player != null) {
+			if (!this.isChunkInRenderDistance(chunkX, chunkZ)) {
+				this.chunksOutOfRenderDistance.add(packet);
+				return;
+			}
+		}
 
 		ByteBuf byteBuf = Unpooled.buffer();
 		byteBuf.writeBytes(packet.getData());
@@ -184,6 +163,27 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 	@Override
 	public Class<?> getPacketClass() {
 		return LevelChunkPacket.class;
+	}
+
+	public boolean isChunkInRenderDistance(int chunkX, int chunkZ) {
+		int playerChunkX = MathHelper.floor(TunnelMC.mc.player.getX()) >> 4;
+		int playerChunkZ = MathHelper.floor(TunnelMC.mc.player.getZ()) >> 4;
+		return Math.abs(chunkX - playerChunkX) <= TunnelMC.mc.options.viewDistance && Math.abs(chunkZ - playerChunkZ) <= TunnelMC.mc.options.viewDistance;
+	}
+
+	@EventTarget
+	public void onEvent(EventPlayerTick event) {
+		//this needs some work, general chunk loading needs some work as well
+		for(int i = 0; i < this.chunksOutOfRenderDistance.size(); i++) {//could use an iterator, but that's no fun?
+			LevelChunkPacket levelChunkPacket = this.chunksOutOfRenderDistance.get(i);
+			if (!this.isChunkInRenderDistance(levelChunkPacket.getChunkX(), levelChunkPacket.getChunkZ())) {
+				continue;
+			}
+
+			this.translate(levelChunkPacket);
+			this.chunksOutOfRenderDistance.remove(i);
+			i--;
+		}
 	}
 
 }

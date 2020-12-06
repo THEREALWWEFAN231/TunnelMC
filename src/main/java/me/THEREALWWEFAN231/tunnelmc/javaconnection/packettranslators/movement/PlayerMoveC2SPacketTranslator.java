@@ -8,6 +8,8 @@ import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.packet.s2c.play.ChunkRenderDistanceCenterS2CPacket;
+import net.minecraft.util.math.MathHelper;
 
 public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2SPacket> {
 
@@ -21,8 +23,16 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 
 	@Override
 	public void translate(PlayerMoveC2SPacket packet) {
-		PlayerMoveC2SPacket playerMoveC2SPacket = (PlayerMoveC2SPacket) packet;
+		//this shouldn't even be called? I don't know, doesn't matter
+		PlayerMoveC2SPacketTranslator.translateMovementPacket((PlayerMoveC2SPacket) packet, MovePlayerPacket.Mode.NORMAL);
+	}
 
+	@Override
+	public Class<?> getPacketClass() {
+		return PlayerMoveC2SPacket.class;
+	}
+
+	public static void translateMovementPacket(PlayerMoveC2SPacket playerMoveC2SPacket, MovePlayerPacket.Mode mode) {
 		double currentPosX = playerMoveC2SPacket.getX(TunnelMC.mc.player.getPos().x);
 		double currentPosY = playerMoveC2SPacket.getY(TunnelMC.mc.player.getPos().y) + TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING);
 		double currentPosZ = playerMoveC2SPacket.getZ(TunnelMC.mc.player.getPos().z);
@@ -40,7 +50,7 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 		movePlayerPacket.setRuntimeEntityId(runtimeId);
 		movePlayerPacket.setPosition(Vector3f.from(currentPosX, currentPosY, currentPosZ));
 		movePlayerPacket.setRotation(Vector3f.from(currentPitch, currentYaw, 0));
-		movePlayerPacket.setMode(MovePlayerPacket.Mode.NORMAL);
+		movePlayerPacket.setMode(mode);//honestly we could just check if the playerMoveC2SPacket is a rotation packet, and if it is use HEAD_ROTATION
 		movePlayerPacket.setOnGround(currentlyOnGround);
 		Client.instance.sendPacket(movePlayerPacket);
 
@@ -50,11 +60,12 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 		PlayerMoveC2SPacketTranslator.lastYaw = currentYaw;
 		PlayerMoveC2SPacketTranslator.lastPitch = currentPitch;
 		PlayerMoveC2SPacketTranslator.lastOnGround = currentlyOnGround;
-	}
 
-	@Override
-	public Class<?> getPacketClass() {
-		return PlayerMoveC2SPacket.class;
+		//update our "chunk radius center" every time we move
+		int chunkX = MathHelper.floor(currentPosX) >> 4;
+		int chunkZ = MathHelper.floor(currentPosZ) >> 4;
+		ChunkRenderDistanceCenterS2CPacket chunkRenderDistanceCenterS2CPacket = new ChunkRenderDistanceCenterS2CPacket(chunkX, chunkZ);
+		Client.instance.javaConnection.processServerToClientPacket(chunkRenderDistanceCenterS2CPacket);
 	}
 
 }

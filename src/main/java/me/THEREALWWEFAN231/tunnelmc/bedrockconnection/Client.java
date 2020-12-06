@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import com.nukkitx.protocol.bedrock.v419.Bedrock_v419;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,14 +13,13 @@ import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockSession;
 import com.nukkitx.protocol.bedrock.packet.LoginPacket;
-import com.nukkitx.protocol.bedrock.v408.Bedrock_v408;
+import com.nukkitx.protocol.bedrock.v419.Bedrock_v419;
 
 import io.netty.util.AsciiString;
-import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.auth.Auth;
-import me.THEREALWWEFAN231.tunnelmc.auth.BedrockSessionData;
 import me.THEREALWWEFAN231.tunnelmc.auth.SkinData;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.FakeJavaConnection;
+import net.minecraft.client.util.NetworkUtils;
 
 public class Client {
 
@@ -30,7 +28,7 @@ public class Client {
 	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v419.V419_CODEC;
 	private String ip;
 	private int port;
-	public BedrockSessionData currentSessionData;
+	public Auth authData;
 	public BedrockClient bedrockClient;
 	public FakeJavaConnection javaConnection;
 
@@ -38,7 +36,7 @@ public class Client {
 		this.ip = ip;
 		this.port = port;
 
-		InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", 12345);
+		InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", this.getOpenLocalPort());
 		this.bedrockClient = new BedrockClient(bindAddress);
 		this.bedrockClient.bind().join();
 
@@ -71,18 +69,20 @@ public class Client {
 
 		try {
 			LoginPacket loginPacket = new LoginPacket();
-			
-			String chainData = Auth.getOfflineChainData(TunnelMC.mc.getSession().getUsername());
-			this.currentSessionData = Auth.getSessionDataFromChainData(chainData);
-			
+
+			this.authData = new Auth();
+			//String chainData = this.authData.getOfflineChainData(TunnelMC.mc.getSession().getUsername());
+			String chainData = this.authData.getOnlineChainData();
+
 			loginPacket.setProtocolVersion(bedrockSession.getPacketCodec().getProtocolVersion());
-			loginPacket.setChainData(new AsciiString(chainData));
-			loginPacket.setSkinData(new AsciiString(SkinData.getSkinData(this.ip + ":" + this.port, this.currentSessionData.getDisplayName())));
+			loginPacket.setChainData(new AsciiString(chainData.getBytes()));
+			loginPacket.setSkinData(new AsciiString(SkinData.getSkinData(this.ip + ":" + this.port)));
 			this.sendPacketImmediately(loginPacket);
 
 			this.javaConnection = new FakeJavaConnection();
 
 		} catch (Exception e) {
+			//TODO: do something better with this
 			e.printStackTrace();
 		}
 	}
@@ -107,6 +107,14 @@ public class Client {
 		if (session.isLogging()) {
 			this.logger.info("Outbound {}: {}", session.getAddress().toString(), packet.getClass().getCanonicalName());
 		}
+	}
+
+	public int getOpenLocalPort() {
+		int port = NetworkUtils.findLocalPort();//minecraft does this when opening world to lan
+		if (port == 25564) {//fallback port, we are going to change it because we are cool
+			port = 2021;
+		}
+		return port;
 	}
 
 }

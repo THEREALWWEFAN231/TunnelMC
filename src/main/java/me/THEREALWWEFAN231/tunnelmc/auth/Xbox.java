@@ -4,9 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.math.BigInteger;
 import java.net.URL;
-import java.security.MessageDigest;
+import java.security.Signature;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -15,70 +16,75 @@ import javax.net.ssl.HttpsURLConnection;
 import com.google.common.primitives.Longs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.starkbank.ellipticcurve.Ecdsa;
-import com.starkbank.ellipticcurve.PrivateKey;
-import com.starkbank.ellipticcurve.PublicKey;
+import com.google.gson.JsonParser;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
+import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 
+/*
+ * This note refers to all auth/JWT related classes, I know there are JWT parsing dependencies(already built into the protocol
+ * dependence) but I want to to be "up front", meaning I/we see everything that is going on, meaning we can see exactly how
+ * the header, payload and signature are formed, rather then using some library that make take a couple minutes to understand(how
+ * it works), I also do know, at some points it would be easier to use the JWT dependence but my stance above still applies,
+ * maybe ill make my own simple class :shrug:
+ */
+//based off https://github.com/Sandertv/gophertunnel/tree/master/minecraft/auth
 public class Xbox {
 
 	//go here, log in, and in the redirected url you will have your access token, https://login.live.com/oauth20_authorize.srf?client_id=00000000441cc96b&redirect_uri=https://login.live.com/oauth20_desktop.srf&response_type=token&display=touch&scope=service::user.auth.xboxlive.com::MBI_SSL&locale=en
-	private String accessToken = "enter your access token";
+	//then add -DXboxAccessToken=YOURS to your jvm arguments
+	private String accessToken;
 
-	public String xblUserAuthURL = "https://user.auth.xboxlive.com/user/authenticate";
-	public String xblAuthorizeURL = "https://xsts.auth.xboxlive.com/xsts/authorize";
-	public String xblDeviceAuthURL = "https://device.auth.xboxlive.com/device/authenticate";
-	public String xblTitleAuthURL = "https://title.auth.xboxlive.com/title/authenticate";
-	public String minecraftAuthURL = "https://multiplayer.minecraft.net/authentication";
+	private String xboxUserAuthURL = "https://user.auth.xboxlive.com/user/authenticate";
+	private String xboxAuthorizeURL = "https://xsts.auth.xboxlive.com/xsts/authorize";
+	private String xboxDeviceAuthURL = "https://device.auth.xboxlive.com/device/authenticate";
+	private String xboxTitleAuthURL = "https://title.auth.xboxlive.com/title/authenticate";
+	private String minecraftAuthURL = "https://multiplayer.minecraft.net/authentication";
 
-	public String userToken(PublicKey publicKey) {
+	private JsonParser jsonParser = TunnelMC.instance.fileManagement.jsonParser;
 
-		try {
-			JsonObject jsonObject = new JsonObject();
-			jsonObject.addProperty("RelyingParty", "http://auth.xboxlive.com");
-			jsonObject.addProperty("TokenType", "JWT");
-
-			JsonObject properties = new JsonObject();
-			jsonObject.add("Properties", properties);
-			properties.addProperty("AuthMethod", "RPS");
-			properties.addProperty("SiteName", "user.auth.xboxlive.com");
-			properties.addProperty("RpsTicket", "t=" + this.accessToken);
-
-			/*JsonObject proofKey = new JsonObject();
-			properties.add("ProofKey", proofKey);
-			proofKey.addProperty("crv", "P-256");
-			proofKey.addProperty("alg", "ES256");
-			proofKey.addProperty("use", "sig");
-			proofKey.addProperty("kty", "EC");
-			proofKey.addProperty("x", Base64.getEncoder().encodeToString(ecPublicKey.getW().getAffineX().toByteArray()));
-			proofKey.addProperty("y", Base64.getEncoder().encodeToString(ecPublicKey.getW().getAffineY().toByteArray()));*/
-
-			URL url = new URL(this.xblUserAuthURL);
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestProperty("x-xbl-contract-version", "1");
-			connection.setDoOutput(true);
-
-			DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-			dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject));
-			dataOutputStream.flush();
-
-			String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
-			JsonObject responceJsonObject = TunnelMC.instance.fileManagement.jsonParser.parse(responce).getAsJsonObject();
-
-			return responceJsonObject.get("Token").getAsString();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
+	public Xbox(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
-	public String deviceToken(PublicKey publicKey, PrivateKey privateKey) {
+	public String getUserToken(ECPublicKey publicKey, ECPrivateKey privateKey) throws Exception {
+
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("RelyingParty", "http://auth.xboxlive.com");
+		jsonObject.addProperty("TokenType", "JWT");
+
+		JsonObject properties = new JsonObject();
+		jsonObject.add("Properties", properties);
+		properties.addProperty("AuthMethod", "RPS");
+		properties.addProperty("SiteName", "user.auth.xboxlive.com");
+		properties.addProperty("RpsTicket", "t=" + this.accessToken);
+
+		JsonObject proofKey = new JsonObject();
+		properties.add("ProofKey", proofKey);
+		proofKey.addProperty("crv", "P-256");
+		proofKey.addProperty("alg", "ES256");
+		proofKey.addProperty("use", "sig");
+		proofKey.addProperty("kty", "EC");
+		proofKey.addProperty("x", this.getProofKeyX(publicKey));
+		proofKey.addProperty("y", this.getProofKeyY(publicKey));
+
+		URL url = new URL(this.xboxUserAuthURL);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestProperty("x-xbl-contract-version", "1");
+		this.addSignatureHeader(connection, jsonObject, privateKey);
+
+		this.writeJsonObjectToPost(connection, jsonObject);
+
+		String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
+		JsonObject responceJsonObject = this.jsonParser.parse(responce).getAsJsonObject();
+
+		return responceJsonObject.get("Token").getAsString();
+	}
+
+	public String getDeviceToken(ECPublicKey publicKey, ECPrivateKey privateKey) throws Exception {
 
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("RelyingParty", "http://auth.xboxlive.com");
@@ -98,37 +104,26 @@ public class Xbox {
 		proofKey.addProperty("alg", "ES256");
 		proofKey.addProperty("use", "sig");
 		proofKey.addProperty("kty", "EC");
-		proofKey.addProperty("x", Base64.getUrlEncoder().withoutPadding().encodeToString(Xbox.bigIntegerToByteArray(publicKey.point.x)));
-		proofKey.addProperty("y", Base64.getUrlEncoder().withoutPadding().encodeToString(Xbox.bigIntegerToByteArray(publicKey.point.y)));
+		proofKey.addProperty("x", this.getProofKeyX(publicKey));
+		proofKey.addProperty("y", this.getProofKeyY(publicKey));
 
-		try {
+		URL url = new URL(this.xboxDeviceAuthURL);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
-			URL url = new URL(this.xblDeviceAuthURL);
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestProperty("x-xbl-contract-version", "1");
+		this.addSignatureHeader(connection, jsonObject, privateKey);
 
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestProperty("x-xbl-contract-version", "1");
-			this.sign(connection, TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject), privateKey);
-			connection.setDoOutput(true);
+		this.writeJsonObjectToPost(connection, jsonObject);
 
-			DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-			dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject));
-			dataOutputStream.flush();
+		String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
+		JsonObject responceJsonObject = this.jsonParser.parse(responce).getAsJsonObject();
 
-			String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
-			JsonObject responceJsonObject = TunnelMC.instance.fileManagement.jsonParser.parse(responce).getAsJsonObject();
-
-			return responceJsonObject.get("Token").getAsString();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
+		return responceJsonObject.get("Token").getAsString();
 	}
 
-	public String titleToken(PublicKey publicKey, PrivateKey privateKey, String deviceToken) {
+	public String getTitleToken(ECPublicKey publicKey, ECPrivateKey privateKey, String deviceToken) throws Exception {
 
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("RelyingParty", "http://auth.xboxlive.com");
@@ -147,163 +142,149 @@ public class Xbox {
 		proofKey.addProperty("alg", "ES256");
 		proofKey.addProperty("use", "sig");
 		proofKey.addProperty("kty", "EC");
-		proofKey.addProperty("x", Base64.getUrlEncoder().withoutPadding().encodeToString(Xbox.bigIntegerToByteArray(publicKey.point.x)));
-		proofKey.addProperty("y", Base64.getUrlEncoder().withoutPadding().encodeToString(Xbox.bigIntegerToByteArray(publicKey.point.y)));
+		proofKey.addProperty("x", this.getProofKeyX(publicKey));
+		proofKey.addProperty("y", this.getProofKeyY(publicKey));
 
-		try {
+		URL url = new URL(this.xboxTitleAuthURL);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
-			URL url = new URL(this.xblTitleAuthURL);
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestProperty("x-xbl-contract-version", "1");
+		this.addSignatureHeader(connection, jsonObject, privateKey);
 
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestProperty("x-xbl-contract-version", "1");
-			this.sign(connection, TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject), privateKey);
-			connection.setDoOutput(true);
+		this.writeJsonObjectToPost(connection, jsonObject);
 
-			DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-			dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject));
-			dataOutputStream.flush();
+		String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
+		JsonObject responceJsonObject = this.jsonParser.parse(responce).getAsJsonObject();
 
-			String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
-			JsonObject responceJsonObject = TunnelMC.instance.fileManagement.jsonParser.parse(responce).getAsJsonObject();
-
-			return responceJsonObject.get("Token").getAsString();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return null;
+		return responceJsonObject.get("Token").getAsString();
 	}
 
-	public JsonObject xstsToken(String userToken, String deviceToken, String titleToken) {
+	public String getXstsToken(String userToken, String deviceToken, String titleToken, ECPublicKey publicKey, ECPrivateKey privateKey) throws Exception {
 
-		try {
-			JsonObject jsonObject = new JsonObject();
+		JsonObject jsonObject = new JsonObject();
 
-			jsonObject.addProperty("RelyingParty", "https://multiplayer.minecraft.net/");
-			jsonObject.addProperty("TokenType", "JWT");
+		jsonObject.addProperty("RelyingParty", "https://multiplayer.minecraft.net/");
+		jsonObject.addProperty("TokenType", "JWT");
 
-			JsonObject properties = new JsonObject();
-			jsonObject.add("properties", properties);
+		JsonObject properties = new JsonObject();
+		jsonObject.add("Properties", properties);
 
-			JsonArray userTokens = new JsonArray();
-			userTokens.add(userToken);
+		JsonArray userTokens = new JsonArray();
+		userTokens.add(userToken);
 
-			properties.addProperty("DeviceToken", deviceToken);
-			properties.addProperty("TitleToken", titleToken);
-			properties.add("UserTokens", userTokens);
-			properties.addProperty("SandboxId", "RETAIL");
+		properties.addProperty("DeviceToken", deviceToken);
+		properties.addProperty("TitleToken", titleToken);
+		properties.add("UserTokens", userTokens);
+		properties.addProperty("SandboxId", "RETAIL");
 
-			URL url = new URL(this.xblAuthorizeURL);
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		JsonObject proofKey = new JsonObject();
+		properties.add("ProofKey", proofKey);
+		proofKey.addProperty("crv", "P-256");
+		proofKey.addProperty("alg", "ES256");
+		proofKey.addProperty("use", "sig");
+		proofKey.addProperty("kty", "EC");
+		proofKey.addProperty("x", this.getProofKeyX(publicKey));
+		proofKey.addProperty("y", this.getProofKeyY(publicKey));
 
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-			connection.setRequestProperty("x-xbl-contract-version", "1");
-			connection.setDoOutput(true);
+		URL url = new URL(this.xboxAuthorizeURL);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
-			DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-			dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject));
-			dataOutputStream.flush();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		connection.setRequestProperty("x-xbl-contract-version", "1");
+		this.addSignatureHeader(connection, jsonObject, privateKey);
 
-			String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
-			return TunnelMC.instance.fileManagement.jsonParser.parse(responce).getAsJsonObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.writeJsonObjectToPost(connection, jsonObject);
 
-		return null;
+		return TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
 	}
 
-	public String RequestMinecraftChain(JsonObject xsts, PublicKey publicKey) {
-		try {
-			String pubKeyData = Base64.getEncoder().encodeToString(publicKey.toDer().getBytes());
+	public String requestMinecraftChain(String xsts, ECPublicKey publicKey) throws Exception {
+		JsonObject xstsObject = this.jsonParser.parse(xsts).getAsJsonObject();
 
-			JsonObject jsonObject = new JsonObject();
-			jsonObject.addProperty("identityPublicKey", pubKeyData);
+		String pubKeyData = Base64.getEncoder().encodeToString(publicKey.getEncoded());
 
-			URL url = new URL(this.minecraftAuthURL);
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("identityPublicKey", pubKeyData);
 
-			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestProperty("Authorization", "XBL3.0 x=" + xsts.get("DisplayClaims").getAsJsonObject().getAsJsonArray("xui").getAsJsonArray().get(0).getAsJsonObject().get("uhs").getAsString() + ";" + xsts.get("Token").getAsString());
-			connection.setRequestProperty("User-Agent", "MCPE/UWP");
-			connection.setRequestProperty("Client-Version", /*Client.instance.bedrockClient.getSession().getPacketCodec().getMinecraftVersion()*/ "1.16.20" + "");
-			connection.setDoOutput(true);
+		URL url = new URL(this.minecraftAuthURL);
+		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
-			DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-			dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject));
-			dataOutputStream.flush();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json");
+		connection.setRequestProperty("Authorization", "XBL3.0 x=" + xstsObject.get("DisplayClaims").getAsJsonObject().getAsJsonArray("xui").getAsJsonArray().get(0).getAsJsonObject().get("uhs").getAsString() + ";" + xstsObject.get("Token").getAsString());
+		connection.setRequestProperty("User-Agent", "MCPE/UWP");
+		connection.setRequestProperty("Client-Version", Client.instance.bedrockClient.getSession().getPacketCodec().getMinecraftVersion());
 
-			String responce = TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
-			return responce;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		this.writeJsonObjectToPost(connection, jsonObject);
+
+		return TunnelMC.instance.fileManagement.getTextFromInputStream(connection.getInputStream());
 	}
 
-	public void sign(HttpsURLConnection httpsURLConnection, String body, PrivateKey privateKey) throws Exception {
+	private void writeJsonObjectToPost(HttpsURLConnection connection, JsonObject jsonObject) throws Exception {
+		connection.setDoOutput(true);
+
+		DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
+		dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject));
+		dataOutputStream.flush();
+	}
+
+	private String getProofKeyX(ECPublicKey ecPublicKey) {
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(Xbox.bigIntegerToByteArray(ecPublicKey.getW().getAffineX()));
+	}
+
+	private String getProofKeyY(ECPublicKey ecPublicKey) {
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(Xbox.bigIntegerToByteArray(ecPublicKey.getW().getAffineY()));
+	}
+
+	private void addSignatureHeader(HttpsURLConnection httpsURLConnection, JsonObject postData, ECPrivateKey privateKey) throws Exception {
 		long currentTime = this.windowsTimestamp();
-		ByteArrayOutputStream hash = new ByteArrayOutputStream();
+		ByteArrayOutputStream bytesToSign = new ByteArrayOutputStream();
 
-		hash.write(new byte[] { 0, 0, 0, 1, 0 });
-		hash.write(Longs.toByteArray(currentTime));
-		hash.write(new byte[] { 0 });
+		bytesToSign.write(new byte[] { 0, 0, 0, 1, 0 });
+		bytesToSign.write(Longs.toByteArray(currentTime));
+		bytesToSign.write(new byte[] { 0 });
 
-		hash.write("POST".getBytes());
-		hash.write(new byte[] { 0 });
+		bytesToSign.write("POST".getBytes());
+		bytesToSign.write(new byte[] { 0 });
 		String query = httpsURLConnection.getURL().getQuery();
 		if (query == null) {
 			query = "";
 		}
-		hash.write((httpsURLConnection.getURL().getPath() + query).getBytes());
-		hash.write(new byte[] { 0 });
+		bytesToSign.write((httpsURLConnection.getURL().getPath() + query).getBytes());
+		bytesToSign.write(new byte[] { 0 });
 		String authorization = httpsURLConnection.getRequestProperty("Authorization");
 		if (authorization == null) {
 			authorization = "";
 		}
-		hash.write(authorization.getBytes());
-		hash.write(new byte[] { 0 });
-		hash.write(body.getBytes("UTF-8"));//TODO: i dont think utf-8 is needed
-		hash.write(new byte[] { 0 });
+		bytesToSign.write(authorization.getBytes());
+		bytesToSign.write(new byte[] { 0 });
+		bytesToSign.write(TunnelMC.instance.fileManagement.normalGson.toJson(postData).getBytes());
+		bytesToSign.write(new byte[] { 0 });
 
-		MessageDigest digest = MessageDigest.getInstance("SHA-256");
-		byte[] hashBytes = digest.digest(hash.toByteArray());
-		//Signature signature = Signature.getInstance("SHA512withECDSA");
-		//signature.initSign(privateKey);
-		//signature.update(hashBytes);
-		//byte[] signatureBytes = signature.sign();
-		com.starkbank.ellipticcurve.Signature signature = Ecdsa.signTunnelMc(hashBytes, privateKey);
-		byte[] signatureBytes = null;
-		ByteArrayOutputStream kek = new ByteArrayOutputStream();
-		kek.write(bigIntegerToByteArray(signature.r));
-		kek.write(bigIntegerToByteArray(signature.s));
-		signatureBytes = kek.toByteArray();
-
-		ByteArrayOutputStream buf = new ByteArrayOutputStream();
-		buf.write(new byte[] { 0, 0, 0, 1 });
-		buf.write(Longs.toByteArray(currentTime));
+		Signature signature = Signature.getInstance("SHA256withECDSA");
+		signature.initSign(privateKey);
+		signature.update(bytesToSign.toByteArray());
+		byte[] signatureBytes = JoseStuff.DERToJOSE(signature.sign(), JoseStuff.AlgorithmType.ECDSA256);
 
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		byteArrayOutputStream.write(buf.toByteArray());
+		byteArrayOutputStream.write(new byte[] { 0, 0, 0, 1 });
+		byteArrayOutputStream.write(Longs.toByteArray(currentTime));
 		byteArrayOutputStream.write(signatureBytes);
 		httpsURLConnection.addRequestProperty("Signature", Base64.getEncoder().encodeToString(byteArrayOutputStream.toByteArray()));
 	}
 
-	// windowsTimestamp returns a Windows specific timestamp. It has a certain offset from Unix time which must be
-	// accounted for.
-	public long windowsTimestamp() {
+	// windowsTimestamp returns a Windows specific timestamp. It has a certain offset from Unix time which must be accounted for.
+	private long windowsTimestamp() {
 		return (Instant.now().getEpochSecond() + 11644473600L) * 10000000L;
 	}
 
 	//so sometimes getAffineX/Y toByteArray returns 33 or 31(really rare) bytes we are suppose to get 32 bytes, as said in these stackoverflows, they basically say if byte 0 is 0(33 bytes?) we can remove it
 	//https://stackoverflow.com/questions/57379134/bouncy-castle-ecc-key-pair-generation-produces-different-sizes-for-the-coordinat
 	//https://stackoverflow.com/questions/4407779/biginteger-to-byte
-	public static byte[] bigIntegerToByteArray(BigInteger bigInteger) {
+	private static byte[] bigIntegerToByteArray(BigInteger bigInteger) {
 		byte[] array = bigInteger.toByteArray();
 		if (array[0] == 0) {
 			byte[] newArray = new byte[array.length - 1];
@@ -311,21 +292,6 @@ public class Xbox {
 			return newArray;
 		}
 		return array;
-	}
-
-	//https://stackoverflow.com/questions/49974441/extracting-r-s-and-verifying-ecdsa-signature-remotely
-	public static BigInteger extractR(byte[] signature) throws Exception {
-		int startR = (signature[1] & 0x80) != 0 ? 3 : 2;
-		int lengthR = signature[startR + 1];
-		return new BigInteger(Arrays.copyOfRange(signature, startR + 2, startR + 2 + lengthR));
-	}
-
-	public static BigInteger extractS(byte[] signature) throws Exception {
-		int startR = (signature[1] & 0x80) != 0 ? 3 : 2;
-		int lengthR = signature[startR + 1];
-		int startS = startR + 2 + lengthR;
-		int lengthS = signature[startS + 1];
-		return new BigInteger(Arrays.copyOfRange(signature, startS + 2, startS + 2 + lengthS));
 	}
 
 }
