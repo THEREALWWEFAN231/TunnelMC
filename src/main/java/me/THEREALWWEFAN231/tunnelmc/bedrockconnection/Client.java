@@ -13,7 +13,7 @@ import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockSession;
 import com.nukkitx.protocol.bedrock.packet.LoginPacket;
-import com.nukkitx.protocol.bedrock.v419.Bedrock_v419;
+import com.nukkitx.protocol.bedrock.v422.Bedrock_v422;
 
 import io.netty.util.AsciiString;
 import me.THEREALWWEFAN231.tunnelmc.auth.Auth;
@@ -25,7 +25,7 @@ public class Client {
 
 	public static Client instance = new Client();
 	private Logger logger = LogManager.getLogger(ClientBatchHandler.class);
-	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v419.V419_CODEC;
+	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v422.V422_CODEC;
 	private String ip;
 	private int port;
 	public Auth authData;

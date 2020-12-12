@@ -13,42 +13,44 @@ import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 
 public class SetEntityDataPacketTranslator extends PacketTranslator<SetEntityDataPacket> {
-    @Override
-    public void translate(SetEntityDataPacket packet) {
-        //TODO: Set up an entity class system, like Geyser?
-        int id = (int) packet.getRuntimeEntityId();
+	@Override
+	public void translate(SetEntityDataPacket packet) {
 
-        if (TunnelMC.mc.world != null) {
-            Entity entity = TunnelMC.mc.world.getEntityById(id);
-            if (entity == null) {
-                System.out.println("No entity found with ID " + id);
-                return;
-            }
-            EntityDataMap metadata = packet.getMetadata();
+		//TODO: Set up an entity class system, like Geyser?
+		int id = (int) packet.getRuntimeEntityId();
 
-            if (metadata.containsKey(EntityData.AIR_SUPPLY)) {
-                entity.setAir(metadata.getShort(EntityData.AIR_SUPPLY));
-            }
+		if (TunnelMC.mc.world != null) {
+			Entity entity = TunnelMC.mc.world.getEntityById(id);
+			if (entity == null) {
+				//System.out.println("No entity found with ID " + id);
+				return;
+			}
+			EntityDataMap metadata = packet.getMetadata();
 
-            EntityFlags flags = metadata.getFlags();
+			if (metadata.containsKey(EntityData.AIR_SUPPLY)) {
+				entity.setAir(metadata.getShort(EntityData.AIR_SUPPLY));
+			}
 
-            if (flags != null) {
-                entity.setSneaking(flags.getFlag(EntityFlag.SNEAKING));
+			EntityFlags flags = metadata.getFlags();
 
-                if (flags.getFlag(EntityFlag.SNEAKING)) {
-                    entity.setPose(EntityPose.CROUCHING);
-                } else {
-                    entity.setPose(EntityPose.STANDING);
-                }
-            }
+			if (flags != null) {
+				entity.setSneaking(flags.getFlag(EntityFlag.SNEAKING));
 
-            EntityTrackerUpdateS2CPacket trackerUpdatePacket = new EntityTrackerUpdateS2CPacket(id, entity.getDataTracker(), true);
-            Client.instance.javaConnection.processServerToClientPacket(trackerUpdatePacket);
-        }
-    }
+				if (flags.getFlag(EntityFlag.SNEAKING)) {
+					entity.setPose(EntityPose.CROUCHING);
+				} else {
+					entity.setPose(EntityPose.STANDING);
+				}
+			}
 
-    @Override
-    public Class<?> getPacketClass() {
-        return SetEntityDataPacket.class;
-    }
+			EntityTrackerUpdateS2CPacket trackerUpdatePacket = new EntityTrackerUpdateS2CPacket(id, entity.getDataTracker(), true);
+			Client.instance.javaConnection.processServerToClientPacket(trackerUpdatePacket);
+		}
+	}
+
+	@Override
+	public Class<?> getPacketClass() {
+		return SetEntityDataPacket.class;
+	}
+
 }

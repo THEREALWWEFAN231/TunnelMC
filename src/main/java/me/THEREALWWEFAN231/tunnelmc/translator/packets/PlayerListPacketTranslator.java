@@ -12,6 +12,7 @@ import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket.Entry;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.GameMode;
 
 public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacket> {
 
@@ -26,10 +27,11 @@ public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacke
 
 		for (PlayerListPacket.Entry entry : packet.getEntries()) {
 			if (add) {
-				
+
 			}
 
-			entries.add(playerListS2CPacket.new Entry(new GameProfile(entry.getUuid(), entry.getName()), 0, null, new LiteralText(entry.getName())));
+			//gamemode says nullable but is used in ClientGameSession/:
+			entries.add(playerListS2CPacket.new Entry(new GameProfile(entry.getUuid(), entry.getName()), 0, GameMode.SURVIVAL, new LiteralText(entry.getName())));
 		}
 
 		Client.instance.javaConnection.processServerToClientPacket(playerListS2CPacket);
@@ -39,17 +41,17 @@ public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacke
 	public Class<?> getPacketClass() {
 		return PlayerListPacket.class;
 	}
-	
+
 	public static class SkinType {//this is only temporary
-		
+
 		public Identifier texture;
 		public boolean slim;
-		
+
 		public SkinType(Identifier texture, boolean slim) {
 			this.texture = texture;
 			this.slim = slim;
 		}
-		
+
 	}
 
 }
