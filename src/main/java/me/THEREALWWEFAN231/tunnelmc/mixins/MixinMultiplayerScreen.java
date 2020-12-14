@@ -23,12 +23,8 @@ public class MixinMultiplayerScreen extends Screen {
 	@Inject(method = "init", at = @At(value = "RETURN"))
 	public void init(CallbackInfo callback) {
 		this.addButton(new ButtonWidget(5, 5, 150, 20, new LiteralText("Connect To Bedrock Server"), (buttonWidget) -> {
-			TunnelMC.mc.openScreen(new BedrockConnectionScreen(this, this::directConnect));
+			TunnelMC.mc.openScreen(new BedrockConnectionScreen(this));
 		}));
-	}
-
-	private void directConnect(boolean confirmedAction) {
-		this.client.openScreen(this);
 	}
 
 }
