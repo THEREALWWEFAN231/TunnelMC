@@ -44,6 +44,7 @@ public class JavaPacketTranslatorManager {
 		this.packetTranslatorsByPacketClass.put(translator.getPacketClass(), translator);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void translatePacket(Packet<?> packet) {
 		PacketTranslator packetTranslator = this.packetTranslatorsByPacketClass.get(packet.getClass());
 		if (packetTranslator != null) {

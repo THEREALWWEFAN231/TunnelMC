@@ -88,6 +88,7 @@ public class SkinData {
 	}
 
 	//this is just a simple way...
+	@SuppressWarnings("unused")
 	private static String skinTextureToString(File file) throws Exception {
 		BufferedImage bufferedImage = ImageIO.read(file);
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

@@ -116,7 +116,8 @@ public final class EventManager {
      * @param object
      *         Source object of the method.
      */
-    private static void register(Method method, Object object) {
+    @SuppressWarnings({ "unchecked", "deprecation" })
+	private static void register(Method method, Object object) {
     	Class<? extends Event> indexClass = (Class<? extends Event>) method.getParameterTypes()[0];
     	//New MethodData from the Method we are registering.
     	final MethodData data = new MethodData(object, method, method.getAnnotation(EventTarget.class).value());

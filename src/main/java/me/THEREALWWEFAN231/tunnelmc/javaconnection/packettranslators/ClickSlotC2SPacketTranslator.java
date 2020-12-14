@@ -9,6 +9,7 @@ import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SPacket> {
 
 	@Override
+	@SuppressWarnings("unused")
 	public void translate(ClickSlotC2SPacket packet) {
 		
 		InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
