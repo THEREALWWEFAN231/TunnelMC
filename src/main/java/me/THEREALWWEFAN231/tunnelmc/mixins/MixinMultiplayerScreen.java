@@ -5,7 +5,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
+import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
+import me.THEREALWWEFAN231.tunnelmc.gui.BedrockConnectionScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -21,21 +22,13 @@ public class MixinMultiplayerScreen extends Screen {
 
 	@Inject(method = "init", at = @At(value = "RETURN"))
 	public void init(CallbackInfo callback) {
-		this.addButton(new ButtonWidget(5, 5, 50, 20, new LiteralText("Server"), new ButtonWidget.PressAction() {
-
-			@Override
-			public void onPress(ButtonWidget button) {
-				//Server.instance.initialize();
-			}
+		this.addButton(new ButtonWidget(5, 5, 150, 20, new LiteralText("Connect To Bedrock Server"), (buttonWidget) -> {
+			TunnelMC.mc.openScreen(new BedrockConnectionScreen(this, this::directConnect));
 		}));
+	}
 
-		this.addButton(new ButtonWidget(60, 5, 50, 20, new LiteralText("Client"), new ButtonWidget.PressAction() {
-
-			@Override
-			public void onPress(ButtonWidget button) {
-				Client.instance.initialize("127.0.0.1", 19132);
-			}
-		}));
+	private void directConnect(boolean confirmedAction) {
+		this.client.openScreen(this);
 	}
 
 }

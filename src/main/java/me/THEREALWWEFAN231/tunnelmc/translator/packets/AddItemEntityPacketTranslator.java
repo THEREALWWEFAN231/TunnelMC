@@ -17,6 +17,7 @@ import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 
 public class AddItemEntityPacketTranslator extends PacketTranslator<AddItemEntityPacket> {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void translate(AddItemEntityPacket packet) {
 		

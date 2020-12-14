@@ -15,6 +15,7 @@ public class AddEntityPacketTranslator extends PacketTranslator<AddEntityPacket>
 	
 	//TODO: handle non living entities differently, EntitySpawnS2CPacket
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void translate(AddEntityPacket packet) {
 

@@ -36,6 +36,7 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 
 	//TODO: block entities, biomes, and probably lighting
 
+	@SuppressWarnings("unused")
 	@Override
 	public void translate(LevelChunkPacket packet) {
 		/*
