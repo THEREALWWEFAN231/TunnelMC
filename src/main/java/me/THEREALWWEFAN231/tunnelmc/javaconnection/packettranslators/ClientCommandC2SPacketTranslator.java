@@ -1,8 +1,8 @@
 package me.THEREALWWEFAN231.tunnelmc.javaconnection.packettranslators;
 
 import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.data.PlayerActionType;
 import com.nukkitx.protocol.bedrock.packet.PlayerActionPacket;
-import com.nukkitx.protocol.bedrock.packet.PlayerActionPacket.Action;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
@@ -18,28 +18,28 @@ public class ClientCommandC2SPacketTranslator extends PacketTranslator<ClientCom
 		if (packet.getMode() == Mode.PRESS_SHIFT_KEY) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
-			playerActionPacket.setAction(Action.START_SNEAK);
+			playerActionPacket.setAction(PlayerActionType.START_SNEAK);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
 			Client.instance.sendPacket(playerActionPacket);
 		} else if (packet.getMode() == Mode.RELEASE_SHIFT_KEY) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
-			playerActionPacket.setAction(Action.STOP_SNEAK);
+			playerActionPacket.setAction(PlayerActionType.STOP_SNEAK);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
 			Client.instance.sendPacket(playerActionPacket);
 		} else if (packet.getMode() == Mode.START_SPRINTING) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
-			playerActionPacket.setAction(Action.START_SPRINT);
+			playerActionPacket.setAction(PlayerActionType.START_SPRINT);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
 			Client.instance.sendPacket(playerActionPacket);
 		} else if (packet.getMode() == Mode.STOP_SPRINTING) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
-			playerActionPacket.setAction(Action.STOP_SPRINT);
+			playerActionPacket.setAction(PlayerActionType.STOP_SPRINT);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
 			Client.instance.sendPacket(playerActionPacket);

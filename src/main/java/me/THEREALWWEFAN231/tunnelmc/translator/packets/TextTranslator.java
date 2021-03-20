@@ -8,7 +8,7 @@ import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.text.LiteralText;
 
-public class TextPacketTranslator extends PacketTranslator<TextPacket> {
+public class TextTranslator extends PacketTranslator<TextPacket> {
 
 	@Override
 	public void translate(TextPacket packet) {

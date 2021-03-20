@@ -24,7 +24,7 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 	@Override
 	public void translate(PlayerMoveC2SPacket packet) {
 		//this shouldn't even be called? I don't know, doesn't matter
-		PlayerMoveC2SPacketTranslator.translateMovementPacket((PlayerMoveC2SPacket) packet, MovePlayerPacket.Mode.NORMAL);
+		PlayerMoveC2SPacketTranslator.translateMovementPacket(packet, MovePlayerPacket.Mode.NORMAL);
 	}
 
 	@Override
@@ -40,7 +40,9 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 		float currentPitch = playerMoveC2SPacket.getPitch(TunnelMC.mc.player.pitch);
 		boolean currentlyOnGround = playerMoveC2SPacket.isOnGround();
 
-		if (PlayerMoveC2SPacketTranslator.lastPosX == currentPosX && PlayerMoveC2SPacketTranslator.lastPosY == currentPosY && PlayerMoveC2SPacketTranslator.lastPosZ == currentPosZ && PlayerMoveC2SPacketTranslator.lastYaw == currentYaw && PlayerMoveC2SPacketTranslator.lastPitch == currentPitch && PlayerMoveC2SPacketTranslator.lastOnGround == currentlyOnGround) {
+		if (PlayerMoveC2SPacketTranslator.lastPosX == currentPosX && PlayerMoveC2SPacketTranslator.lastPosY == currentPosY
+				&& PlayerMoveC2SPacketTranslator.lastPosZ == currentPosZ && PlayerMoveC2SPacketTranslator.lastYaw == currentYaw
+				&& PlayerMoveC2SPacketTranslator.lastPitch == currentPitch && PlayerMoveC2SPacketTranslator.lastOnGround == currentlyOnGround) {
 			return;
 		}
 
@@ -61,11 +63,11 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 		PlayerMoveC2SPacketTranslator.lastPitch = currentPitch;
 		PlayerMoveC2SPacketTranslator.lastOnGround = currentlyOnGround;
 
-		//update our "chunk radius center" every time we move
-		int chunkX = MathHelper.floor(currentPosX) >> 4;
-		int chunkZ = MathHelper.floor(currentPosZ) >> 4;
-		ChunkRenderDistanceCenterS2CPacket chunkRenderDistanceCenterS2CPacket = new ChunkRenderDistanceCenterS2CPacket(chunkX, chunkZ);
-		Client.instance.javaConnection.processServerToClientPacket(chunkRenderDistanceCenterS2CPacket);
+//		//update our "chunk radius center" every time we move
+//		int chunkX = MathHelper.floor(currentPosX) >> 4;
+//		int chunkZ = MathHelper.floor(currentPosZ) >> 4;
+//		ChunkRenderDistanceCenterS2CPacket chunkRenderDistanceCenterS2CPacket = new ChunkRenderDistanceCenterS2CPacket(chunkX, chunkZ);
+//		Client.instance.javaConnection.processServerToClientPacket(chunkRenderDistanceCenterS2CPacket);
 	}
 
 }

@@ -9,41 +9,23 @@ import com.darkmagician6.eventapi.EventTarget;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.events.EventPlayerTick;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddItemEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.AddPlayerPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ChunkRadiusUpdatedPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ContainerOpenPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.InventoryContentPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.InventorySlotPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.LevelChunkPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.MoveEntityAbsolutePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.MovePlayerPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.NetworkChunkPublisherUpdatePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayStatusPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.PlayerListPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.RemoveEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePackStackPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ResourcePacksInfoPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.ServerToClientHandshakePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.SetEntityDataPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.SetEntityMotionPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.SetTimePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.StartGamePacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.TakeItemEntityPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.TextPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.UpdateBlockPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.*;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.entity.*;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.inventory.ContainerOpenPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.inventory.InventoryContentPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.inventory.InventorySlotPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.world.*;
 
 public class PacketTranslatorManager {
 
-	private ArrayList<PacketTranslator<?>> packetTranslators = new ArrayList<PacketTranslator<?>>();
-	private HashMap<Class<?>, PacketTranslator<?>> packetTranslatorsByClass = new HashMap<Class<?>, PacketTranslator<?>>();
-	private HashMap<Class<?>, PacketTranslator<?>> packetTranslatorsByPacketClass = new HashMap<Class<?>, PacketTranslator<?>>();
+	private final ArrayList<PacketTranslator<?>> packetTranslators = new ArrayList<>();
+	private final HashMap<Class<?>, PacketTranslator<?>> packetTranslatorsByClass = new HashMap<>();
+	private final HashMap<Class<?>, PacketTranslator<?>> packetTranslatorsByPacketClass = new HashMap<>();
 
-	private CopyOnWriteArrayList<IdleThing> idlePackets = new CopyOnWriteArrayList<IdleThing>();//I didn't actually check if I need CopyOnWriteArrayList, but I assume so
+	private final CopyOnWriteArrayList<IdleThing> idlePackets = new CopyOnWriteArrayList<>();//I didn't actually check if I need CopyOnWriteArrayList, but I assume so
 
 	public PacketTranslatorManager() {
-		this.addTranslator(new StartGamePacketTranslator());
+		this.addTranslator(new StartGameTranslator());
 		this.addTranslator(new ChunkRadiusUpdatedPacketTranslator());
 		this.addTranslator(new LevelChunkPacketTranslator());
 		this.addTranslator(new PlayStatusPacketTranslator());
@@ -51,7 +33,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new ResourcePackStackPacketTranslator());
 		this.addTranslator(new AddPlayerPacketTranslator());
 		this.addTranslator(new PlayerListPacketTranslator());
-		this.addTranslator(new TextPacketTranslator());
+		this.addTranslator(new TextTranslator());
 		this.addTranslator(new AddEntityPacketTranslator());
 		this.addTranslator(new SetTimePacketTranslator());
 		this.addTranslator(new RemoveEntityPacketTranslator());
@@ -60,13 +42,17 @@ public class PacketTranslatorManager {
 		this.addTranslator(new MovePlayerPacketTranslator());
 		this.addTranslator(new MoveEntityAbsolutePacketTranslator());
 		this.addTranslator(new ServerToClientHandshakePacketTranslator());
-		this.addTranslator(new UpdateBlockPacketTranslator());
+		this.addTranslator(new UpdateBlockTranslator());
 		this.addTranslator(new SetEntityMotionPacketTranslator());
 		this.addTranslator(new TakeItemEntityPacketTranslator());
 		this.addTranslator(new NetworkChunkPublisherUpdatePacketTranslator());
 		this.addTranslator(new SetEntityDataPacketTranslator());
 		this.addTranslator(new ContainerOpenPacketTranslator());
 		this.addTranslator(new InventoryContentPacketTranslator());
+		this.addTranslator(new DisconnectPacketTranslator());
+		this.addTranslator(new UpdatePlayerGameTypeTranslator());
+		this.addTranslator(new AdventureSettingsTranslator());
+		this.addTranslator(new AnimateTranslator());
 		
 		EventManager.register(this);
 	}
@@ -106,9 +92,9 @@ public class PacketTranslatorManager {
 		}
 	}
 
-	private class IdleThing {
-		private PacketTranslator<BedrockPacket> packetTranslator;
-		private BedrockPacket bedrockPacket;
+	private static class IdleThing {
+		private final PacketTranslator<BedrockPacket> packetTranslator;
+		private final BedrockPacket bedrockPacket;
 
 		public IdleThing(PacketTranslator<BedrockPacket> packetTranslator, BedrockPacket bedrockPacket) {
 			this.packetTranslator = packetTranslator;

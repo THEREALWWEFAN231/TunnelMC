@@ -42,19 +42,19 @@ public class BedrockBlockState {
 			return null;
 		}
 
-		String string = "";
+		StringBuilder string = new StringBuilder();
 
-		string += this.identifier;
-		string += "[";
+		string.append(this.identifier);
+		string.append("[");
 
 		for (Map.Entry<String, String> entry : this.properties.entrySet()) {
-			string += entry.getKey() + "=" + entry.getValue() + ",";
+			string.append(entry.getKey()).append("=").append(entry.getValue()).append(",");
 		}
-		string = string.substring(0, string.length() - 1);//remove the last comma
+		string = new StringBuilder(string.substring(0, string.length() - 1)); // remove the last comma
 
-		string += "]";
+		string.append("]");
 
-		return string;
+		return string.toString();
 	}
 
 }

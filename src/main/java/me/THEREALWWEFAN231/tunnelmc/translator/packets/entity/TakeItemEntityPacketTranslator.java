@@ -1,4 +1,4 @@
-package me.THEREALWWEFAN231.tunnelmc.translator.packets;
+package me.THEREALWWEFAN231.tunnelmc.translator.packets.entity;
 
 import com.nukkitx.protocol.bedrock.packet.TakeItemEntityPacket;
 

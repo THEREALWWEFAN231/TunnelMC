@@ -4,6 +4,7 @@ import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.data.PlayerActionType;
 import com.nukkitx.protocol.bedrock.data.inventory.TransactionType;
 import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket;
 import com.nukkitx.protocol.bedrock.packet.PlayerActionPacket;
@@ -34,7 +35,7 @@ public class PlayerActionC2SPacketTranslator extends PacketTranslator<PlayerActi
 
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(runtimeId);
-			playerActionPacket.setAction(PlayerActionPacket.Action.START_BREAK);
+			playerActionPacket.setAction(PlayerActionType.START_BREAK);
 			playerActionPacket.setBlockPosition(blockPosition);
 			playerActionPacket.setFace(packet.getDirection().ordinal());
 
@@ -44,7 +45,7 @@ public class PlayerActionC2SPacketTranslator extends PacketTranslator<PlayerActi
 		} else if (packet.getAction() == Action.STOP_DESTROY_BLOCK) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(runtimeId);
-			playerActionPacket.setAction(PlayerActionPacket.Action.STOP_BREAK);
+			playerActionPacket.setAction(PlayerActionType.STOP_BREAK);
 			playerActionPacket.setBlockPosition(blockPosition);
 			playerActionPacket.setFace(packet.getDirection().ordinal());
 
@@ -69,7 +70,7 @@ public class PlayerActionC2SPacketTranslator extends PacketTranslator<PlayerActi
 		} else if (packet.getAction() == Action.ABORT_DESTROY_BLOCK) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(runtimeId);
-			playerActionPacket.setAction(PlayerActionPacket.Action.ABORT_BREAK);
+			playerActionPacket.setAction(PlayerActionType.ABORT_BREAK);
 			playerActionPacket.setBlockPosition(blockPosition);
 			playerActionPacket.setFace(packet.getDirection().ordinal());
 
@@ -90,7 +91,7 @@ public class PlayerActionC2SPacketTranslator extends PacketTranslator<PlayerActi
 	@EventTarget
 	public void event(EventPlayerTick event) {
 		int runtimeId = TunnelMC.mc.player.getEntityId();
-		PlayerActionPacket.Action action = PlayerActionPacket.Action.CONTINUE_BREAK;
+		PlayerActionType action = PlayerActionType.CONTINUE_BREAK;
 
 		PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 		playerActionPacket.setRuntimeEntityId(runtimeId);

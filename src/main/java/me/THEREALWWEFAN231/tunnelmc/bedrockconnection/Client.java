@@ -4,6 +4,9 @@ import java.net.InetSocketAddress;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import com.nukkitx.protocol.bedrock.v428.Bedrock_v428;
+import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,46 +27,41 @@ import net.minecraft.client.util.NetworkUtils;
 public class Client {
 
 	public static Client instance = new Client();
-	private Logger logger = LogManager.getLogger(ClientBatchHandler.class);
-	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v422.V422_CODEC;
+	private final Logger logger = LogManager.getLogger(ClientBatchHandler.class);
+	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v428.V428_CODEC;
 	private String ip;
 	private int port;
+	private boolean onlineMode;
 	public Auth authData;
 	public BedrockClient bedrockClient;
 	public FakeJavaConnection javaConnection;
 
-	public void initialize(String ip, int port) {
+	public void initialize(String ip, int port, boolean onlineMode) {
 		this.ip = ip;
 		this.port = port;
+		this.onlineMode = onlineMode;
+
+		org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+		logger.get().setLevel(Level.DEBUG);
 
 		InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", this.getOpenLocalPort());
 		this.bedrockClient = new BedrockClient(bindAddress);
 		this.bedrockClient.bind().join();
 
 		InetSocketAddress addressToConnect = new InetSocketAddress(ip, port);
-		this.bedrockClient.connect(addressToConnect).whenComplete(new BiConsumer<BedrockSession, Throwable>() {
-
-			@Override
-			public void accept(BedrockSession session, Throwable throwable) {
-				if (throwable != null) {
-					return;
-				}
-
-				Client.this.onSessionInitialized(session);
+		this.bedrockClient.connect(addressToConnect).whenComplete((BiConsumer<BedrockSession, Throwable>) (session, throwable) -> {
+			if (throwable != null) {
+				return;
 			}
+
+			Client.this.onSessionInitialized(session);
 		}).join();
 
 	}
 
 	public void onSessionInitialized(BedrockSession bedrockSession) {
 		bedrockSession.setPacketCodec(this.bedrockPacketCodec);
-		bedrockSession.addDisconnectHandler(new Consumer<DisconnectReason>() {
-
-			@Override
-			public void accept(DisconnectReason reason) {
-				System.out.println("Disconnected");
-			}
-		});
+		bedrockSession.addDisconnectHandler(reason -> System.out.println("Disconnected"));
 		bedrockSession.setBatchHandler(new ClientBatchHandler());
 		bedrockSession.setLogging(false);
 
@@ -71,8 +69,12 @@ public class Client {
 			LoginPacket loginPacket = new LoginPacket();
 
 			this.authData = new Auth();
-			//String chainData = this.authData.getOfflineChainData(TunnelMC.mc.getSession().getUsername());
-			String chainData = this.authData.getOnlineChainData();
+			String chainData;
+			if (this.onlineMode) {
+				chainData = this.authData.getOnlineChainData();
+			} else {
+				chainData = this.authData.getOfflineChainData(TunnelMC.mc.getSession().getUsername());
+			}
 
 			loginPacket.setProtocolVersion(bedrockSession.getPacketCodec().getProtocolVersion());
 			loginPacket.setChainData(new AsciiString(chainData.getBytes()));

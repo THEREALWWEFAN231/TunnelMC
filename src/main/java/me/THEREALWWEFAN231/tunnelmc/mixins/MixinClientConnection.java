@@ -1,5 +1,6 @@
 package me.THEREALWWEFAN231.tunnelmc.mixins;
 
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,10 +22,10 @@ import net.minecraft.network.packet.s2c.query.QueryResponseS2CPacket;
 @Mixin(ClientConnection.class)
 public class MixinClientConnection {
 
-	//TODO: probably need disconnect()V
-
 	@Shadow
 	private Channel channel;
+
+	@Shadow private Text disconnectReason;
 
 	@Inject(method = "isOpen", at = @At("HEAD"), cancellable = true)
 	public void isOpen(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
@@ -57,6 +58,16 @@ public class MixinClientConnection {
 			}
 			
 			System.out.println("got packet " + packet.getClass());
+		}
+	}
+
+	@Inject(method = "disconnect", at = @At("HEAD"), cancellable = true)
+	public void disconnect(Text disconnectReason, CallbackInfo ci) {
+		if (Client.instance.isConnectionOpen()) {
+			// this.channel is null here
+			Client.instance.bedrockClient.close(true);
+			this.disconnectReason = disconnectReason;
+			ci.cancel();
 		}
 	}
 

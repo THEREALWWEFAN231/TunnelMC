@@ -29,11 +29,11 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
 	//compile group: 'com.nukkitx.protocol', name: 'bedrock-v408', version: '2.6.0-SNAPSHOT'
-	compile("com.nukkitx.protocol:bedrock-v422:2.6.1-SNAPSHOT") {
+	compile("com.nukkitx.protocol:bedrock-v428:2.6.3-SNAPSHOT") {
 		exclude group: 'com.nukkitx.fastutil'
 		exclude group: 'io.netty'
 	}
-	shadow ('com.nukkitx.protocol:bedrock-v422:2.6.1-SNAPSHOT') {
+	shadow ('com.nukkitx.protocol:bedrock-v428:2.6.3-SNAPSHOT') {
 		exclude group: 'com.nukkitx.fastutil'
 		exclude group: 'io.netty'
 	}

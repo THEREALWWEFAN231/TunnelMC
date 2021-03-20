@@ -1,6 +1,7 @@
-package me.THEREALWWEFAN231.tunnelmc.translator.packets;
+package me.THEREALWWEFAN231.tunnelmc.translator.packets.world;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
@@ -18,17 +19,20 @@ import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockPaletteTranslator;
 import net.minecraft.block.BlockState;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
+import net.minecraft.util.collection.IndexedIterable;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
 public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacket> {
+	private static final IndexedIterable<Biome> BIOME_REGISTRY = DynamicRegistryManager.create().get(Registry.BIOME_KEY);
 
-	private ArrayList<LevelChunkPacket> chunksOutOfRenderDistance = new ArrayList<LevelChunkPacket>();
+	private final ArrayList<LevelChunkPacket> chunksOutOfRenderDistance = new ArrayList<>();
 
 	public LevelChunkPacketTranslator() {
 		EventManager.register(this);
@@ -96,16 +100,16 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 
 		for (int sectionIndex = 0; sectionIndex < packet.getSubChunksLength(); sectionIndex++) {
 			chunkSections[sectionIndex] = new ChunkSection(sectionIndex);
-			byte something = byteBuf.readByte();//geyser says CHUNK_SECTION_VERSION
+			byteBuf.readByte(); // geyser says CHUNK_SECTION_VERSION
 			byte storageSize = byteBuf.readByte();
 
-			for (int storageReadIndex = 0; storageReadIndex < storageSize; storageReadIndex++) {//1 appears to basically be empty, also nukkit basically says its empty
-				//PalettedBlockStorage
+			for (int storageReadIndex = 0; storageReadIndex < storageSize; storageReadIndex++) {
+				// PalettedBlockStorage
 				byte paletteHeader = byteBuf.readByte();
 				int paletteVersion = (paletteHeader | 1) >> 1;
 				BitArrayVersion bitArrayVersion = BitArrayVersion.get(paletteVersion, true);
 
-				int maxBlocksInSection = 4096;//16*16*16
+				int maxBlocksInSection = 4096; // 16*16*16
 				BitArray bitArray = bitArrayVersion.createPalette(maxBlocksInSection);
 				int wordsSize = bitArrayVersion.getWordsForSize(maxBlocksInSection);
 
@@ -115,14 +119,14 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 				}
 
 				int paletteSize = VarInts.readInt(byteBuf);
-				int[] sectionPalette = new int[paletteSize];//so this holds all the different block types in the chunk section, first index is always air, then we have the block ids
+				int[] sectionPalette = new int[paletteSize]; // so this holds all the different block types in the chunk section, first index is always air, then we have the block ids
 				for (int i = 0; i < paletteSize; i++) {
 					int id = VarInts.readInt(byteBuf);
 
 					sectionPalette[i] = id;
 				}
 
-				if (storageReadIndex == 0 || true) {
+				if (storageReadIndex == 0) {
 					int index = 0;
 					for (int x = 0; x < 16; x++) {
 						for (int z = 0; z < 16; z++) {
@@ -140,17 +144,49 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 						}
 					}
 				}
+				/*
+				else if (storageReadIndex == 1) {
+					int index = 0;
+					for (int x = 0; x < 16; x++) {
+						for (int z = 0; z < 16; z++) {
+							for (int y = 0; y < 16; y++) {
+								if (sectionPalette[0] != 134 || sectionPalette.length > 1) {
+									System.out.println(Arrays.toString(sectionPalette));
+								}
+								int paletteIndex = bitArray.get(index);
+								if (paletteIndex != 0) {
+									System.out.println(paletteIndex);
+								}
+								index++;
+							}
+						}
+					}
+				}*/
 			}
 
 			//break;
 		}
 
-		int[] intBiomeArray = new int[1024];
-		for (int i = 0; i < intBiomeArray.length; i++) {
-			intBiomeArray[i] = 1;
+		byte[] bedrockBiomes = new byte[256];
+		byteBuf.readBytes(bedrockBiomes);
+
+		int[] javaBiomes = new int[1024];
+		int javaBiomeCount = 0;
+		for (byte bedrockBiome : bedrockBiomes) {
+			byte desiredBiome = bedrockBiome;
+			if (BIOME_REGISTRY.get(desiredBiome) == null) {
+				// Invalid biome that spams the console
+				// I got -98 so it could also be an encoding issue
+				desiredBiome = 1;
+			}
+			javaBiomes[javaBiomeCount++] = desiredBiome;
+			// convert 256 to 1024
+			javaBiomes[javaBiomeCount++] = desiredBiome;
+			javaBiomes[javaBiomeCount++] = desiredBiome;
+			javaBiomes[javaBiomeCount++] = desiredBiome;
 		}
 
-		BiomeArray biomeArray = new BiomeArray(DynamicRegistryManager.create().get(Registry.BIOME_KEY), intBiomeArray);
+		BiomeArray biomeArray = new BiomeArray(BIOME_REGISTRY, javaBiomes);
 		WorldChunk worldChunk = new WorldChunk(null, new ChunkPos(chunkX, chunkZ), biomeArray);
 
 		for (int i = 0; i < worldChunk.getSectionArray().length; i++) {
@@ -174,8 +210,8 @@ public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacke
 
 	@EventTarget
 	public void onEvent(EventPlayerTick event) {
-		//this needs some work, general chunk loading needs some work as well
-		for(int i = 0; i < this.chunksOutOfRenderDistance.size(); i++) {//could use an iterator, but that's no fun?
+		// this needs some work, general chunk loading needs some work as well
+		for(int i = 0; i < this.chunksOutOfRenderDistance.size(); i++) { // could use an iterator, but that's no fun?
 			LevelChunkPacket levelChunkPacket = this.chunksOutOfRenderDistance.get(i);
 			if (!this.isChunkInRenderDistance(levelChunkPacket.getChunkX(), levelChunkPacket.getChunkZ())) {
 				continue;

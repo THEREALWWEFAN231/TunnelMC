@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.zip.GZIPInputStream;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -39,7 +40,7 @@ public class BlockStateTranslator {
 		}
 
 		for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-			String javaBlockState = entry.getKey();//could be for example, wheat[age=0]
+			String javaBlockState = entry.getKey(); // could be for example, wheat[age=0]
 			JsonObject blockEntry = entry.getValue().getAsJsonObject();
 
 			BedrockBlockState bedrockBlockState = new BedrockBlockState();
@@ -52,7 +53,7 @@ public class BlockStateTranslator {
 					}
 
 					JsonPrimitive jsonPrimitive = (JsonPrimitive) stateEntry.getValue();
-					String value = "";
+					String value;
 
 					if (jsonPrimitive.isBoolean()) {
 						value = Boolean.valueOf(jsonPrimitive.getAsBoolean()).toString();
@@ -69,8 +70,12 @@ public class BlockStateTranslator {
 				}
 			}
 
+			if (entry.getKey().equals("minecraft:water[level=1]")) {
+				System.out.println(bedrockBlockState.toString());
+			}
+
 			BlockState blockState = BlockStateTranslator.parseBlockState(javaBlockState);
-			if (blockState == null) {//we print in the parseBlockState method
+			if (blockState == null) { // we print in the parseBlockState method
 				continue;
 			}
 
@@ -84,7 +89,7 @@ public class BlockStateTranslator {
 		}
 
 		NbtList<NbtMap> blocksTag;
-		try (NBTInputStream nbtInputStream = new NBTInputStream(new DataInputStream(stream))) {
+		try (NBTInputStream nbtInputStream = new NBTInputStream(new DataInputStream(new GZIPInputStream(stream)))) {
 			NbtMap blockPalette = (NbtMap) nbtInputStream.readTag();
 			blocksTag = (NbtList<NbtMap>) blockPalette.getList("blocks", NbtType.COMPOUND);
 		} catch (Exception e) {
@@ -126,7 +131,7 @@ public class BlockStateTranslator {
 
 				Property<?> property = block.getStateManager().getProperty(key);
 
-				theBlockState = BlockStateTranslator.parsePropertyValue(theBlockState, property, value);
+				theBlockState = parsePropertyValue(theBlockState, property, value);
 				if (theBlockState == null) {
 					System.out.println("Could not find the state " + key + " or set the value " + value + " " + blockStateInformation);
 					return null;

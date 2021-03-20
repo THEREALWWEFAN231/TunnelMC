@@ -105,7 +105,8 @@ public class Auth {
 		UUID offlineUUID = UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8));
 
 		Gson gson = TunnelMC.instance.fileManagement.normalGson;
-		KeyPair ecdsa256KeyPair = Auth.createKeyPair();//for xbox live, xbox live requests use, ES256, ECDSA256
+		//KeyPair ecdsa256KeyPair = Auth.createKeyPair();//for xbox live, xbox live requests use, ES256, ECDSA256
+		KeyPair ecdsa256KeyPair = EncryptionUtils.createKeyPair();
 		this.publicKey = (ECPublicKey) ecdsa256KeyPair.getPublic();
 		this.privateKey = (ECPrivateKey) ecdsa256KeyPair.getPrivate();
 

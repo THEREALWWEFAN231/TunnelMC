@@ -1,11 +1,13 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.packets;
 
+import java.net.URI;
 import java.security.interfaces.ECPublicKey;
 import java.util.Base64;
 
 import javax.crypto.SecretKey;
 
 import com.google.gson.JsonObject;
+import com.nimbusds.jwt.SignedJWT;
 import com.nukkitx.protocol.bedrock.packet.ClientToServerHandshakePacket;
 import com.nukkitx.protocol.bedrock.packet.ServerToClientHandshakePacket;
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
@@ -18,9 +20,8 @@ public class ServerToClientHandshakePacketTranslator extends PacketTranslator<Se
 
 	@Override
 	public void translate(ServerToClientHandshakePacket packet) {
-		//thanks to proxypass, manually parse the jwt, as said in Xbox, this would be easier using the jwt library but I like seeing what's actually happening
+		// Thanks to proxypass, manually parse the jwt, as said in Xbox, this would be easier using the jwt library but I like seeing what's actually happening
 		try {
-			
 			String[] jwtSplit = packet.getJwt().split("\\.");
 			String header = new String(Base64.getDecoder().decode(jwtSplit[0]));
 			JsonObject headerObject = TunnelMC.instance.fileManagement.jsonParser.parse(header).getAsJsonObject();

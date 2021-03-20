@@ -16,14 +16,15 @@ import net.minecraft.block.Blocks;
 public class BlockPaletteTranslator {
 
 	public static int AIR_BEDROCK_BLOCK_ID;
+	public static int WATER_BEDROCK_BLOCK_ID;
 
-	public static final HashMap<Integer, BlockState> RUNTIME_ID_TO_BLOCK_STATE = new HashMap<Integer, BlockState>();
+	public static final HashMap<Integer, BlockState> RUNTIME_ID_TO_BLOCK_STATE = new HashMap<>();
 
 	public static void loadMap(NbtList<NbtMap> blockPaletteData) {
 		int runtimeId = 0;
 		for (NbtMap nbtMap : blockPaletteData) {
-			String mcbeStringBlockName = nbtMap.getCompound("block").getString("name");
-			NbtMap blockStates = nbtMap.getCompound("block").getCompound("states");
+			String mcbeStringBlockName = nbtMap.getString("name");
+			NbtMap blockStates = nbtMap.getCompound("states");
 
 			BedrockBlockState bedrockBlockState = new BedrockBlockState();
 			bedrockBlockState.identifier = mcbeStringBlockName;
@@ -35,7 +36,7 @@ public class BlockPaletteTranslator {
 					value = blockState.getValue().toString();
 				} else if (blockState.getValue() instanceof Byte) {//i guess byte on mcbe nbt is a boolean type
 					byte theByte = (byte) blockState.getValue();
-					value = theByte == 0 ? "false" : "true";//im assuming 0 is false
+					value = theByte == 0 ? "false" : "true";
 				} else {
 					System.out.println("Unknown type " + blockState.getValue().getClass());
 				}
@@ -48,10 +49,12 @@ public class BlockPaletteTranslator {
 				RUNTIME_ID_TO_BLOCK_STATE.put(runtimeId, blockState);
 				if (mcbeStringBlockName.equals("minecraft:air")) {
 					AIR_BEDROCK_BLOCK_ID = runtimeId;
+				} else if (mcbeStringBlockName.equals("minecraft:water")) {
+					WATER_BEDROCK_BLOCK_ID = runtimeId;
 				}
 			} else {
+				System.out.println("Unable to find suitable block state for " + bedrockBlockState.toString());
 				RUNTIME_ID_TO_BLOCK_STATE.put(runtimeId, Blocks.STONE.getDefaultState());//we could probably put the default state, but for now we will use stone
-				//System.out.println("Unknown block " + mcbeStringBlockName + " sent from the servers' palette states=" + bedrockBlockState.toString());
 			}
 
 			runtimeId++;

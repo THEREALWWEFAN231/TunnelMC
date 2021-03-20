@@ -1,4 +1,4 @@
-package me.THEREALWWEFAN231.tunnelmc.translator.packets;
+package me.THEREALWWEFAN231.tunnelmc.translator.packets.world;
 
 import com.nukkitx.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
 import com.nukkitx.protocol.bedrock.packet.SetLocalPlayerAsInitializedPacket;
@@ -6,6 +6,7 @@ import com.nukkitx.protocol.bedrock.packet.TickSyncPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packets.StartGameTranslator;
 
 public class ChunkRadiusUpdatedPacketTranslator extends PacketTranslator<ChunkRadiusUpdatedPacket> {
 
@@ -14,7 +15,7 @@ public class ChunkRadiusUpdatedPacketTranslator extends PacketTranslator<ChunkRa
 		Client.instance.sendPacketImmediately(new TickSyncPacket());
 
 		SetLocalPlayerAsInitializedPacket setLocalPlayerAsInitializedPacket = new SetLocalPlayerAsInitializedPacket();
-		setLocalPlayerAsInitializedPacket.setRuntimeEntityId(StartGamePacketTranslator.lastRunTimeId);
+		setLocalPlayerAsInitializedPacket.setRuntimeEntityId(StartGameTranslator.lastRunTimeId);
 		Client.instance.sendPacketImmediately(setLocalPlayerAsInitializedPacket);
 	}
 

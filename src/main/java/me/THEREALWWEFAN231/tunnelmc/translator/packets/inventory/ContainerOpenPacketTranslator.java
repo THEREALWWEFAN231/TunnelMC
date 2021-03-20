@@ -1,4 +1,4 @@
-package me.THEREALWWEFAN231.tunnelmc.translator.packets;
+package me.THEREALWWEFAN231.tunnelmc.translator.packets.inventory;
 
 import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
