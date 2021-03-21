@@ -7,11 +7,7 @@ public class BedrockBlockState {
 
 	public String identifier;
 	//this holds the block states properties, for example, stone_type, granite
-	public HashMap<String, String> properties = new HashMap<String, String>();
-
-	public BedrockBlockState() {
-
-	}
+	public HashMap<String, String> properties = new HashMap<>();
 
 	public void parseFromString(String string) {
 

@@ -1,7 +1,7 @@
 package me.THEREALWWEFAN231.tunnelmc.translator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.darkmagician6.eventapi.EventManager;
@@ -9,29 +9,27 @@ import com.darkmagician6.eventapi.EventTarget;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.events.EventPlayerTick;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.*;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.entity.*;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.inventory.ContainerOpenPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.inventory.InventoryContentPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.inventory.InventorySlotPacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.packets.world.*;
+import me.THEREALWWEFAN231.tunnelmc.translator.packet.*;
+import me.THEREALWWEFAN231.tunnelmc.translator.packet.entity.*;
+import me.THEREALWWEFAN231.tunnelmc.translator.packet.inventory.ContainerOpenPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packet.inventory.InventoryContentPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packet.inventory.InventorySlotPacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.packet.world.*;
 
 public class PacketTranslatorManager {
 
-	private final ArrayList<PacketTranslator<?>> packetTranslators = new ArrayList<>();
-	private final HashMap<Class<?>, PacketTranslator<?>> packetTranslatorsByClass = new HashMap<>();
-	private final HashMap<Class<?>, PacketTranslator<?>> packetTranslatorsByPacketClass = new HashMap<>();
+	private final Map<Class<?>, PacketTranslator<?>> packetTranslatorsByPacketClass = new HashMap<>();
 
 	private final CopyOnWriteArrayList<IdleThing> idlePackets = new CopyOnWriteArrayList<>();//I didn't actually check if I need CopyOnWriteArrayList, but I assume so
 
 	public PacketTranslatorManager() {
 		this.addTranslator(new StartGameTranslator());
-		this.addTranslator(new ChunkRadiusUpdatedPacketTranslator());
+		this.addTranslator(new ChunkRadiusUpdatedTranslator());
 		this.addTranslator(new LevelChunkPacketTranslator());
 		this.addTranslator(new PlayStatusPacketTranslator());
 		this.addTranslator(new ResourcePacksInfoPacketTranslator());
 		this.addTranslator(new ResourcePackStackPacketTranslator());
-		this.addTranslator(new AddPlayerPacketTranslator());
+		this.addTranslator(new AddPlayerTranslator());
 		this.addTranslator(new PlayerListPacketTranslator());
 		this.addTranslator(new TextTranslator());
 		this.addTranslator(new AddEntityPacketTranslator());
@@ -43,23 +41,24 @@ public class PacketTranslatorManager {
 		this.addTranslator(new MoveEntityAbsolutePacketTranslator());
 		this.addTranslator(new ServerToClientHandshakePacketTranslator());
 		this.addTranslator(new UpdateBlockTranslator());
-		this.addTranslator(new SetEntityMotionPacketTranslator());
+		this.addTranslator(new SetEntityMotionTranslator());
 		this.addTranslator(new TakeItemEntityPacketTranslator());
 		this.addTranslator(new NetworkChunkPublisherUpdatePacketTranslator());
 		this.addTranslator(new SetEntityDataPacketTranslator());
 		this.addTranslator(new ContainerOpenPacketTranslator());
 		this.addTranslator(new InventoryContentPacketTranslator());
-		this.addTranslator(new DisconnectPacketTranslator());
-		this.addTranslator(new UpdatePlayerGameTypeTranslator());
+		this.addTranslator(new DisconnectTranslator());
+		this.addTranslator(new SetPlayerGameTypeTranslator());
 		this.addTranslator(new AdventureSettingsTranslator());
 		this.addTranslator(new AnimateTranslator());
+		this.addTranslator(new MobEquipmentTranslator());
+		this.addTranslator(new MobArmorEquipmentTranslator());
+		this.addTranslator(new BlockEntityDataTranslator());
 		
 		EventManager.register(this);
 	}
 
 	private void addTranslator(PacketTranslator<?> translator) {
-		this.packetTranslators.add(translator);
-		this.packetTranslatorsByClass.put(translator.getClass(), translator);
 		this.packetTranslatorsByPacketClass.put(translator.getPacketClass(), translator);
 	}
 
