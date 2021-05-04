@@ -5,6 +5,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.nukkitx.protocol.bedrock.v428.Bedrock_v428;
+import com.nukkitx.protocol.bedrock.v431.Bedrock_v431;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +29,7 @@ public class Client {
 
 	public static Client instance = new Client();
 	private final Logger logger = LogManager.getLogger(ClientBatchHandler.class);
-	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v428.V428_CODEC;
+	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v431.V431_CODEC;
 	private String ip;
 	private int port;
 	private boolean onlineMode;

@@ -28,12 +28,12 @@ import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
-public class LevelChunkPacketTranslator extends PacketTranslator<LevelChunkPacket> {
+public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 	private static final IndexedIterable<Biome> BIOME_REGISTRY = DynamicRegistryManager.create().get(Registry.BIOME_KEY);
 
 	private final ArrayList<LevelChunkPacket> chunksOutOfRenderDistance = new ArrayList<>();
 
-	public LevelChunkPacketTranslator() {
+	public LevelChunkTranslator() {
 		EventManager.register(this);
 	}
 

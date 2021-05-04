@@ -25,7 +25,7 @@ public class PacketTranslatorManager {
 	public PacketTranslatorManager() {
 		this.addTranslator(new StartGameTranslator());
 		this.addTranslator(new ChunkRadiusUpdatedTranslator());
-		this.addTranslator(new LevelChunkPacketTranslator());
+		this.addTranslator(new LevelChunkTranslator());
 		this.addTranslator(new PlayStatusPacketTranslator());
 		this.addTranslator(new ResourcePacksInfoPacketTranslator());
 		this.addTranslator(new ResourcePackStackPacketTranslator());
