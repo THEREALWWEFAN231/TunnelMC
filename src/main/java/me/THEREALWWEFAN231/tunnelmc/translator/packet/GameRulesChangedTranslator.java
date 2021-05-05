@@ -31,10 +31,10 @@ public class GameRulesChangedTranslator extends PacketTranslator<GameRulesChange
         for (GameRuleData<?> gamerule : gamerules) {
             switch (gamerule.getName()) {
                 case "dodaylightcycle":
-                    MinecraftClient.getInstance().world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set((boolean) gamerule.getValue(), null);
+                    MinecraftClient.getInstance().world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(((Boolean) gamerule.getValue()), null);
                     break;
                 case "doimmediaterespawn":
-                    MinecraftClient.getInstance().player.setShowsDeathScreen(!(boolean) gamerule.getValue());
+                    MinecraftClient.getInstance().player.setShowsDeathScreen(!((Boolean) gamerule.getValue()));
                     break;
             }
         }

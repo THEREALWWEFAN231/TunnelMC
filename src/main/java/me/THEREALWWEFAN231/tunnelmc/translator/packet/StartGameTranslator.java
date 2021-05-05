@@ -66,7 +66,7 @@ public class StartGameTranslator extends PacketTranslator<StartGamePacket> {
 
 		for (GameRuleData<?> gamerule : packet.getGamerules()) {
 			if ("doimmediaterespawn".equals(gamerule.getName())) {
-				showDeathScreen = !(boolean) gamerule.getValue();
+				showDeathScreen = !((Boolean) gamerule.getValue());
 				break;
 			}
 		}
