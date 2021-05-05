@@ -6,6 +6,8 @@ import java.util.Map;
 import com.nukkitx.nbt.NbtList;
 import com.nukkitx.nbt.NbtMap;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 
@@ -18,7 +20,7 @@ public class BlockPaletteTranslator {
 	public static int AIR_BEDROCK_BLOCK_ID;
 	public static int WATER_BEDROCK_BLOCK_ID;
 
-	public static final HashMap<Integer, BlockState> RUNTIME_ID_TO_BLOCK_STATE = new HashMap<>();
+	public static final Int2ObjectMap<BlockState> RUNTIME_ID_TO_BLOCK_STATE = new Int2ObjectOpenHashMap<>();
 
 	public static void loadMap(NbtList<NbtMap> blockPaletteData) {
 		int runtimeId = 0;

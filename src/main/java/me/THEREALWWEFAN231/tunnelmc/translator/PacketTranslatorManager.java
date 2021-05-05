@@ -43,7 +43,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new UpdateBlockTranslator());
 		this.addTranslator(new SetEntityMotionTranslator());
 		this.addTranslator(new TakeItemEntityPacketTranslator());
-		this.addTranslator(new NetworkChunkPublisherUpdatePacketTranslator());
+		this.addTranslator(new NetworkChunkPublisherUpdateTranslator());
 		this.addTranslator(new SetEntityDataPacketTranslator());
 		this.addTranslator(new ContainerOpenPacketTranslator());
 		this.addTranslator(new InventoryContentPacketTranslator());
@@ -54,6 +54,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new MobEquipmentTranslator());
 		this.addTranslator(new MobArmorEquipmentTranslator());
 		this.addTranslator(new BlockEntityDataTranslator());
+		this.addTranslator(new GameRulesChangedTranslator());
 		
 		EventManager.register(this);
 	}

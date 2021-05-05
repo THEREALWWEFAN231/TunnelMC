@@ -12,10 +12,10 @@ public class PlayStatusPacketTranslator extends PacketTranslator<PlayStatusPacke
 	@Override
 	public void translate(PlayStatusPacket packet) {
 		if (packet.getStatus() == PlayStatusPacket.Status.PLAYER_SPAWN) {
-			RequestChunkRadiusPacket requestChunkRadiusPacket = new RequestChunkRadiusPacket();
-			requestChunkRadiusPacket.setRadius(TunnelMC.mc.options.viewDistance);
-
-			Client.instance.sendPacketImmediately(requestChunkRadiusPacket);
+//			RequestChunkRadiusPacket requestChunkRadiusPacket = new RequestChunkRadiusPacket();
+//			requestChunkRadiusPacket.setRadius(TunnelMC.mc.options.viewDistance);
+//
+//			Client.instance.sendPacketImmediately(requestChunkRadiusPacket); hmm
 		}
 	}
 

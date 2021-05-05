@@ -1,6 +1,7 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.packet.world;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
@@ -16,7 +17,9 @@ import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArray;
 import me.THEREALWWEFAN231.tunnelmc.nukkit.BitArrayVersion;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockPaletteTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.LegacyBlockPaletteManager;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.util.collection.IndexedIterable;
 import net.minecraft.util.math.ChunkPos;
@@ -31,7 +34,7 @@ import net.minecraft.world.chunk.WorldChunk;
 public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 	private static final IndexedIterable<Biome> BIOME_REGISTRY = DynamicRegistryManager.create().get(Registry.BIOME_KEY);
 
-	private final ArrayList<LevelChunkPacket> chunksOutOfRenderDistance = new ArrayList<>();
+	private final List<LevelChunkPacket> chunksOutOfRenderDistance = new ArrayList<>();
 
 	public LevelChunkTranslator() {
 		EventManager.register(this);
@@ -75,15 +78,6 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 		 * 
 		 */
 
-		//I like setting it in PlayerMoveC2SPacketTranslator, better this this
-		/*if (TunnelMC.mc.player != null) {
-			//make sure far away chunks load
-			ChunkRenderDistanceCenterS2CPacket renderDistanceCenterPacket = new ChunkRenderDistanceCenterS2CPacket(MathHelper.floor(TunnelMC.mc.player.getX()) >> 4, MathHelper.floor(TunnelMC.mc.player.getZ()) >> 4);
-			Client.instance.javaConnection.processServerToClientPacket(renderDistanceCenterPacket);
-		}*/
-
-		ChunkSection[] chunkSections = new ChunkSection[16];
-
 		int chunkX = packet.getChunkX();
 		int chunkZ = packet.getChunkZ();
 
@@ -94,13 +88,20 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 			}
 		}
 
+		ChunkSection[] chunkSections = new ChunkSection[16];
+
 		ByteBuf byteBuf = Unpooled.buffer();
 		byteBuf.writeBytes(packet.getData());
 
 		for (int sectionIndex = 0; sectionIndex < packet.getSubChunksLength(); sectionIndex++) {
 			chunkSections[sectionIndex] = new ChunkSection(sectionIndex);
-			byteBuf.readByte(); // geyser says CHUNK_SECTION_VERSION
-			byte storageSize = byteBuf.readByte();
+			int chunkVersion = byteBuf.readByte();
+			if (chunkVersion != 1 && chunkVersion != 8) {
+				manage0VersionChunk(byteBuf, chunkSections[sectionIndex]);
+				continue;
+			}
+
+			byte storageSize = chunkVersion == 1 ? 1 : byteBuf.readByte();
 
 			for (int storageReadIndex = 0; storageReadIndex < storageSize; storageReadIndex++) {
 				// PalettedBlockStorage
@@ -194,6 +195,41 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 
 		ChunkDataS2CPacket chunkDeltaUpdateS2CPacket = new ChunkDataS2CPacket(worldChunk, 65535);
 		Client.instance.javaConnection.processServerToClientPacket(chunkDeltaUpdateS2CPacket);
+	}
+
+	/**
+	 * Used for PocketMine.
+	 */
+	private void manage0VersionChunk(ByteBuf byteBuf, ChunkSection chunkSection) {
+		byte[] blockIds = new byte[4096];
+		byteBuf.readBytes(blockIds);
+
+		byte[] metaIdsTemp = new byte[2048];
+		byteBuf.readBytes(metaIdsTemp);
+		byte[] metaIds = new byte[2048]; // This should use a NibbleArray, it seems? That's what's with all the weird code.
+
+		for (int i = 0; i < metaIdsTemp.length; i++) {
+			int value = metaIdsTemp[i] & 15;
+			int i1 = i >> 1;
+			metaIds[i1] &= 15 << (i + 1 & 1) * 4;
+			metaIds[i1] |= value << (i & 1) * 4;
+		}
+
+		for (int x = 0; x < 16; x++) {
+			for (int y = 0; y < 16; y++) {
+				for (int z = 0; z < 16; z++) {
+					int idx = (x << 8) + (z << 4) + y;
+					int id = blockIds[idx];
+					int meta = metaIds[idx >> 1] >> (idx & 1) * 4 & 15;
+
+					BlockState blockState = LegacyBlockPaletteManager.LEGACY_BLOCK_TO_JAVA_ID.get(id << 6 | meta);
+
+					if (blockState != null) {
+						chunkSection.setBlockState(x, y, z, blockState);
+					}
+				}
+			}
+		}
 	}
 
 	@Override

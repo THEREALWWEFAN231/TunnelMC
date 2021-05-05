@@ -4,15 +4,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.nukkitx.protocol.bedrock.data.GameRuleData;
 import com.nukkitx.protocol.bedrock.data.GameType;
+import com.nukkitx.protocol.bedrock.packet.RequestChunkRadiusPacket;
 import com.nukkitx.protocol.bedrock.packet.SetLocalPlayerAsInitializedPacket;
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket;
 
 import com.nukkitx.protocol.bedrock.packet.TickSyncPacket;
+import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.dimension.DimensionTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.gamemode.GameModeTranslator;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.ChunkRenderDistanceCenterS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
@@ -20,6 +24,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.GameMode;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -59,10 +64,21 @@ public class StartGameTranslator extends PacketTranslator<StartGamePacket> {
 		boolean debugWorld = false;
 		boolean flatWorld = false;
 
+		for (GameRuleData<?> gamerule : packet.getGamerules()) {
+			if ("doimmediaterespawn".equals(gamerule.getName())) {
+				showDeathScreen = !(boolean) gamerule.getValue();
+				break;
+			}
+		}
+
 		GameJoinS2CPacket gameJoinS2CPacket = new GameJoinS2CPacket(playerEntityId, gameMode, previousGameMode, sha256Seed,
 				hardcore, dimensionIds, registryManager, dimensionType, dimensionId, maxPlayers, chunkLoadDistance,
 				reducedDebugInfo, showDeathScreen, debugWorld, flatWorld);
 		Client.instance.javaConnection.processServerToClientPacket(gameJoinS2CPacket);
+
+		//TODO send a complete SynchronizeTagsS2CPacket - that way water can work
+
+		MinecraftClient.getInstance().execute(() -> GameRulesChangedTranslator.onGameRulesChanged(packet.getGamerules()));
 
 		float x = packet.getPlayerPosition().getX();
 		float y = packet.getPlayerPosition().getY();
@@ -79,6 +95,10 @@ public class StartGameTranslator extends PacketTranslator<StartGamePacket> {
 		Client.instance.javaConnection.processServerToClientPacket(chunkRenderDistanceCenterS2CPacket);
 
 		// Boilerplate initialization stuff
+		RequestChunkRadiusPacket requestChunkRadiusPacket = new RequestChunkRadiusPacket();
+		requestChunkRadiusPacket.setRadius(TunnelMC.mc.options.viewDistance);
+		Client.instance.sendPacketImmediately(requestChunkRadiusPacket);
+
 		Client.instance.sendPacketImmediately(new TickSyncPacket());
 
 		SetLocalPlayerAsInitializedPacket setLocalPlayerAsInitializedPacket = new SetLocalPlayerAsInitializedPacket();

@@ -103,6 +103,7 @@ public class Auth {
 		//So we need to assign the a uuid from a username, or else everytime we join a server with the same name, we will get reset(as if we are a new player)
 		//Java does it this way, I'm not sure if bedrock does but it gets our goal accomplished, PlayerEntity.getOfflinePlayerUuid
 		UUID offlineUUID = UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8));
+		String xuid = Long.toString(offlineUUID.getLeastSignificantBits());
 
 		Gson gson = TunnelMC.instance.fileManagement.normalGson;
 		//KeyPair ecdsa256KeyPair = Auth.createKeyPair();//for xbox live, xbox live requests use, ES256, ECDSA256
@@ -121,6 +122,7 @@ public class Auth {
 		JsonObject extraData = new JsonObject();
 		extraData.addProperty("identity", offlineUUID.toString());
 		extraData.addProperty("displayName", username);
+		extraData.addProperty("XUID", xuid);
 		chain.add("extraData", extraData);
 
 		JsonObject jwtHeader = new JsonObject();
@@ -142,7 +144,7 @@ public class Auth {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.add("chain", chainDataJsonArray);
 
-		this.xuid = "";
+		this.xuid = xuid;
 		this.identity = offlineUUID;
 		this.displayName = username;
 

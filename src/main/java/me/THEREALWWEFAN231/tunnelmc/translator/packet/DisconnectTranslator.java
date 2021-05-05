@@ -12,7 +12,10 @@ public class DisconnectTranslator extends PacketTranslator<DisconnectPacket> {
         if (MinecraftClient.getInstance().world != null) {
             MinecraftClient.getInstance().world.disconnect();
         }
-        MinecraftClient.getInstance().disconnect(new DisconnectedScreen(MinecraftClient.getInstance().currentScreen, Text.of("Use Translated Here"), Text.of(packet.getKickMessage())));
+        MinecraftClient.getInstance().execute(() ->
+                MinecraftClient.getInstance().disconnect(
+                        new DisconnectedScreen(MinecraftClient.getInstance().currentScreen, Text.of("Use Translated Here"),
+                                Text.of(packet.getKickMessage()))));
     }
 
     @Override

@@ -6,12 +6,12 @@ import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.network.packet.s2c.play.ChunkRenderDistanceCenterS2CPacket;
 
-public class NetworkChunkPublisherUpdatePacketTranslator extends PacketTranslator<NetworkChunkPublisherUpdatePacket> {
+public class NetworkChunkPublisherUpdateTranslator extends PacketTranslator<NetworkChunkPublisherUpdatePacket> {
 
     @Override
     public void translate(NetworkChunkPublisherUpdatePacket packet) {
-    	//this "aint it"? It makes chunk loading worse?
-        ChunkRenderDistanceCenterS2CPacket renderDistanceCenterPacket = new ChunkRenderDistanceCenterS2CPacket(packet.getPosition().getX() >> 4, packet.getPosition().getZ() >> 4);
+        ChunkRenderDistanceCenterS2CPacket renderDistanceCenterPacket = new ChunkRenderDistanceCenterS2CPacket(
+                packet.getPosition().getX() >> 4, packet.getPosition().getZ() >> 4);
         Client.instance.javaConnection.processServerToClientPacket(renderDistanceCenterPacket);
     }
 

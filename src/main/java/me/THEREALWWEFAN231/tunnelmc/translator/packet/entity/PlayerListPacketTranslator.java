@@ -1,6 +1,7 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.packet.entity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.mojang.authlib.GameProfile;
 import com.nukkitx.protocol.bedrock.packet.PlayerListPacket;
@@ -19,7 +20,7 @@ public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacke
 	@Override
 	public void translate(PlayerListPacket packet) {
 		boolean add = packet.getAction() == PlayerListPacket.Action.ADD;
-		ArrayList<PlayerListS2CPacket.Entry> entries = new ArrayList<Entry>();
+		List<Entry> entries = new ArrayList<>();
 
 		PlayerListS2CPacket playerListS2CPacket = new PlayerListS2CPacket();
 		((IMixinPlayerListS2CPacket) playerListS2CPacket).setAction(add ? PlayerListS2CPacket.Action.ADD_PLAYER : PlayerListS2CPacket.Action.REMOVE_PLAYER);
@@ -30,7 +31,7 @@ public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacke
 
 			}
 
-			//gamemode says nullable but is used in ClientGameSession/:
+			// gamemode says nullable but is used in ClientGameSession/:
 			entries.add(playerListS2CPacket.new Entry(new GameProfile(entry.getUuid(), entry.getName()), 0, GameMode.SURVIVAL, new LiteralText(entry.getName())));
 		}
 

@@ -5,16 +5,13 @@ import com.mojang.authlib.GameProfile;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.NetworkSide;
-import net.minecraft.network.OffThreadException;
-import net.minecraft.network.Packet;
+import net.minecraft.network.*;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 
 public class FakeJavaConnection {
 
-	private ClientConnection clientConnection;//TODO: i think we dont need this to be in the "public scope"
-	private ClientPlayNetworkHandler clientPlayNetworkHandler;
+	private final ClientConnection clientConnection;//TODO: i think we dont need this to be in the "public scope"
+	private final ClientPlayNetworkHandler clientPlayNetworkHandler;
 	public JavaPacketTranslatorManager packetTranslatorManager;
 
 	public FakeJavaConnection() {
