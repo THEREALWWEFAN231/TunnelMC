@@ -33,15 +33,15 @@ public class Xbox {
 
 	//go here, log in, and in the redirected url you will have your access token, https://login.live.com/oauth20_authorize.srf?client_id=00000000441cc96b&redirect_uri=https://login.live.com/oauth20_desktop.srf&response_type=token&display=touch&scope=service::user.auth.xboxlive.com::MBI_SSL&locale=en
 	//then add -DXboxAccessToken=YOURS to your jvm arguments
-	private String accessToken;
+	private final String accessToken;
 
-	private String xboxUserAuthURL = "https://user.auth.xboxlive.com/user/authenticate";
-	private String xboxAuthorizeURL = "https://xsts.auth.xboxlive.com/xsts/authorize";
-	private String xboxDeviceAuthURL = "https://device.auth.xboxlive.com/device/authenticate";
-	private String xboxTitleAuthURL = "https://title.auth.xboxlive.com/title/authenticate";
-	private String minecraftAuthURL = "https://multiplayer.minecraft.net/authentication";
+	private static final String xboxUserAuthURL = "https://user.auth.xboxlive.com/user/authenticate";
+	private static final String xboxAuthorizeURL = "https://xsts.auth.xboxlive.com/xsts/authorize";
+	private static final String xboxDeviceAuthURL = "https://device.auth.xboxlive.com/device/authenticate";
+	private static final String xboxTitleAuthURL = "https://title.auth.xboxlive.com/title/authenticate";
+	private static final String minecraftAuthURL = "https://multiplayer.minecraft.net/authentication";
 
-	private JsonParser jsonParser = TunnelMC.instance.fileManagement.jsonParser;
+	private final JsonParser jsonParser = TunnelMC.instance.fileManagement.jsonParser;
 
 	public Xbox(String accessToken) {
 		this.accessToken = accessToken;
@@ -68,7 +68,7 @@ public class Xbox {
 		proofKey.addProperty("x", this.getProofKeyX(publicKey));
 		proofKey.addProperty("y", this.getProofKeyY(publicKey));
 
-		URL url = new URL(this.xboxUserAuthURL);
+		URL url = new URL(xboxUserAuthURL);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
 		connection.setRequestMethod("POST");
@@ -107,7 +107,7 @@ public class Xbox {
 		proofKey.addProperty("x", this.getProofKeyX(publicKey));
 		proofKey.addProperty("y", this.getProofKeyY(publicKey));
 
-		URL url = new URL(this.xboxDeviceAuthURL);
+		URL url = new URL(xboxDeviceAuthURL);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
 		connection.setRequestMethod("POST");
@@ -145,7 +145,7 @@ public class Xbox {
 		proofKey.addProperty("x", this.getProofKeyX(publicKey));
 		proofKey.addProperty("y", this.getProofKeyY(publicKey));
 
-		URL url = new URL(this.xboxTitleAuthURL);
+		URL url = new URL(xboxTitleAuthURL);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
 		connection.setRequestMethod("POST");
@@ -188,7 +188,7 @@ public class Xbox {
 		proofKey.addProperty("x", this.getProofKeyX(publicKey));
 		proofKey.addProperty("y", this.getProofKeyY(publicKey));
 
-		URL url = new URL(this.xboxAuthorizeURL);
+		URL url = new URL(xboxAuthorizeURL);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
 		connection.setRequestMethod("POST");
@@ -209,7 +209,7 @@ public class Xbox {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("identityPublicKey", pubKeyData);
 
-		URL url = new URL(this.minecraftAuthURL);
+		URL url = new URL(minecraftAuthURL);
 		HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
 		connection.setRequestMethod("POST");

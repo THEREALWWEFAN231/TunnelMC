@@ -57,6 +57,7 @@ public class SkinData {
 			skinData.add("PieceTintColors", new JsonArray());
 			skinData.addProperty("PlatformOfflineId", "");
 			skinData.addProperty("PlatformOnlineId", "");
+			skinData.addProperty("PlayFabId", "");
 			skinData.addProperty("PremiumSkin", false);
 			skinData.addProperty("SelfSignedId", UUID.randomUUID().toString());//erm? i hope this works?
 			skinData.addProperty("ServerAddress", serverAddress);
@@ -78,9 +79,7 @@ public class SkinData {
 			byte[] dataToSign = (header + "." + payload).getBytes();
 			String signatureString = Client.instance.authData.signBytes(dataToSign);
 
-			String jwt = header + "." + payload + "." + signatureString;
-
-			return jwt;
+			return header + "." + payload + "." + signatureString;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

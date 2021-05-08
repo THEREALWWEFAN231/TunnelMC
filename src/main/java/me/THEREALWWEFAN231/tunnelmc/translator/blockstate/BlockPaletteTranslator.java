@@ -6,6 +6,10 @@ import java.util.Map;
 import com.nukkitx.nbt.NbtList;
 import com.nukkitx.nbt.NbtMap;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 
@@ -16,14 +20,16 @@ import net.minecraft.block.Blocks;
 public class BlockPaletteTranslator {
 
 	public static int AIR_BEDROCK_BLOCK_ID;
+	public static int WATER_BEDROCK_BLOCK_ID;
 
-	public static final HashMap<Integer, BlockState> RUNTIME_ID_TO_BLOCK_STATE = new HashMap<Integer, BlockState>();
+	public static final Int2ObjectMap<BlockState> RUNTIME_ID_TO_BLOCK_STATE = new Int2ObjectOpenHashMap<>();
+	public static final Object2IntMap<BlockState> BLOCK_STATE_TO_RUNTIME_ID = new Object2IntOpenHashMap<>();
 
 	public static void loadMap(NbtList<NbtMap> blockPaletteData) {
 		int runtimeId = 0;
 		for (NbtMap nbtMap : blockPaletteData) {
-			String mcbeStringBlockName = nbtMap.getCompound("block").getString("name");
-			NbtMap blockStates = nbtMap.getCompound("block").getCompound("states");
+			String mcbeStringBlockName = nbtMap.getString("name");
+			NbtMap blockStates = nbtMap.getCompound("states");
 
 			BedrockBlockState bedrockBlockState = new BedrockBlockState();
 			bedrockBlockState.identifier = mcbeStringBlockName;
@@ -33,9 +39,9 @@ public class BlockPaletteTranslator {
 				String value = "";
 				if (blockState.getValue() instanceof String || blockState.getValue() instanceof Integer) {
 					value = blockState.getValue().toString();
-				} else if (blockState.getValue() instanceof Byte) {//i guess byte on mcbe nbt is a boolean type
+				} else if (blockState.getValue() instanceof Byte) {
 					byte theByte = (byte) blockState.getValue();
-					value = theByte == 0 ? "false" : "true";//im assuming 0 is false
+					value = theByte == 0 ? "false" : "true";
 				} else {
 					System.out.println("Unknown type " + blockState.getValue().getClass());
 				}
@@ -46,12 +52,15 @@ public class BlockPaletteTranslator {
 			BlockState blockState = BlockStateTranslator.BEDROCK_BLOCK_STATE_STRING_TO_JAVA_BLOCK_STATE.get(bedrockBlockState.toString());
 			if (blockState != null) {
 				RUNTIME_ID_TO_BLOCK_STATE.put(runtimeId, blockState);
+				BLOCK_STATE_TO_RUNTIME_ID.put(blockState, runtimeId);
 				if (mcbeStringBlockName.equals("minecraft:air")) {
 					AIR_BEDROCK_BLOCK_ID = runtimeId;
+				} else if (mcbeStringBlockName.equals("minecraft:water")) {
+					WATER_BEDROCK_BLOCK_ID = runtimeId;
 				}
 			} else {
+				System.out.println("Unable to find suitable block state for " + bedrockBlockState.toString());
 				RUNTIME_ID_TO_BLOCK_STATE.put(runtimeId, Blocks.STONE.getDefaultState());//we could probably put the default state, but for now we will use stone
-				//System.out.println("Unknown block " + mcbeStringBlockName + " sent from the servers' palette states=" + bedrockBlockState.toString());
 			}
 
 			runtimeId++;

@@ -17,13 +17,13 @@ import net.minecraft.util.registry.Registry;
 public class ItemTranslator {
 
 	//key, is the item id:damage, so for example could be 218:13
-	public static final HashMap<String, Item> BEDROCK_ITEM_INFO_TO_JAVA_ITEM = new HashMap<String, Item>();
+	public static final HashMap<String, Item> BEDROCK_ITEM_INFO_TO_JAVA_ITEM = new HashMap<>();
 
 	public static void load() {
 
 		JsonObject jsonObject = TunnelMC.instance.fileManagement.getJsonObjectFromResource("geyser/items.json");
 		if (jsonObject == null) {
-			return;
+			throw new RuntimeException("Items list not found!");
 		}
 
 		for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
@@ -48,7 +48,6 @@ public class ItemTranslator {
 
 	//TODO: tags and what ever
 	public static ItemStack itemDataToItemStack(ItemData itemData) {
-
 		//keep the short cast, the server can send us non short numbers that, "need to be rolled over" to their correct id
 		ItemStack itemStack = new ItemStack(BEDROCK_ITEM_INFO_TO_JAVA_ITEM.get((short) itemData.getId() + ":" + itemData.getDamage()));
 		itemStack.setCount(itemData.getCount());

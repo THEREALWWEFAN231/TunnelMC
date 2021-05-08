@@ -11,9 +11,11 @@ import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 public interface IMixinPlayerListS2CPacket {
 
 	@Accessor("action")
-	public void setAction(PlayerListS2CPacket.Action newValue);
-	
-	@Accessor("entries")
-	public void setEntries(List<PlayerListS2CPacket.Entry> newValue);
+	void setAction(PlayerListS2CPacket.Action newValue);
 
+	/**
+	 * Needed because the constructor only takes in ServerPlayerEntity
+	 */
+	@Accessor("entries")
+	void setEntries(List<PlayerListS2CPacket.Entry> newValue);
 }

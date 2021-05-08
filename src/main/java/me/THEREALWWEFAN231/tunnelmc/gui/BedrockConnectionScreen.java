@@ -1,7 +1,6 @@
 package me.THEREALWWEFAN231.tunnelmc.gui;
 
-import java.util.function.Consumer;
-
+import net.minecraft.client.gui.widget.CheckboxWidget;
 import org.lwjgl.glfw.GLFW;
 
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
@@ -24,6 +23,7 @@ public class BedrockConnectionScreen extends Screen {
 	private ButtonWidget joinServerButton;
 	private TextFieldWidget addressField;
 	private TextFieldWidget portField;
+	private CheckboxWidget onlineModeWidget;
 	private final Screen parent;
 
 	public BedrockConnectionScreen(Screen parent) {
@@ -33,47 +33,33 @@ public class BedrockConnectionScreen extends Screen {
 
 	public void init() {
 		this.client.keyboard.setRepeatEvents(true);
-		this.joinServerButton = this.addButton(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 100 + 12, 204, 20, new TranslatableText("selectServer.select"), new ButtonWidget.PressAction() {
-
-			@Override
-			public void onPress(ButtonWidget button) {
-				if (BedrockConnectionScreen.this.addressField.getText().isEmpty()) {
-					return;
-				}
-
-				int port;
-				try {
-					port = Integer.parseInt(BedrockConnectionScreen.this.portField.getText());
-				} catch (NumberFormatException e) {
-					port = 19132;
-				}
-
-				Client.instance.initialize(BedrockConnectionScreen.this.addressField.getText(), port);
-
+		this.joinServerButton = this.addButton(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 100 + 12, 204, 20, new TranslatableText("selectServer.select"), button -> {
+			if (BedrockConnectionScreen.this.addressField.getText().isEmpty()) {
+				return;
 			}
-		}));
-		this.addButton(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 120 + 12, 204, 20, ScreenTexts.CANCEL, new ButtonWidget.PressAction() {
 
-			@Override
-			public void onPress(ButtonWidget button) {
-				BedrockConnectionScreen.this.client.openScreen(BedrockConnectionScreen.this.parent);
+			int port;
+			try {
+				port = Integer.parseInt(BedrockConnectionScreen.this.portField.getText());
+			} catch (NumberFormatException e) {
+				port = 19132;
 			}
+
+			Client.instance.initialize(BedrockConnectionScreen.this.addressField.getText(), port, BedrockConnectionScreen.this.onlineModeWidget.isChecked());
 		}));
+
+		this.addButton(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 120 + 12, 204, 20, ScreenTexts.CANCEL,
+				button -> BedrockConnectionScreen.this.client.openScreen(BedrockConnectionScreen.this.parent)));
 		this.addressField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 116, 200, 20, new LiteralText("Enter IP"));
 		this.portField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 140, 200, 20, new LiteralText("Enter Port"));
+		this.onlineModeWidget = new CheckboxWidget(this.width / 2 - 100, 164, 200, 20, new LiteralText("Online mode"), true);
 		this.addressField.setMaxLength(128);
 		this.portField.setMaxLength(6);
 		this.addressField.setSelected(true);
 		this.portField.setSelected(false);
 		this.addressField.setText("127.0.0.1");
 		this.portField.setText("19132");
-		this.addressField.setChangedListener(new Consumer<String>() {
-
-			@Override
-			public void accept(String text) {
-				BedrockConnectionScreen.this.onAddressFieldChanged();
-			}
-		});
+		this.addressField.setChangedListener(text -> BedrockConnectionScreen.this.onAddressFieldChanged());
 		this.children.add(this.addressField);
 		this.children.add(this.portField);
 		this.setInitialFocus(this.addressField);
@@ -91,6 +77,7 @@ public class BedrockConnectionScreen extends Screen {
 		Screen.drawTextWithShadow(matrices, this.textRenderer, new LiteralText("Enter IP and Port"), this.width / 2 - 100, 100, 10526880);
 		this.addressField.render(matrices, mouseX, mouseY, delta);
 		this.portField.render(matrices, mouseX, mouseY, delta);
+		this.onlineModeWidget.render(matrices, mouseX, mouseY, delta);
 		super.render(matrices, mouseX, mouseY, delta);
 	}
 
@@ -98,6 +85,7 @@ public class BedrockConnectionScreen extends Screen {
 
 		this.addressField.mouseClicked(mouseX, mouseY, button);
 		this.portField.mouseClicked(mouseX, mouseY, button);
+		this.onlineModeWidget.mouseClicked(mouseX, mouseY, button);
 
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
