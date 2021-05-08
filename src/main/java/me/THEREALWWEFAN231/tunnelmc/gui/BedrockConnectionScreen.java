@@ -48,15 +48,14 @@ public class BedrockConnectionScreen extends Screen {
 			Client.instance.initialize(BedrockConnectionScreen.this.addressField.getText(), port, BedrockConnectionScreen.this.onlineModeWidget.isChecked());
 		}));
 
-		this.addButton(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 120 + 12, 204, 20, ScreenTexts.CANCEL,
-				button -> BedrockConnectionScreen.this.client.openScreen(BedrockConnectionScreen.this.parent)));
-		this.addressField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 116, 200, 20, new LiteralText("Enter IP"));
-		this.portField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 140, 200, 20, new LiteralText("Enter Port"));
-		this.onlineModeWidget = new CheckboxWidget(this.width / 2 - 100, 164, 200, 20, new LiteralText("Online mode"), true);
+		this.addButton(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 125 + 12, 204, 20, ScreenTexts.CANCEL, button -> BedrockConnectionScreen.this.client.openScreen(BedrockConnectionScreen.this.parent)));
+		this.addressField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, (this.height / 4) + 16, 200, 20, new LiteralText("Enter IP"));
+		this.portField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, (this.height / 4) + 46, 200, 20, new LiteralText("Enter Port"));
+		this.onlineModeWidget = new CheckboxWidget(this.width / 2 - 100, (this.height / 4) + 80, 200, 20, new LiteralText("Online mode"), true);
 		this.addressField.setMaxLength(128);
 		this.portField.setMaxLength(6);
-		this.addressField.setSelected(true);
-		this.portField.setSelected(false);
+		this.addressField.setTextFieldFocused(true);
+		this.portField.setTextFieldFocused(false);
 		this.addressField.setText("127.0.0.1");
 		this.portField.setText("19132");
 		this.addressField.setChangedListener(text -> BedrockConnectionScreen.this.onAddressFieldChanged());
@@ -74,7 +73,7 @@ public class BedrockConnectionScreen extends Screen {
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		this.renderBackground(matrices);
 		Screen.drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 20, 16777215);
-		Screen.drawTextWithShadow(matrices, this.textRenderer, new LiteralText("Enter IP and Port"), this.width / 2 - 100, 100, 10526880);
+		Screen.drawTextWithShadow(matrices, this.textRenderer, new LiteralText("Enter IP and Port"), this.width / 2 - 100, this.height / 4, 10526880);
 		this.addressField.render(matrices, mouseX, mouseY, delta);
 		this.portField.render(matrices, mouseX, mouseY, delta);
 		this.onlineModeWidget.render(matrices, mouseX, mouseY, delta);
