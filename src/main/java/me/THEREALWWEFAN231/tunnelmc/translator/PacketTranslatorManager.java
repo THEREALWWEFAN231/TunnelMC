@@ -55,6 +55,10 @@ public class PacketTranslatorManager {
 		this.addTranslator(new MobArmorEquipmentTranslator());
 		this.addTranslator(new BlockEntityDataTranslator());
 		this.addTranslator(new GameRulesChangedTranslator());
+		this.addTranslator(new UpdatePlayerGameTypeTranslator());
+		this.addTranslator(new LevelEventTranslator());
+		this.addTranslator(new LevelSoundEvent2Translator());
+		this.addTranslator(new LevelSoundEventTranslator());
 		
 		EventManager.register(this);
 	}

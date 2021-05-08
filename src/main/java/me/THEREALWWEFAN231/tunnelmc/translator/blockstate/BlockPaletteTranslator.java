@@ -8,6 +8,8 @@ import com.nukkitx.nbt.NbtMap;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 
@@ -21,6 +23,7 @@ public class BlockPaletteTranslator {
 	public static int WATER_BEDROCK_BLOCK_ID;
 
 	public static final Int2ObjectMap<BlockState> RUNTIME_ID_TO_BLOCK_STATE = new Int2ObjectOpenHashMap<>();
+	public static final Object2IntMap<BlockState> BLOCK_STATE_TO_RUNTIME_ID = new Object2IntOpenHashMap<>();
 
 	public static void loadMap(NbtList<NbtMap> blockPaletteData) {
 		int runtimeId = 0;
@@ -36,7 +39,7 @@ public class BlockPaletteTranslator {
 				String value = "";
 				if (blockState.getValue() instanceof String || blockState.getValue() instanceof Integer) {
 					value = blockState.getValue().toString();
-				} else if (blockState.getValue() instanceof Byte) {//i guess byte on mcbe nbt is a boolean type
+				} else if (blockState.getValue() instanceof Byte) {
 					byte theByte = (byte) blockState.getValue();
 					value = theByte == 0 ? "false" : "true";
 				} else {
@@ -49,6 +52,7 @@ public class BlockPaletteTranslator {
 			BlockState blockState = BlockStateTranslator.BEDROCK_BLOCK_STATE_STRING_TO_JAVA_BLOCK_STATE.get(bedrockBlockState.toString());
 			if (blockState != null) {
 				RUNTIME_ID_TO_BLOCK_STATE.put(runtimeId, blockState);
+				BLOCK_STATE_TO_RUNTIME_ID.put(blockState, runtimeId);
 				if (mcbeStringBlockName.equals("minecraft:air")) {
 					AIR_BEDROCK_BLOCK_ID = runtimeId;
 				} else if (mcbeStringBlockName.equals("minecraft:water")) {

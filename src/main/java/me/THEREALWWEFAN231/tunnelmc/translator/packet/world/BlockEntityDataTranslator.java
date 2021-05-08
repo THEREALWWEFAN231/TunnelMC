@@ -16,7 +16,7 @@ public class BlockEntityDataTranslator extends PacketTranslator<BlockEntityDataP
         if (translator != null) {
             CompoundTag tag = translator.translateTag(packet.getData());
             BlockEntityUpdateS2CPacket updatePacket = new BlockEntityUpdateS2CPacket(
-                    PositionUtil.vector3iToBlockPos(packet.getBlockPosition()), translator.getJavaId(), tag);
+                    PositionUtil.toBlockPos(packet.getBlockPosition()), translator.getJavaId(), tag);
             Client.instance.javaConnection.processServerToClientPacket(updatePacket);
         }
     }

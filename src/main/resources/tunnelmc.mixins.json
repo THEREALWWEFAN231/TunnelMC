@@ -19,6 +19,11 @@
     "interfaces.IMixinPlayerListS2CPacket"
   ],
   "mixins": [
-    "MixinClientWorld"
+    "MixinBlock",
+    "MixinClientPlayerInteractionHandler",
+    "MixinClientWorld",
+    "MixinWorldRenderer",
+    "interfaces.IMixinClientPlayerInteractionManager",
+    "interfaces.IMixinWorldRenderer"
   ]
 }

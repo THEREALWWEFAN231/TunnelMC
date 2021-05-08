@@ -7,6 +7,9 @@ import java.util.function.Consumer;
 import com.nukkitx.protocol.bedrock.v428.Bedrock_v428;
 import com.nukkitx.protocol.bedrock.v431.Bedrock_v431;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
+import net.minecraft.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,11 +55,14 @@ public class Client {
 		InetSocketAddress addressToConnect = new InetSocketAddress(ip, port);
 		this.bedrockClient.connect(addressToConnect).whenComplete((BiConsumer<BedrockSession, Throwable>) (session, throwable) -> {
 			if (throwable != null) {
+				MinecraftClient.getInstance().execute(() ->  MinecraftClient.getInstance().disconnect(
+						new DisconnectedScreen(MinecraftClient.getInstance().currentScreen, Text.of("Use Translated Here"),
+								Text.of(throwable.getMessage()))));
 				return;
 			}
 
 			Client.this.onSessionInitialized(session);
-		}).join();
+		});
 
 	}
 

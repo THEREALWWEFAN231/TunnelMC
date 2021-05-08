@@ -204,16 +204,8 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 		byte[] blockIds = new byte[4096];
 		byteBuf.readBytes(blockIds);
 
-		byte[] metaIdsTemp = new byte[2048];
-		byteBuf.readBytes(metaIdsTemp);
-		byte[] metaIds = new byte[2048]; // This should use a NibbleArray, it seems? That's what's with all the weird code.
-
-		for (int i = 0; i < metaIdsTemp.length; i++) {
-			int value = metaIdsTemp[i] & 15;
-			int i1 = i >> 1;
-			metaIds[i1] &= 15 << (i + 1 & 1) * 4;
-			metaIds[i1] |= value << (i & 1) * 4;
-		}
+		byte[] metaIds = new byte[2048];
+		byteBuf.readBytes(metaIds);
 
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {

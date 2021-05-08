@@ -9,7 +9,7 @@ import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 
-public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2SPacket> {
+public class PlayerMoveTranslator extends PacketTranslator<PlayerMoveC2SPacket> {
 
 	//so java edition sends movement packets every x(i forgot) ticks  even if we didn't move, bedrock doesn't do this, so we basically try to ignore these packets
 	public static double lastPosX;
@@ -22,7 +22,7 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 	@Override
 	public void translate(PlayerMoveC2SPacket packet) {
 		//this shouldn't even be called? I don't know, doesn't matter
-		PlayerMoveC2SPacketTranslator.translateMovementPacket(packet, MovePlayerPacket.Mode.NORMAL);
+		PlayerMoveTranslator.translateMovementPacket(packet, MovePlayerPacket.Mode.NORMAL);
 	}
 
 	@Override
@@ -38,9 +38,9 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 		float currentPitch = playerMoveC2SPacket.getPitch(TunnelMC.mc.player.pitch);
 		boolean currentlyOnGround = playerMoveC2SPacket.isOnGround();
 
-		if (PlayerMoveC2SPacketTranslator.lastPosX == currentPosX && PlayerMoveC2SPacketTranslator.lastPosY == currentPosY
-				&& PlayerMoveC2SPacketTranslator.lastPosZ == currentPosZ && PlayerMoveC2SPacketTranslator.lastYaw == currentYaw
-				&& PlayerMoveC2SPacketTranslator.lastPitch == currentPitch && PlayerMoveC2SPacketTranslator.lastOnGround == currentlyOnGround) {
+		if (PlayerMoveTranslator.lastPosX == currentPosX && PlayerMoveTranslator.lastPosY == currentPosY
+				&& PlayerMoveTranslator.lastPosZ == currentPosZ && PlayerMoveTranslator.lastYaw == currentYaw
+				&& PlayerMoveTranslator.lastPitch == currentPitch && PlayerMoveTranslator.lastOnGround == currentlyOnGround) {
 			return;
 		}
 
@@ -49,23 +49,17 @@ public class PlayerMoveC2SPacketTranslator extends PacketTranslator<PlayerMoveC2
 		MovePlayerPacket movePlayerPacket = new MovePlayerPacket();
 		movePlayerPacket.setRuntimeEntityId(runtimeId);
 		movePlayerPacket.setPosition(Vector3f.from(currentPosX, currentPosY, currentPosZ));
-		movePlayerPacket.setRotation(Vector3f.from(currentPitch, currentYaw, 0));
-		movePlayerPacket.setMode(mode);//honestly we could just check if the playerMoveC2SPacket is a rotation packet, and if it is use HEAD_ROTATION
+		movePlayerPacket.setRotation(Vector3f.from(currentPitch, currentYaw, currentYaw)); // Set yaw twice so BDS cooperates with head movement better
+		movePlayerPacket.setMode(mode);
 		movePlayerPacket.setOnGround(currentlyOnGround);
 		Client.instance.sendPacket(movePlayerPacket);
 
-		PlayerMoveC2SPacketTranslator.lastPosX = currentPosX;
-		PlayerMoveC2SPacketTranslator.lastPosY = currentPosY;
-		PlayerMoveC2SPacketTranslator.lastPosZ = currentPosZ;
-		PlayerMoveC2SPacketTranslator.lastYaw = currentYaw;
-		PlayerMoveC2SPacketTranslator.lastPitch = currentPitch;
-		PlayerMoveC2SPacketTranslator.lastOnGround = currentlyOnGround;
-
-//		//update our "chunk radius center" every time we move
-//		int chunkX = MathHelper.floor(currentPosX) >> 4;
-//		int chunkZ = MathHelper.floor(currentPosZ) >> 4;
-//		ChunkRenderDistanceCenterS2CPacket chunkRenderDistanceCenterS2CPacket = new ChunkRenderDistanceCenterS2CPacket(chunkX, chunkZ);
-//		Client.instance.javaConnection.processServerToClientPacket(chunkRenderDistanceCenterS2CPacket);
+		PlayerMoveTranslator.lastPosX = currentPosX;
+		PlayerMoveTranslator.lastPosY = currentPosY;
+		PlayerMoveTranslator.lastPosZ = currentPosZ;
+		PlayerMoveTranslator.lastYaw = currentYaw;
+		PlayerMoveTranslator.lastPitch = currentPitch;
+		PlayerMoveTranslator.lastOnGround = currentlyOnGround;
 	}
 
 }

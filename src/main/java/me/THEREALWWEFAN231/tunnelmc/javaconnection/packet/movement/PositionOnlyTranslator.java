@@ -10,7 +10,7 @@ public class PositionOnlyTranslator extends PacketTranslator<PlayerMoveC2SPacket
 
 	@Override
 	public void translate(PositionOnly packet) {
-		PlayerMoveC2SPacketTranslator.translateMovementPacket((PlayerMoveC2SPacket.PositionOnly) packet, MovePlayerPacket.Mode.NORMAL);
+		PlayerMoveTranslator.translateMovementPacket((PlayerMoveC2SPacket.PositionOnly) packet, MovePlayerPacket.Mode.NORMAL);
 	}
 
 	@Override

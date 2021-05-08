@@ -11,6 +11,7 @@ import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.item.ItemTranslator;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -32,20 +33,27 @@ public class AddPlayerTranslator extends PacketTranslator<AddPlayerPacket> {
 		float yaw = packet.getRotation().getY();
 		Vec3d velocity = new Vec3d(packet.getMotion().getX(), packet.getMotion().getY(), packet.getMotion().getZ());
 
-		OtherClientPlayerEntity player = new OtherClientPlayerEntity(TunnelMC.mc.world, new GameProfile(uuid, name));
-		player.setEntityId(id);
-		player.setPos(x, y, z);
-		player.yaw = yaw;
-		player.pitch = pitch;
-		player.setVelocity(velocity);
+		Runnable runnable = () -> {
+			OtherClientPlayerEntity player = new OtherClientPlayerEntity(TunnelMC.mc.world, new GameProfile(uuid, name));
+			player.setEntityId(id);
+			player.setPos(x, y, z);
+			player.yaw = yaw;
+			player.pitch = pitch;
+			player.setVelocity(velocity);
 
-		PlayerSpawnS2CPacket playerSpawnS2CPacket = new PlayerSpawnS2CPacket(player);
-		Client.instance.javaConnection.processServerToClientPacket(playerSpawnS2CPacket);
+			PlayerSpawnS2CPacket playerSpawnS2CPacket = new PlayerSpawnS2CPacket(player);
+			Client.instance.javaConnection.processServerToClientPacket(playerSpawnS2CPacket);
 
-		Pair<EquipmentSlot, ItemStack> itemStackPair = new Pair<>(EquipmentSlot.MAINHAND, ItemTranslator.itemDataToItemStack(packet.getHand()));
-		EntityEquipmentUpdateS2CPacket equipmentUpdatePacket = new EntityEquipmentUpdateS2CPacket((int) packet.getRuntimeEntityId(),
-				Collections.singletonList(itemStackPair));
-		Client.instance.javaConnection.processServerToClientPacket(equipmentUpdatePacket);
+			Pair<EquipmentSlot, ItemStack> itemStackPair = new Pair<>(EquipmentSlot.MAINHAND, ItemTranslator.itemDataToItemStack(packet.getHand()));
+			EntityEquipmentUpdateS2CPacket equipmentUpdatePacket = new EntityEquipmentUpdateS2CPacket((int) packet.getRuntimeEntityId(),
+					Collections.singletonList(itemStackPair));
+			Client.instance.javaConnection.processServerToClientPacket(equipmentUpdatePacket);
+		};
+		if (TunnelMC.mc.world != null) {
+			runnable.run();
+		} else {
+			MinecraftClient.getInstance().execute(runnable);
+		}
 	}
 
 	@Override

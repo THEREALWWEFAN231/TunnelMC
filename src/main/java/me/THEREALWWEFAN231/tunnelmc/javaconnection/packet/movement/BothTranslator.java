@@ -10,7 +10,7 @@ public class BothTranslator extends PacketTranslator<PlayerMoveC2SPacket.Both> {
 
 	@Override
 	public void translate(Both packet) {
-		PlayerMoveC2SPacketTranslator.translateMovementPacket((PlayerMoveC2SPacket.Both) packet, MovePlayerPacket.Mode.NORMAL);
+		PlayerMoveTranslator.translateMovementPacket((PlayerMoveC2SPacket.Both) packet, MovePlayerPacket.Mode.NORMAL);
 	}
 
 	@Override

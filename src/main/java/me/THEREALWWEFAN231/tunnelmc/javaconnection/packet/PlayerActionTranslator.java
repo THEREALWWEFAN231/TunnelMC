@@ -14,11 +14,13 @@ import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.ServerInventoryCache;
 import me.THEREALWWEFAN231.tunnelmc.events.EventPlayerTick;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket.Action;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.GameMode;
 
-public class PlayerActionC2SPacketTranslator extends PacketTranslator<PlayerActionC2SPacket> {
+public class PlayerActionTranslator extends PacketTranslator<PlayerActionC2SPacket> {
 
 	private Direction lastDirection;
 	private Vector3i lastBlockPosition;
@@ -51,6 +53,17 @@ public class PlayerActionC2SPacketTranslator extends PacketTranslator<PlayerActi
 
 			Client.instance.sendPacket(playerActionPacket);
 
+			if (MinecraftClient.getInstance().interactionManager.getCurrentGameMode() == GameMode.CREATIVE) {
+				//TODO
+				PlayerActionPacket creativePacket = new PlayerActionPacket();
+				creativePacket.setRuntimeEntityId(runtimeId);
+				creativePacket.setAction(PlayerActionType.DIMENSION_CHANGE_REQUEST_OR_CREATIVE_DESTROY_BLOCK);
+				creativePacket.setBlockPosition(blockPosition);
+				playerActionPacket.setFace(packet.getDirection().ordinal());
+
+				Client.instance.sendPacket(playerActionPacket);
+			}
+
 			this.lastDirection = null;
 			this.lastBlockPosition = null;
 			EventManager.unregister(this);
@@ -63,7 +76,7 @@ public class PlayerActionC2SPacketTranslator extends PacketTranslator<PlayerActi
 			inventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
 			inventoryTransactionPacket.setItemInHand(ServerInventoryCache.getItemFromInventory(0, 36 + TunnelMC.mc.player.inventory.selectedSlot));
 			inventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y, TunnelMC.mc.player.getPos().z));
-			inventoryTransactionPacket.setClickPosition(Vector3f.from(0, 0, 0));
+			inventoryTransactionPacket.setClickPosition(Vector3f.ZERO);
 
 			Client.instance.sendPacket(inventoryTransactionPacket);
 
