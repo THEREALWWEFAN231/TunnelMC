@@ -11,7 +11,6 @@ import com.nukkitx.protocol.bedrock.packet.PlayerActionPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
-import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.ServerInventoryCache;
 import me.THEREALWWEFAN231.tunnelmc.events.EventPlayerTick;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.client.MinecraftClient;
@@ -74,7 +73,7 @@ public class PlayerActionTranslator extends PacketTranslator<PlayerActionC2SPack
 			inventoryTransactionPacket.setBlockPosition(blockPosition);
 			inventoryTransactionPacket.setBlockFace(packet.getDirection().ordinal());
 			inventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
-			inventoryTransactionPacket.setItemInHand(ServerInventoryCache.getItemFromInventory(0, 36 + TunnelMC.mc.player.inventory.selectedSlot));
+			inventoryTransactionPacket.setItemInHand(Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.inventory.selectedSlot));
 			inventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y, TunnelMC.mc.player.getPos().z));
 			inventoryTransactionPacket.setClickPosition(Vector3f.ZERO);
 

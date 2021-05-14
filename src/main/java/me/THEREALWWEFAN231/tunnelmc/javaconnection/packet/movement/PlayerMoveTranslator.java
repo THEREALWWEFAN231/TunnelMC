@@ -38,9 +38,7 @@ public class PlayerMoveTranslator extends PacketTranslator<PlayerMoveC2SPacket> 
 		float currentPitch = playerMoveC2SPacket.getPitch(TunnelMC.mc.player.pitch);
 		boolean currentlyOnGround = playerMoveC2SPacket.isOnGround();
 
-		if (PlayerMoveTranslator.lastPosX == currentPosX && PlayerMoveTranslator.lastPosY == currentPosY
-				&& PlayerMoveTranslator.lastPosZ == currentPosZ && PlayerMoveTranslator.lastYaw == currentYaw
-				&& PlayerMoveTranslator.lastPitch == currentPitch && PlayerMoveTranslator.lastOnGround == currentlyOnGround) {
+		if (PlayerMoveTranslator.lastPosX == currentPosX && PlayerMoveTranslator.lastPosY == currentPosY && PlayerMoveTranslator.lastPosZ == currentPosZ && PlayerMoveTranslator.lastYaw == currentYaw && PlayerMoveTranslator.lastPitch == currentPitch && PlayerMoveTranslator.lastOnGround == currentlyOnGround) {
 			return;
 		}
 

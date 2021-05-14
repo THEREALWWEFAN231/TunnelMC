@@ -2,31 +2,29 @@ package me.THEREALWWEFAN231.tunnelmc.bedrockconnection;
 
 import java.net.InetSocketAddress;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-import com.nukkitx.protocol.bedrock.v428.Bedrock_v428;
-import com.nukkitx.protocol.bedrock.v431.Bedrock_v431;
-import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.DisconnectedScreen;
-import net.minecraft.text.Text;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nukkitx.network.util.DisconnectReason;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockSession;
 import com.nukkitx.protocol.bedrock.packet.LoginPacket;
-import com.nukkitx.protocol.bedrock.v422.Bedrock_v422;
+import com.nukkitx.protocol.bedrock.v431.Bedrock_v431;
 
 import io.netty.util.AsciiString;
+import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.auth.Auth;
 import me.THEREALWWEFAN231.tunnelmc.auth.SkinData;
+import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.BlockEntityDataCache;
+import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.container.BedrockContainers;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.FakeJavaConnection;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.client.util.NetworkUtils;
+import net.minecraft.text.Text;
 
 public class Client {
 
@@ -39,6 +37,9 @@ public class Client {
 	public Auth authData;
 	public BedrockClient bedrockClient;
 	public FakeJavaConnection javaConnection;
+	
+	public BedrockContainers containers;
+	public BlockEntityDataCache blockEntityDataCache;
 
 	public void initialize(String ip, int port, boolean onlineMode) {
 		this.ip = ip;
@@ -55,9 +56,7 @@ public class Client {
 		InetSocketAddress addressToConnect = new InetSocketAddress(ip, port);
 		this.bedrockClient.connect(addressToConnect).whenComplete((BiConsumer<BedrockSession, Throwable>) (session, throwable) -> {
 			if (throwable != null) {
-				MinecraftClient.getInstance().execute(() ->  MinecraftClient.getInstance().disconnect(
-						new DisconnectedScreen(MinecraftClient.getInstance().currentScreen, Text.of("Use Translated Here"),
-								Text.of(throwable.getMessage()))));
+				MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().disconnect(new DisconnectedScreen(MinecraftClient.getInstance().currentScreen, Text.of("Use Translated Here"), Text.of(throwable.getMessage()))));
 				return;
 			}
 
@@ -95,6 +94,12 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
+	
+	//when our java player is initialized
+	public void onPlayerInitialized() {
+		this.containers = new BedrockContainers();
+		this.blockEntityDataCache = new BlockEntityDataCache();
+	}
 
 	public boolean isConnectionOpen() {
 		return this.bedrockClient != null && this.bedrockClient.getRakNet() != null && this.bedrockClient.getRakNet().isRunning();
@@ -124,7 +129,7 @@ public class Client {
 			port = 2021;
 		}
 		return port;
-//		return 12345;
+		//		return 12345;
 	}
 
 }

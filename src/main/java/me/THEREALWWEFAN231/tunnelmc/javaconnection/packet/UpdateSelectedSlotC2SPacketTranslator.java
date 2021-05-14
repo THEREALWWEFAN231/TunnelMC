@@ -5,7 +5,7 @@ import com.nukkitx.protocol.bedrock.packet.MobEquipmentPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
-import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.ServerInventoryCache;
+import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.container.BedrockContainer;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 
@@ -23,20 +23,22 @@ public class UpdateSelectedSlotC2SPacketTranslator extends PacketTranslator<Upda
 	
 	public static void updateHotbarItem(int hotbarSlot) {
 		
-		int javaInventorySlot = hotbarSlot;
-		if (javaInventorySlot < 9) {
-			javaInventorySlot += 36;
+		if(hotbarSlot < 0 || hotbarSlot > 8) {
+			System.out.println("Can not send an invalid hotbar slot");
+			return;
 		}
 		
 		long runtimeEntityId = TunnelMC.mc.player.getEntityId();
-		ItemData item = ServerInventoryCache.getItemFromInventory(ServerInventoryCache.JAVA_MAIN_INVENTORY_ID, javaInventorySlot);
+		BedrockContainer container = Client.instance.containers.getPlayerInventory();
+		
+		ItemData item = container.getItemFromSlot(hotbarSlot);
 		
 		MobEquipmentPacket mobEquipmentPacket = new MobEquipmentPacket();
 		mobEquipmentPacket.setRuntimeEntityId(runtimeEntityId);
 		mobEquipmentPacket.setItem(item);
 		mobEquipmentPacket.setInventorySlot(hotbarSlot);
 		mobEquipmentPacket.setHotbarSlot(hotbarSlot);
-		mobEquipmentPacket.setContainerId(ServerInventoryCache.BEDROCK_MAIN_INVENTORY_ID);
+		mobEquipmentPacket.setContainerId(container.getId());
 
 		Client.instance.sendPacket(mobEquipmentPacket);
 	}

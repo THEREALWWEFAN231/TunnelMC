@@ -8,7 +8,6 @@ import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
-import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.ServerInventoryCache;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
@@ -26,7 +25,7 @@ public class PlayerInteractBlockC2SPacketTranslator extends PacketTranslator<Pla
 		Vector3i blockPosition = Vector3i.from(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 		Vec3d sideHitOffset = packet.getBlockHitResult().getPos().subtract(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 
-		ItemData placingItem = ServerInventoryCache.getItemFromInventory(0, 36 + TunnelMC.mc.player.inventory.selectedSlot);
+		ItemData placingItem = Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.inventory.selectedSlot);
 
 		InventoryTransactionPacket placeInventoryTransactionPacket = new InventoryTransactionPacket();
 		placeInventoryTransactionPacket.setTransactionType(TransactionType.ITEM_USE);

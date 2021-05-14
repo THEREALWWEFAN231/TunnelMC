@@ -28,7 +28,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 public class StartGameTranslator extends PacketTranslator<StartGamePacket> {
-	
+
 	public static int lastRunTimeId;//TODO: remove this, or at least move to some class accessible from the Client class, thinking of setting the player id to this, but not sure about that yet
 	public static GameType DEFAULT_GAME_TYPE;
 
@@ -70,10 +70,10 @@ public class StartGameTranslator extends PacketTranslator<StartGamePacket> {
 			}
 		}
 
-		GameJoinS2CPacket gameJoinS2CPacket = new GameJoinS2CPacket(playerEntityId, gameMode, previousGameMode, sha256Seed,
-				hardcore, dimensionIds, registryManager, dimensionType, dimensionId, maxPlayers, chunkLoadDistance,
-				reducedDebugInfo, showDeathScreen, debugWorld, flatWorld);
+		GameJoinS2CPacket gameJoinS2CPacket = new GameJoinS2CPacket(playerEntityId, gameMode, previousGameMode, sha256Seed, hardcore, dimensionIds, registryManager, dimensionType, dimensionId, maxPlayers, chunkLoadDistance, reducedDebugInfo, showDeathScreen, debugWorld, flatWorld);
 		Client.instance.javaConnection.processServerToClientPacket(gameJoinS2CPacket);
+		
+		Client.instance.onPlayerInitialized();
 
 		//TODO send a complete SynchronizeTagsS2CPacket - that way water can work
 

@@ -11,12 +11,15 @@
     "MixinKeyboard",
     "MixinMinecraftClient",
     "MixinMultiplayerScreen",
+    "MixinScreenHandler",
+    "MixinHandledScreen",
     "interfaces.IMixinCloseHandledScreenC2SPacket",
     "interfaces.IMixinDimensionType",
     "interfaces.IMixinEntityPositionS2CPacket",
     "interfaces.IMixinEntitySetHeadYawS2CPacket",
     "interfaces.IMixinPlayerInteractEntityC2SPacket",
-    "interfaces.IMixinPlayerListS2CPacket"
+    "interfaces.IMixinPlayerListS2CPacket",
+    "interfaces.IMixinSlot"
   ],
   "mixins": [
     "MixinBlock",

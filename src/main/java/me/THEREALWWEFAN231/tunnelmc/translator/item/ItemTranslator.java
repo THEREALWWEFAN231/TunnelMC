@@ -5,9 +5,12 @@ import java.util.Map;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.nukkitx.nbt.NbtMap;
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
+import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockPaletteTranslator;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -48,11 +51,44 @@ public class ItemTranslator {
 
 	//TODO: tags and what ever
 	public static ItemStack itemDataToItemStack(ItemData itemData) {
+		
+		int damage = 0;
+		if(itemData.getTag() != null) {
+			damage = itemData.getTag().getInt("Damage");
+		}
+		
 		//keep the short cast, the server can send us non short numbers that, "need to be rolled over" to their correct id
-		ItemStack itemStack = new ItemStack(BEDROCK_ITEM_INFO_TO_JAVA_ITEM.get((short) itemData.getId() + ":" + itemData.getDamage()));
+		ItemStack itemStack = new ItemStack(BEDROCK_ITEM_INFO_TO_JAVA_ITEM.get((short) itemData.getId() + ":" + damage));
 		itemStack.setCount(itemData.getCount());
 
 		return itemStack;
 	}
 
+	//TODO: tags and what ever
+	public static ItemData itemStackToItemData(ItemStack itemStack) {
+		String idDamageString = null;
+		for (Map.Entry<String, Item> entry : BEDROCK_ITEM_INFO_TO_JAVA_ITEM.entrySet()) {
+
+			if (entry.getValue().equals(itemStack.getItem())) {
+				idDamageString = entry.getKey();
+				break;
+			}
+
+		}
+		
+		if(idDamageString == null) {
+			System.out.println("ouch");
+		}
+		
+		String[] idDamageSplit = idDamageString.split(":");
+		
+		int blockRuntimeId= BlockPaletteTranslator.BLOCK_STATE_TO_RUNTIME_ID.getInt(Block.getBlockFromItem(itemStack.getItem()).getDefaultState());
+
+		NbtMap nbtMap = NbtMap.builder().putInt("Damage", 1).build();
+		
+		ItemData itemData = ItemData.builder().id(Integer.parseInt(idDamageSplit[0])).damage(Integer.parseInt(idDamageSplit[1])).count(itemStack.getCount()).tag(nbtMap).blockRuntimeId(blockRuntimeId).build();
+		
+		return itemData;
+	}
+	
 }

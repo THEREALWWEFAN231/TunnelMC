@@ -7,7 +7,6 @@ import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
-import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.ServerInventoryCache;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
@@ -17,7 +16,7 @@ public class PlayerInteractEntityC2SPacketTranslator extends PacketTranslator<Pl
 	@Override
 	public void translate(PlayerInteractEntityC2SPacket packet) {
 		
-		ItemData holdingItem = ServerInventoryCache.getItemFromInventory(0, 36 + TunnelMC.mc.player.inventory.selectedSlot);
+		ItemData holdingItem = Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.inventory.selectedSlot);
 		
 		InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
 		inventoryTransactionPacket.setTransactionType(TransactionType.ITEM_USE_ON_ENTITY);

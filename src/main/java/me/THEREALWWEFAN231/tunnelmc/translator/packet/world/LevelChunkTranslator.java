@@ -19,7 +19,6 @@ import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockPaletteTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.LegacyBlockPaletteManager;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.util.collection.IndexedIterable;
 import net.minecraft.util.math.ChunkPos;
@@ -42,7 +41,6 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 
 	//TODO: block entities, biomes, and probably lighting
 
-	@SuppressWarnings("unused")
 	@Override
 	public void translate(LevelChunkPacket packet) {
 		/*

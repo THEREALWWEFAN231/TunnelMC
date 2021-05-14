@@ -8,7 +8,6 @@ import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
-import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.ServerInventoryCache;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
@@ -24,8 +23,8 @@ public class PlayerInteractItemC2SPacketTranslator extends PacketTranslator<Play
 
 	@Override
 	public void translate(PlayerInteractItemC2SPacket packet) {
-
-		ItemData usingItem = ServerInventoryCache.getItemFromInventory(0, 36 + TunnelMC.mc.player.inventory.selectedSlot);
+		
+		ItemData usingItem = Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.inventory.selectedSlot);
 
 		if (TunnelMC.mc.crosshairTarget.getType() == HitResult.Type.BLOCK) {
 			BlockPos blockPos = ((BlockHitResult) TunnelMC.mc.crosshairTarget).getBlockPos();
