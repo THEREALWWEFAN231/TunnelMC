@@ -120,6 +120,7 @@ public class Auth {
 		chain.addProperty("nbf", Instant.now().getEpochSecond() - TimeUnit.HOURS.toSeconds(6));
 
 		JsonObject extraData = new JsonObject();
+		extraData.addProperty("titleId", "896928775"); // Use the Title ID for Windows 10, as some servers ban for an incorrect Title ID.
 		extraData.addProperty("identity", offlineUUID.toString());
 		extraData.addProperty("displayName", username);
 		extraData.addProperty("XUID", xuid);
