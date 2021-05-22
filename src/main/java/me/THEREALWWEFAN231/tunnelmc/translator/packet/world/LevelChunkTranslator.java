@@ -1,14 +1,15 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.packet.world;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.EventTarget;
+import com.nukkitx.nbt.NBTInputStream;
+import com.nukkitx.nbt.NbtMap;
+import com.nukkitx.nbt.NbtMapBuilder;
+import com.nukkitx.nbt.util.stream.NetworkDataInputStream;
 import com.nukkitx.network.VarInts;
 import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket;
-
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
@@ -29,6 +30,10 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 	private static final IndexedIterable<Biome> BIOME_REGISTRY = DynamicRegistryManager.create().get(Registry.BIOME_KEY);
@@ -102,9 +107,10 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 			byte storageSize = chunkVersion == 1 ? 1 : byteBuf.readByte();
 
 			for (int storageReadIndex = 0; storageReadIndex < storageSize; storageReadIndex++) {
-				// PalettedBlockStorage
 				byte paletteHeader = byteBuf.readByte();
+				boolean isRuntime = (paletteHeader & 1) == 1;
 				int paletteVersion = (paletteHeader | 1) >> 1;
+
 				BitArrayVersion bitArrayVersion = BitArrayVersion.get(paletteVersion, true);
 
 				int maxBlocksInSection = 4096; // 16*16*16
@@ -117,11 +123,21 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 				}
 
 				int paletteSize = VarInts.readInt(byteBuf);
-				int[] sectionPalette = new int[paletteSize]; // so this holds all the different block types in the chunk section, first index is always air, then we have the block ids
+				int[] sectionPalette = new int[paletteSize];
+				NBTInputStream nbtStream = isRuntime ? null : new NBTInputStream(new NetworkDataInputStream(new ByteBufInputStream(byteBuf)));
 				for (int i = 0; i < paletteSize; i++) {
-					int id = VarInts.readInt(byteBuf);
-
-					sectionPalette[i] = id;
+					if (isRuntime) {
+						sectionPalette[i] = VarInts.readInt(byteBuf);
+					} else {
+						try {
+							NbtMapBuilder map = ((NbtMap) nbtStream.readTag()).toBuilder();
+							// For some reason, persistent chunks don't include the "minecraft:" that should be used in state names.
+							map.replace("name", "minecraft:" + map.get("name").toString());
+							sectionPalette[i] = BlockPaletteTranslator.getBedrockBlockId(BlockPaletteTranslator.bedrockStateFromNBTMap(map.build()));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 
 				if (storageReadIndex == 0) {
@@ -142,27 +158,7 @@ public class LevelChunkTranslator extends PacketTranslator<LevelChunkPacket> {
 						}
 					}
 				}
-				/*
-				else if (storageReadIndex == 1) {
-					int index = 0;
-					for (int x = 0; x < 16; x++) {
-						for (int z = 0; z < 16; z++) {
-							for (int y = 0; y < 16; y++) {
-								if (sectionPalette[0] != 134 || sectionPalette.length > 1) {
-									System.out.println(Arrays.toString(sectionPalette));
-								}
-								int paletteIndex = bitArray.get(index);
-								if (paletteIndex != 0) {
-									System.out.println(paletteIndex);
-								}
-								index++;
-							}
-						}
-					}
-				}*/
 			}
-
-			//break;
 		}
 
 		byte[] bedrockBiomes = new byte[256];
