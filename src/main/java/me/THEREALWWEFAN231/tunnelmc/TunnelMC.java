@@ -5,6 +5,8 @@ import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslatorManager;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockentity.BlockEntityRegistry;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockentity.BlockEntityTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockStateTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.container.screenhandler.ScreenHandlerTranslatorManager;
+import me.THEREALWWEFAN231.tunnelmc.translator.enchantment.EnchantmentTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.item.ItemTranslator;
 import me.THEREALWWEFAN231.tunnelmc.utils.FileManagement;
 import net.minecraft.client.MinecraftClient;
@@ -25,6 +27,8 @@ public class TunnelMC {
 		BlockStateTranslator.load();
 		EntityTranslator.load();
 		ItemTranslator.load();
+		EnchantmentTranslator.load();
+		ScreenHandlerTranslatorManager.load();
 	}
 
 }

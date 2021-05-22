@@ -5,8 +5,10 @@ import java.util.Set;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.javaconnection.packet.ClickSlotC2SPacketTranslator;
@@ -22,10 +24,14 @@ import net.minecraft.screen.slot.SlotActionType;
 public class MixinScreenHandler {
 
 	//I know I shouldn't use @Overwrite but for now/testing purposes I will use it!!!!! It's not really a big deal though also I used engima to get this code rather then the source fabric attaches(because of the wack while loops)
-	@Overwrite
-	private ItemStack method_30010(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity) {
-		ClickSlotC2SPacketTranslator translator = Client.instance.javaConnection.packetTranslatorManager.clickSlotTranslator;
+	@Inject(method = "method_30010", at =  @At("HEAD"), cancellable =  true)
+	private void method_30010(int slotId, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> callbackInfoReturnable) {
+		if(!Client.instance.isConnectionOpen()) {//if the connection isn't open, do the normal click stuff
+			return;
+		}
 		
+		ClickSlotC2SPacketTranslator translator = Client.instance.javaConnection.packetTranslatorManager.clickSlotTranslator;
+
 		ItemStack itemStack6 = ItemStack.EMPTY;
 		PlayerInventory playerInventory = playerEntity.inventory;
 		if (actionType == SlotActionType.QUICK_CRAFT) {
@@ -89,18 +95,24 @@ public class MixinScreenHandler {
 				}
 			} else if (actionType == SlotActionType.QUICK_MOVE) {
 				if (slotId < 0) {
-					return ItemStack.EMPTY;
+					callbackInfoReturnable.setReturnValue(ItemStack.EMPTY);
+					return;
 				}
 				Slot slot8 = this.slots.get(slotId);
 				if (slot8 == null || !slot8.canTakeItems(playerEntity)) {
-					return ItemStack.EMPTY;
+					callbackInfoReturnable.setReturnValue(ItemStack.EMPTY);
+					return;
 				}
 				for (ItemStack lv10 = this.transferSlot(playerEntity, slotId); !lv10.isEmpty() && ItemStack.areItemsEqualIgnoreDamage(slot8.getStack(), lv10); lv10 = this.transferSlot(playerEntity, slotId)) {
 					itemStack6 = lv10.copy();
 				}
+				
+				//EDITED
+				translator.onStackShiftClicked((ScreenHandler) (Object) this, slotId);
 			} else {//PICKUP 
 				if (slotId < 0) {
-					return ItemStack.EMPTY;
+					callbackInfoReturnable.setReturnValue(ItemStack.EMPTY);
+					return;
 				}
 				Slot clickedSlot = this.slots.get(slotId);
 				if (clickedSlot != null) {
@@ -111,13 +123,13 @@ public class MixinScreenHandler {
 					}
 					if (clickedSlotStack.isEmpty()) {
 						if (!cursorStack.isEmpty() && clickedSlot.canInsert(cursorStack)) {
-							int integer11 = (clickData == 0) ? cursorStack.getCount() : 1;
-							if (integer11 > clickedSlot.getMaxItemCount(cursorStack)) {
-								integer11 = clickedSlot.getMaxItemCount(cursorStack);
+							int itemCountToMoveFromCursorToClickedSlot = (clickData == 0) ? cursorStack.getCount() : 1;
+							if (itemCountToMoveFromCursorToClickedSlot > clickedSlot.getMaxItemCount(cursorStack)) {
+								itemCountToMoveFromCursorToClickedSlot = clickedSlot.getMaxItemCount(cursorStack);
 							}
-							clickedSlot.setStack(cursorStack.split(integer11));
+							clickedSlot.setStack(cursorStack.split(itemCountToMoveFromCursorToClickedSlot));
 							//EDITED
-							translator.onCursorStackClickEmptySlot(slotId);
+							translator.onCursorStackClickEmptySlot((ScreenHandler) (Object) this, slotId, itemCountToMoveFromCursorToClickedSlot);
 						}
 					} else if (clickedSlot.canTakeItems(playerEntity)) {
 						if (cursorStack.isEmpty()) {
@@ -132,9 +144,9 @@ public class MixinScreenHandler {
 									clickedSlot.setStack(ItemStack.EMPTY);
 								}
 								clickedSlot.onTakeItem(playerEntity, playerInventory.getCursorStack());
-								
+
 								//EDITED
-								translator.onEmptyCursorClickStack(slotId);
+								translator.onEmptyCursorClickStack((ScreenHandler) (Object) this, slotId);
 							}
 						} else if (clickedSlot.canInsert(cursorStack)) {
 							if (ScreenHandler.canStacksCombine(clickedSlotStack, cursorStack)) {
@@ -147,6 +159,10 @@ public class MixinScreenHandler {
 								}
 								cursorStack.decrement(integer11);
 								clickedSlotStack.increment(integer11);
+								
+								//EDITED
+								translator.onCursorStackAddToStack((ScreenHandler) (Object) this, slotId);
+								
 							} else if (cursorStack.getCount() <= clickedSlot.getMaxItemCount(cursorStack)) {
 								clickedSlot.setStack(cursorStack);
 								playerInventory.setCursorStack(clickedSlotStack);
@@ -216,9 +232,9 @@ public class MixinScreenHandler {
 				ItemStack itemStack9 = slot8.takeStack((clickData == 0) ? 1 : slot8.getStack().getCount());
 				slot8.onTakeItem(playerEntity, itemStack9);
 				playerEntity.dropItem(itemStack9, true);
-				
+
 				//EDITED
-				translator.onHoverOverStackDropItem(slotId, clickData);
+				translator.onHoverOverStackDropItem((ScreenHandler) (Object) this, slotId, clickData);
 			}
 		} else if (actionType == SlotActionType.PICKUP_ALL && slotId >= 0) {
 			Slot slot8 = this.slots.get(slotId);
@@ -246,7 +262,8 @@ public class MixinScreenHandler {
 			}
 			this.sendContentUpdates();
 		}
-		return itemStack6;
+		
+		callbackInfoReturnable.setReturnValue(itemStack6);
 	}
 
 	@Shadow

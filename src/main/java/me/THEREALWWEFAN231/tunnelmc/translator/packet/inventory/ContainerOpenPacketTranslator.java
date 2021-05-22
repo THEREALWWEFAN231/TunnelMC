@@ -5,8 +5,9 @@ import com.nukkitx.protocol.bedrock.data.inventory.ContainerType;
 import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
+import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.container.BedrockContainer;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
-import me.THEREALWWEFAN231.tunnelmc.translator.container.ContainerTypeTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.container.type.ContainerTypeTranslator;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.text.LiteralText;
@@ -21,6 +22,8 @@ public class ContainerOpenPacketTranslator extends PacketTranslator<ContainerOpe
 			return;
 		}
 		
+		Client.instance.openContainerId = packet.getId();
+		
 		ScreenHandlerType<?> screenHandlerType = ContainerTypeTranslator.bedrockToJava(packet.getType());
 		if(screenHandlerType == null) {
 			System.out.println("No screen handler " + packet.getType());
@@ -32,6 +35,8 @@ public class ContainerOpenPacketTranslator extends PacketTranslator<ContainerOpe
 
 		OpenScreenS2CPacket openScreenS2CPacket = new OpenScreenS2CPacket(packet.getId() & 0xff, screenHandlerType, new LiteralText("Name TODO"));
 		Client.instance.javaConnection.processServerToClientPacket(openScreenS2CPacket);
+
+		Client.instance.containers.setCurrentlyOpenContainer(new BedrockContainer(27, packet.getId()));
 	}
 
 	@Override

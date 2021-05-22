@@ -11,30 +11,15 @@ import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.caches.container.BedrockContainer;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
+import me.THEREALWWEFAN231.tunnelmc.translator.container.screenhandler.ScreenHandlerTranslatorManager;
 import me.THEREALWWEFAN231.tunnelmc.utils.ItemDataUtils;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
+import net.minecraft.screen.ScreenHandler;
 
 public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SPacket> {
 
-	public ClickSlotC2SPacket lastClickedPacket;
-
 	@Override
 	public void translate(ClickSlotC2SPacket packet) {
-		this.lastClickedPacket = packet;
-
-		/*InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
-		
-		//0 for main player? container
-		inventoryTransactionPacket.getActions().add(new InventoryActionData(InventorySource.fromContainerWindowId(0), slot, fromItem, toItem))
-		
-		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
-		inventoryTransactionPacket.setActionType(0);//I have no idea
-		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
-		
-		InventorySource inventorySource = InventorySource.fromContainerWindowId(packet.getSyncId());
-		int slot = packet.getSlot();*/
-		//InventoryActionData inventoryActionData = new InventoryActionData(inventorySource, slot, fromItem, toItem)
-		//inventoryTransactionPacket.getActions().add(inventoryActionData);
 
 	}
 
@@ -44,7 +29,7 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 	}
 
 	//MixinScreenHandler
-	public void onCursorStackClickEmptySlot(int clickedSlotId) {
+	public void onCursorStackClickEmptySlot(ScreenHandler screenHandler, int clickedSlotId, int itemCountToMoveFromCursorToClickedSlot) {
 
 		InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
 
@@ -54,36 +39,36 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 
 		{
 			BedrockContainer cursorContainer = Client.instance.containers.getPlayerContainerCursorContainer();
-
-			BedrockContainer containerForClickedSlot = null;
-			if (clickedSlotId >= 9 && clickedSlotId <= 44) {//java main inventory slot ids
-				containerForClickedSlot = Client.instance.containers.getPlayerInventory();
-			} else if (clickedSlotId >= 5 && clickedSlotId <= 8) {//java armor slot ids
-				containerForClickedSlot = Client.instance.containers.getPlayerArmorContainer();
-			} else if (clickedSlotId == 45) {//java offhand slot id
-				containerForClickedSlot = Client.instance.containers.getPlayerOffhandContainer();
-			}
+			BedrockContainer containerForClickedSlot = ScreenHandlerTranslatorManager.getBedrockContainerFromJava(screenHandler, clickedSlotId);
 
 			if (containerForClickedSlot == null) {
 				System.out.println("FIX THIS, unknown slot clicked " + clickedSlotId);
 				return;
 			}
 
-			int bedrockSlotId = containerForClickedSlot.convertJavaSlotIdToBedrockSlotId(clickedSlotId);
+			int bedrockSlotId = ScreenHandlerTranslatorManager.getBedrockSlotFromJavaContainer(screenHandler, clickedSlotId, containerForClickedSlot);
 
 			ItemData cursorItemData = cursorContainer.getItemFromSlot(0);
 
 			{
-				InventoryActionData changeCursorStackToAir = new InventoryActionData(InventorySource.fromContainerWindowId(cursorContainer.getId()), 0, cursorItemData, ItemData.AIR);
-				inventoryTransactionPacket.getActions().add(changeCursorStackToAir);
-				cursorContainer.setItemBedrock(0, ItemData.AIR);
+				//decrease if the user right clicked a slot, change to air if they left clicked a slot
+				ItemData decreasedCursorStack = ItemDataUtils.copyWithCount(cursorItemData, cursorItemData.getCount() - itemCountToMoveFromCursorToClickedSlot);
+				if (decreasedCursorStack.getCount() == 0) {
+					decreasedCursorStack = ItemData.AIR;
+				}
+
+				InventoryActionData decreaseCursorStack = new InventoryActionData(InventorySource.fromContainerWindowId(cursorContainer.getId()), 0, cursorItemData, decreasedCursorStack);
+				inventoryTransactionPacket.getActions().add(decreaseCursorStack);
+				cursorContainer.setItemBedrock(0, decreasedCursorStack);
 			}
 
 			{
+				ItemData clickedSlotNewItemData = ItemDataUtils.copyWithCount(cursorItemData, itemCountToMoveFromCursorToClickedSlot);
+
 				//changes it to the cursor slot stack
-				InventoryActionData changeClickedSlotItem = new InventoryActionData(InventorySource.fromContainerWindowId(containerForClickedSlot.getId()), bedrockSlotId, ItemData.AIR, cursorItemData);
-				inventoryTransactionPacket.getActions().add(changeClickedSlotItem);
-				containerForClickedSlot.setItemBedrock(bedrockSlotId, cursorItemData);
+				InventoryActionData incrementClickedSlotWithCursorStack = new InventoryActionData(InventorySource.fromContainerWindowId(containerForClickedSlot.getId()), bedrockSlotId, ItemData.AIR, clickedSlotNewItemData);
+				inventoryTransactionPacket.getActions().add(incrementClickedSlotWithCursorStack);
+				containerForClickedSlot.setItemBedrock(bedrockSlotId, clickedSlotNewItemData);
 			}
 
 		}
@@ -92,8 +77,7 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 
 	}
 
-	public void onEmptyCursorClickStack(int clickedSlotId) {
-
+	public void onEmptyCursorClickStack(ScreenHandler screenHandler, int clickedSlotId) {
 		InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
 
 		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
@@ -102,22 +86,14 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 
 		{
 			BedrockContainer cursorContainer = Client.instance.containers.getPlayerContainerCursorContainer();
-
-			BedrockContainer containerForClickedSlot = null;
-			if (clickedSlotId >= 9 && clickedSlotId <= 44) {//java main inventory slot ids
-				containerForClickedSlot = Client.instance.containers.getPlayerInventory();
-			} else if (clickedSlotId >= 5 && clickedSlotId <= 8) {//java armor slot ids
-				containerForClickedSlot = Client.instance.containers.getPlayerArmorContainer();
-			} else if (clickedSlotId == 45) {//java offhand slot id
-				containerForClickedSlot = Client.instance.containers.getPlayerOffhandContainer();
-			}
+			BedrockContainer containerForClickedSlot = ScreenHandlerTranslatorManager.getBedrockContainerFromJava(screenHandler, clickedSlotId);
 
 			if (containerForClickedSlot == null) {
 				System.out.println("FIX THIS, unknown slot clicked " + clickedSlotId);
 				return;
 			}
 
-			int bedrockSlotId = containerForClickedSlot.convertJavaSlotIdToBedrockSlotId(clickedSlotId);
+			int bedrockSlotId = ScreenHandlerTranslatorManager.getBedrockSlotFromJavaContainer(screenHandler, clickedSlotId, containerForClickedSlot);
 
 			ItemData clickedSlotItemData = containerForClickedSlot.getItemFromSlot(bedrockSlotId);
 
@@ -136,10 +112,9 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 		}
 
 		Client.instance.sendPacket(inventoryTransactionPacket);
-
 	}
 
-	public void onHoverOverStackDropItem(int clickedSlotId, int clickData) {
+	public void onHoverOverStackDropItem(ScreenHandler screenHandler, int clickedSlotId, int clickData) {
 
 		InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
 
@@ -147,21 +122,14 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 		inventoryTransactionPacket.setActionType(0);//I have no idea
 		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
 
-		BedrockContainer containerForClickedSlot = null;
-		if (clickedSlotId >= 9 && clickedSlotId <= 44) {//java main inventory slot ids
-			containerForClickedSlot = Client.instance.containers.getPlayerInventory();
-		} else if (clickedSlotId >= 5 && clickedSlotId <= 8) {//java armor slot ids
-			containerForClickedSlot = Client.instance.containers.getPlayerArmorContainer();
-		} else if (clickedSlotId == 45) {//java offhand slot id
-			containerForClickedSlot = Client.instance.containers.getPlayerOffhandContainer();
-		}
+		BedrockContainer containerForClickedSlot = ScreenHandlerTranslatorManager.getBedrockContainerFromJava(screenHandler, clickedSlotId);
 
 		if (containerForClickedSlot == null) {
 			System.out.println("FIX THIS, unknown slot clicked " + clickedSlotId);
 			return;
 		}
 
-		int bedrockSlotId = containerForClickedSlot.convertJavaSlotIdToBedrockSlotId(clickedSlotId);
+		int bedrockSlotId = ScreenHandlerTranslatorManager.getBedrockSlotFromJavaContainer(screenHandler, clickedSlotId, containerForClickedSlot);
 
 		ItemData droppedSlotItemData = containerForClickedSlot.getItemFromSlot(bedrockSlotId);
 		ItemData afterDropSlotItemData = null;
@@ -187,6 +155,53 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 		containerForClickedSlot.setItemBedrock(bedrockSlotId, afterDropSlotItemData);
 
 		Client.instance.sendPacket(inventoryTransactionPacket);
+	}
+
+	public void onStackShiftClicked(ScreenHandler screenHandler, int clickedSlotId) {
+
+	}
+
+	public void onCursorStackAddToStack(ScreenHandler screenHandler, int clickedSlotId) {//for example the user has 64 oak planks in the cursor, and they right click a slot with oak planks(not an empty slot)
+		/*InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
+		
+		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
+		inventoryTransactionPacket.setActionType(0);//I have no idea
+		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+		
+		BedrockContainer containerForClickedSlot = JavaContainerFinder.getContainerFromJava(screenHandler, clickedSlotId);
+		
+		if (containerForClickedSlot == null) {
+			System.out.println("FIX THIS, unknown slot clicked " + clickedSlotId);
+			return;
+		}
+		
+		int bedrockSlotId = containerForClickedSlot.convertJavaSlotIdToBedrockSlotId(clickedSlotId);
+		bedrockSlotId = JavaContainerFinder.getBedrockSlotFromJavaContainer(screenHandler, clickedSlotId, containerForClickedSlot);
+		
+		ItemData droppedSlotItemData = containerForClickedSlot.getItemFromSlot(bedrockSlotId);
+		ItemData afterDropSlotItemData = null;
+		if (clickData == 0) {//1 item is dropped
+			afterDropSlotItemData = ItemDataUtils.copyWithCount(droppedSlotItemData, droppedSlotItemData.getCount() - 1);
+		} else {//all items
+			afterDropSlotItemData = ItemData.AIR;
+		}
+		
+		{
+			InventoryActionData decreaseClickedStack = new InventoryActionData(InventorySource.fromContainerWindowId(containerForClickedSlot.getId()), bedrockSlotId, droppedSlotItemData, afterDropSlotItemData);
+			inventoryTransactionPacket.getActions().add(decreaseClickedStack);
+		}
+		
+		{
+			int droppedItemCount = clickData == 0 ? 1 : droppedSlotItemData.getCount();
+			ItemData itemDroppedInTheWorld = ItemDataUtils.copyWithCount(droppedSlotItemData, droppedItemCount);
+		
+			InventoryActionData dropItemInWorld = new InventoryActionData(InventorySource.fromWorldInteraction(Flag.DROP_ITEM), 0, ItemData.AIR, itemDroppedInTheWorld);
+			inventoryTransactionPacket.getActions().add(dropItemInWorld);
+		}
+		
+		containerForClickedSlot.setItemBedrock(bedrockSlotId, afterDropSlotItemData);
+		
+		Client.instance.sendPacket(inventoryTransactionPacket);*/
 	}
 
 }

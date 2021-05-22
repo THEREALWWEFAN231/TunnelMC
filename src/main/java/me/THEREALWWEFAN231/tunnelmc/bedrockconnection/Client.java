@@ -40,6 +40,7 @@ public class Client {
 	
 	public BedrockContainers containers;
 	public BlockEntityDataCache blockEntityDataCache;
+	public byte openContainerId;
 
 	public void initialize(String ip, int port, boolean onlineMode) {
 		this.ip = ip;
@@ -99,6 +100,7 @@ public class Client {
 	public void onPlayerInitialized() {
 		this.containers = new BedrockContainers();
 		this.blockEntityDataCache = new BlockEntityDataCache();
+		this.openContainerId = 0;
 	}
 
 	public boolean isConnectionOpen() {

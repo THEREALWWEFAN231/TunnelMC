@@ -14,6 +14,8 @@ public class BedrockContainers {
 	public static final int PLAYER_ARMOR_COTNAINER_ID = 120;
 	public static final int PLAYER_CONTAINER_CURSOR_COTNAINER_ID = 124;
 	
+	private BedrockContainer currentlyOpenContainer;
+	
 	private HashMap<Integer, BedrockContainer> containers;
 	
 	private PlayerInventoryContainer playerInventory;
@@ -48,6 +50,14 @@ public class BedrockContainers {
 
 	public PlayerContainerCursorContainer getPlayerContainerCursorContainer() {
 		return this.playerContainerCursorContainer;
+	}
+
+	public BedrockContainer getCurrentlyOpenContainer() {
+		return this.currentlyOpenContainer;
+	}
+
+	public void setCurrentlyOpenContainer(BedrockContainer currentlyOpenContainer) {
+		this.currentlyOpenContainer = currentlyOpenContainer;
 	}
 
 }

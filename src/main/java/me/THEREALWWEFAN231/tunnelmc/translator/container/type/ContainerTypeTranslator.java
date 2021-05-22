@@ -1,4 +1,4 @@
-package me.THEREALWWEFAN231.tunnelmc.translator.container;
+package me.THEREALWWEFAN231.tunnelmc.translator.container.type;
 
 import com.nukkitx.protocol.bedrock.data.inventory.ContainerType;
 
