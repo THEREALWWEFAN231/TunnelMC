@@ -60,6 +60,7 @@ public class PacketTranslatorManager {
 		this.addTranslator(new LevelSoundEvent2Translator());
 		this.addTranslator(new LevelSoundEventTranslator());
 		this.addTranslator(new BlockEntityDataPacketTranslator());
+		this.addTranslator(new RespawnPacketTranslator());
 		
 		EventManager.register(this);
 	}

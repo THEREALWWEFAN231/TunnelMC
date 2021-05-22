@@ -5,11 +5,13 @@ import com.nukkitx.protocol.bedrock.data.entity.EntityDataMap;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
 import com.nukkitx.protocol.bedrock.data.entity.EntityFlags;
 import com.nukkitx.protocol.bedrock.packet.SetEntityDataPacket;
+
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.s2c.play.EntityTrackerUpdateS2CPacket;
 
 public class SetEntityDataPacketTranslator extends PacketTranslator<SetEntityDataPacket> {
@@ -29,6 +31,10 @@ public class SetEntityDataPacketTranslator extends PacketTranslator<SetEntityDat
 
 			if (metadata.containsKey(EntityData.AIR_SUPPLY)) {
 				entity.setAir(metadata.getShort(EntityData.AIR_SUPPLY));
+			} else if (metadata.containsKey(EntityData.HEALTH)) {
+				if (entity instanceof LivingEntity) {
+					((LivingEntity) entity).setHealth(metadata.getInt(EntityData.HEALTH));
+				}
 			}
 
 			EntityFlags flags = metadata.getFlags();
