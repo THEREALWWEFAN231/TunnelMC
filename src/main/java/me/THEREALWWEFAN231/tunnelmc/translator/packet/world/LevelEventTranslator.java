@@ -26,13 +26,14 @@ import java.util.Random;
 import java.util.SortedSet;
 
 public class LevelEventTranslator extends PacketTranslator<LevelEventPacket> {
+
     public static final Object2ObjectMap<Vector3i, BlockBreakingWrapper> BLOCK_BREAKING_INFOS = new Object2ObjectOpenHashMap<>();
     public static final LongSet TO_REMOVE = new LongOpenHashSet();
     private final Random random = new Random();
 
     @Override
     public void translate(LevelEventPacket packet) {
-        if (MinecraftClient.getInstance().world == null) {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().interactionManager == null) {
             return;
         }
 
@@ -57,7 +58,7 @@ public class LevelEventTranslator extends PacketTranslator<LevelEventPacket> {
                 break;
             }
             case BLOCK_STOP_BREAK: {
-                if (packet.getPosition().equals(Vector3f.ZERO)) { // Apparently...
+                if (packet.getPosition().equals(Vector3f.ZERO)) {
                     if (BLOCK_BREAKING_INFOS.containsKey(packet.getPosition().toInt())) {
                         long key = ((IMixinClientPlayerInteractionManager) MinecraftClient.getInstance().interactionManager).getCurrentBreakingPos().asLong();
                         TO_REMOVE.add(key);
@@ -139,4 +140,5 @@ public class LevelEventTranslator extends PacketTranslator<LevelEventPacket> {
             this.blockBreakingInfo = blockBreakingInfo;
         }
     }
+
 }

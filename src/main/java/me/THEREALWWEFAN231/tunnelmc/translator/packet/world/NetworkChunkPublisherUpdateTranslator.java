@@ -19,4 +19,5 @@ public class NetworkChunkPublisherUpdateTranslator extends PacketTranslator<Netw
     public Class<?> getPacketClass() {
         return NetworkChunkPublisherUpdatePacket.class;
     }
+
 }

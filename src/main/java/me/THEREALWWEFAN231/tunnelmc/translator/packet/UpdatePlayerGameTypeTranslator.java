@@ -8,9 +8,10 @@ import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.world.GameMode;
 
 public class UpdatePlayerGameTypeTranslator extends PacketTranslator<UpdatePlayerGameTypePacket> {
+
     @Override
     public void translate(UpdatePlayerGameTypePacket packet) {
-        GameMode javaGameMode = GameModeTranslator.bedrockToJava(packet.getGameType(), StartGameTranslator.DEFAULT_GAME_TYPE);
+        GameMode javaGameMode = GameModeTranslator.bedrockToJava(packet.getGameType(), Client.instance.defaultGameMode);
 
         Client.instance.javaConnection.processServerToClientPacket(new GameStateChangeS2CPacket(
                 GameStateChangeS2CPacket.GAME_MODE_CHANGED,
@@ -21,4 +22,5 @@ public class UpdatePlayerGameTypeTranslator extends PacketTranslator<UpdatePlaye
     public Class<?> getPacketClass() {
         return UpdatePlayerGameTypePacket.class;
     }
+
 }

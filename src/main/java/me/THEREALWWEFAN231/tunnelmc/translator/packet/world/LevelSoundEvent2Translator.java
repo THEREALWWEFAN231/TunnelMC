@@ -15,4 +15,5 @@ public class LevelSoundEvent2Translator extends PacketTranslator<LevelSoundEvent
     public Class<?> getPacketClass() {
         return LevelSoundEvent2Packet.class;
     }
+
 }

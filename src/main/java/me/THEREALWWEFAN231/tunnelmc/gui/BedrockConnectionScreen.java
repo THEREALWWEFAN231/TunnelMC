@@ -32,6 +32,9 @@ public class BedrockConnectionScreen extends Screen {
 	}
 
 	public void init() {
+		if (this.client == null) {
+			return;
+		}
 		this.client.keyboard.setRepeatEvents(true);
 		this.joinServerButton = this.addButton(new ButtonWidget(this.width / 2 - 102, this.height / 4 + 100 + 12, 204, 20, new TranslatableText("selectServer.select"), button -> {
 			if (BedrockConnectionScreen.this.addressField.getText().isEmpty()) {

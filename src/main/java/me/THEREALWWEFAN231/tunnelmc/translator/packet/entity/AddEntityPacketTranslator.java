@@ -13,38 +13,40 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 
 public class AddEntityPacketTranslator extends PacketTranslator<AddEntityPacket> {
 	
-	//TODO: handle non living entities differently, EntitySpawnS2CPacket
+	// TODO: Handle non living entities differently, with the EntitySpawnS2CPacket.
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void translate(AddEntityPacket packet) {
-
 		EntityType<?> entityType = EntityTranslator.BEDROCK_IDENTIFIER_TO_ENTITY_TYPE.get(packet.getIdentifier());
 		if (entityType == null) {
-			System.out.println("Could not find entity type " + packet.getIdentifier());
+			System.out.println("Could not find entity type: " + packet.getIdentifier());
 			return;
-		} else {
-			
-			int id = (int) packet.getUniqueEntityId();
-			double x = packet.getPosition().getX();
-			double y = packet.getPosition().getY();
-			double z = packet.getPosition().getZ();
-			double motionX = packet.getMotion().getX();
-			double motionY = packet.getMotion().getY();
-			double motionZ = packet.getMotion().getZ();
-			float yaw = packet.getRotation().getY();//TODO: not sure about these
-			float pitch = packet.getRotation().getX();
-			
-			Entity entity = entityType.create(TunnelMC.mc.world);
-			entity.setEntityId(id);
-			entity.setPos(x, y, z);
-			entity.setVelocity(motionX, motionY, motionZ);
-			entity.yaw = yaw;
-			entity.pitch = pitch;
-			
-			Client.instance.javaConnection.processServerToClientPacket((Packet<ClientPlayPacketListener>) entity.createSpawnPacket());
 		}
 
+		int id = (int) packet.getUniqueEntityId();
+		double x = packet.getPosition().getX();
+		double y = packet.getPosition().getY();
+		double z = packet.getPosition().getZ();
+		double motionX = packet.getMotion().getX();
+		double motionY = packet.getMotion().getY();
+		double motionZ = packet.getMotion().getZ();
+		float yaw = packet.getRotation().getY();
+		float pitch = packet.getRotation().getX();
+
+		Entity entity = entityType.create(TunnelMC.mc.world);
+		if (entity == null) {
+			System.out.println("Could not create entity type: " + packet.getIdentifier());
+			return;
+		}
+
+		entity.setEntityId(id);
+		entity.setPos(x, y, z);
+		entity.setVelocity(motionX, motionY, motionZ);
+		entity.yaw = yaw;
+		entity.pitch = pitch;
+
+		Client.instance.javaConnection.processServerToClientPacket((Packet<ClientPlayPacketListener>) entity.createSpawnPacket());
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class MovePlayerPacketTranslator extends PacketTranslator<MovePlayerPacke
 	
 	@Override
 	public boolean idleUntil() {
-		return TunnelMC.mc.player != null;
+		return TunnelMC.mc.player == null;
 	}
 
 }

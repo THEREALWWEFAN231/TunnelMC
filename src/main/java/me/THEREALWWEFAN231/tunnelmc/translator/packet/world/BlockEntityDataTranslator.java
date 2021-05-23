@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 
 public class BlockEntityDataTranslator extends PacketTranslator<BlockEntityDataPacket> {
+
     @Override
     public void translate(BlockEntityDataPacket packet) {
         BlockEntityTranslator translator = BlockEntityRegistry.getBlockEntityTranslator(packet.getData());
@@ -25,4 +26,5 @@ public class BlockEntityDataTranslator extends PacketTranslator<BlockEntityDataP
     public Class<?> getPacketClass() {
         return BlockEntityDataPacket.class;
     }
+
 }

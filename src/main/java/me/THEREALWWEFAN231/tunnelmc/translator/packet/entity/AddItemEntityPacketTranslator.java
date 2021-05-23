@@ -20,7 +20,6 @@ public class AddItemEntityPacketTranslator extends PacketTranslator<AddItemEntit
 	@SuppressWarnings("unchecked")
 	@Override
 	public void translate(AddItemEntityPacket packet) {
-		
 		int id = (int) packet.getUniqueEntityId();
 		double x = packet.getPosition().getX();
 		double y = packet.getPosition().getY();

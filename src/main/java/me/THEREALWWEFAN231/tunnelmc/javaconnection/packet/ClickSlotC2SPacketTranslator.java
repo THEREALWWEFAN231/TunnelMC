@@ -18,6 +18,8 @@ import net.minecraft.screen.ScreenHandler;
 
 public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SPacket> {
 
+	// TODO: Re-review this code and clean it up later on, seems incorrect.
+
 	@Override
 	public void translate(ClickSlotC2SPacket packet) {
 
@@ -28,50 +30,45 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 		return ClickSlotC2SPacket.class;
 	}
 
-	//MixinScreenHandler
 	public void onCursorStackClickEmptySlot(ScreenHandler screenHandler, int clickedSlotId, int itemCountToMoveFromCursorToClickedSlot) {
+		if (TunnelMC.mc.player == null) {
+			return;
+		}
 
 		InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
 
 		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
-		inventoryTransactionPacket.setActionType(0);//I have no idea
+		inventoryTransactionPacket.setActionType(0);
 		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
 
-		{
-			BedrockContainer cursorContainer = Client.instance.containers.getPlayerContainerCursorContainer();
-			BedrockContainer containerForClickedSlot = ScreenHandlerTranslatorManager.getBedrockContainerFromJava(screenHandler, clickedSlotId);
+		BedrockContainer cursorContainer = Client.instance.containers.getPlayerContainerCursorContainer();
+		BedrockContainer containerForClickedSlot = ScreenHandlerTranslatorManager.getBedrockContainerFromJava(screenHandler, clickedSlotId);
 
-			if (containerForClickedSlot == null) {
-				System.out.println("FIX THIS, unknown slot clicked " + clickedSlotId);
-				return;
-			}
-
-			int bedrockSlotId = ScreenHandlerTranslatorManager.getBedrockSlotFromJavaContainer(screenHandler, clickedSlotId, containerForClickedSlot);
-
-			ItemData cursorItemData = cursorContainer.getItemFromSlot(0);
-
-			{
-				//decrease if the user right clicked a slot, change to air if they left clicked a slot
-				ItemData decreasedCursorStack = ItemDataUtils.copyWithCount(cursorItemData, cursorItemData.getCount() - itemCountToMoveFromCursorToClickedSlot);
-				if (decreasedCursorStack.getCount() == 0) {
-					decreasedCursorStack = ItemData.AIR;
-				}
-
-				InventoryActionData decreaseCursorStack = new InventoryActionData(InventorySource.fromContainerWindowId(cursorContainer.getId()), 0, cursorItemData, decreasedCursorStack);
-				inventoryTransactionPacket.getActions().add(decreaseCursorStack);
-				cursorContainer.setItemBedrock(0, decreasedCursorStack);
-			}
-
-			{
-				ItemData clickedSlotNewItemData = ItemDataUtils.copyWithCount(cursorItemData, itemCountToMoveFromCursorToClickedSlot);
-
-				//changes it to the cursor slot stack
-				InventoryActionData incrementClickedSlotWithCursorStack = new InventoryActionData(InventorySource.fromContainerWindowId(containerForClickedSlot.getId()), bedrockSlotId, ItemData.AIR, clickedSlotNewItemData);
-				inventoryTransactionPacket.getActions().add(incrementClickedSlotWithCursorStack);
-				containerForClickedSlot.setItemBedrock(bedrockSlotId, clickedSlotNewItemData);
-			}
-
+		if (containerForClickedSlot == null) {
+			System.out.println("FIX THIS, unknown slot clicked " + clickedSlotId);
+			return;
 		}
+
+		int bedrockSlotId = ScreenHandlerTranslatorManager.getBedrockSlotFromJavaContainer(screenHandler, clickedSlotId, containerForClickedSlot);
+
+		ItemData cursorItemData = cursorContainer.getItemFromSlot(0);
+
+		// Decrease if the user right clicked a slot, change to air if they left clicked a slot.
+		ItemData decreasedCursorStack = ItemDataUtils.copyWithCount(cursorItemData, cursorItemData.getCount() - itemCountToMoveFromCursorToClickedSlot);
+		if (decreasedCursorStack.getCount() == 0) {
+			decreasedCursorStack = ItemData.AIR;
+		}
+
+		InventoryActionData decreaseCursorStack = new InventoryActionData(InventorySource.fromContainerWindowId(cursorContainer.getId()), 0, cursorItemData, decreasedCursorStack);
+		inventoryTransactionPacket.getActions().add(decreaseCursorStack);
+		cursorContainer.setItemBedrock(0, decreasedCursorStack);
+
+		ItemData clickedSlotNewItemData = ItemDataUtils.copyWithCount(cursorItemData, itemCountToMoveFromCursorToClickedSlot);
+
+		// Changes it to the cursor slot stack.
+		InventoryActionData incrementClickedSlotWithCursorStack = new InventoryActionData(InventorySource.fromContainerWindowId(containerForClickedSlot.getId()), bedrockSlotId, ItemData.AIR, clickedSlotNewItemData);
+		inventoryTransactionPacket.getActions().add(incrementClickedSlotWithCursorStack);
+		containerForClickedSlot.setItemBedrock(bedrockSlotId, clickedSlotNewItemData);
 
 		Client.instance.sendPacket(inventoryTransactionPacket);
 

@@ -9,6 +9,7 @@ import net.minecraft.world.GameRules;
 import java.util.List;
 
 public class GameRulesChangedTranslator extends PacketTranslator<GameRulesChangedPacket> {
+
     @Override
     public void translate(GameRulesChangedPacket packet) {
         if (MinecraftClient.getInstance().world == null) {
@@ -24,19 +25,22 @@ public class GameRulesChangedTranslator extends PacketTranslator<GameRulesChange
     }
 
     public static void onGameRulesChanged(List<GameRuleData<?>> gamerules) {
-        if (MinecraftClient.getInstance().world == null) {
+        if (MinecraftClient.getInstance().world == null || MinecraftClient.getInstance().player == null) {
             return;
         }
 
-        for (GameRuleData<?> gamerule : gamerules) {
-            switch (gamerule.getName()) {
-                case "dodaylightcycle":
-                    MinecraftClient.getInstance().world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(((Boolean) gamerule.getValue()), null);
+        for (GameRuleData<?> gameRule : gamerules) {
+            switch (gameRule.getName()) {
+                case "dodaylightcycle": {
+                    MinecraftClient.getInstance().world.getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(((Boolean) gameRule.getValue()), null);
                     break;
-                case "doimmediaterespawn":
-                    MinecraftClient.getInstance().player.setShowsDeathScreen(!((Boolean) gamerule.getValue()));
+                }
+                case "doimmediaterespawn": {
+                    MinecraftClient.getInstance().player.setShowsDeathScreen(!((Boolean) gameRule.getValue()));
                     break;
+                }
             }
         }
     }
+
 }

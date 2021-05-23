@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class UpdateBlockTranslator extends PacketTranslator<UpdateBlockPacket> {
 
-	//TODO: probably want to check out flags
+	//TODO: Probably want to check out flags.
 	
 	@Override
 	public void translate(UpdateBlockPacket packet) {
@@ -25,7 +25,7 @@ public class UpdateBlockTranslator extends PacketTranslator<UpdateBlockPacket> {
 			Client.instance.javaConnection.processServerToClientPacket(blockUpdateS2CPacket);
 
 		} else if (packet.getDataLayer() == 1) {
-			// Set waterlogged state of existing block
+			// Set waterlogged state of existing block.
 			BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockPos);
 			BlockState newBlockState;
 			if (blockState.isAir()) {

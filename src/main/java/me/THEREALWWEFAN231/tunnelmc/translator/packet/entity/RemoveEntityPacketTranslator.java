@@ -10,11 +10,9 @@ public class RemoveEntityPacketTranslator extends PacketTranslator<RemoveEntityP
 
 	@Override
 	public void translate(RemoveEntityPacket packet) {
-
 		int id = (int) packet.getUniqueEntityId();
 
 		EntitiesDestroyS2CPacket entitiesDestroyS2CPacket = new EntitiesDestroyS2CPacket(id);
-
 		Client.instance.javaConnection.processServerToClientPacket(entitiesDestroyS2CPacket);
 
 	}

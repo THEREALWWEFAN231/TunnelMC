@@ -27,9 +27,6 @@ public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacke
 		((IMixinPlayerListS2CPacket) playerListS2CPacket).setEntries(entries);
 
 		for (PlayerListPacket.Entry entry : packet.getEntries()) {
-			if (add) {
-
-			}
 
 			// gamemode says nullable but is used in ClientGameSession/:
 			entries.add(playerListS2CPacket.new Entry(new GameProfile(entry.getUuid(), entry.getName()), 0, GameMode.SURVIVAL, new LiteralText(entry.getName())));
@@ -41,18 +38,6 @@ public class PlayerListPacketTranslator extends PacketTranslator<PlayerListPacke
 	@Override
 	public Class<?> getPacketClass() {
 		return PlayerListPacket.class;
-	}
-
-	public static class SkinType {//this is only temporary
-
-		public Identifier texture;
-		public boolean slim;
-
-		public SkinType(Identifier texture, boolean slim) {
-			this.texture = texture;
-			this.slim = slim;
-		}
-
 	}
 
 }

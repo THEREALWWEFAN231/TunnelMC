@@ -27,7 +27,6 @@ public class ItemTranslator {
 	public static final HashMap<String, Item> BEDROCK_ITEM_INFO_TO_JAVA_ITEM = new HashMap<>();
 
 	public static void load() {
-
 		JsonObject jsonObject = TunnelMC.instance.fileManagement.getJsonObjectFromResource("geyser/items.json");
 		if (jsonObject == null) {
 			throw new RuntimeException("Items list not found!");
@@ -55,7 +54,6 @@ public class ItemTranslator {
 
 	//TODO: tags and what ever
 	public static ItemStack itemDataToItemStack(ItemData itemData) {
-
 		int damage = 0;
 		if (itemData.getTag() != null) {
 			damage = itemData.getTag().getInt("Damage");

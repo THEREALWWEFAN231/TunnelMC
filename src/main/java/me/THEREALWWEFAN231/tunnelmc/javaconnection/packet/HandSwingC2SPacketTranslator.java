@@ -11,6 +11,9 @@ public class HandSwingC2SPacketTranslator extends PacketTranslator<HandSwingC2SP
 
 	@Override
 	public void translate(HandSwingC2SPacket packet) {
+		if (TunnelMC.mc.player == null) {
+			return;
+		}
 		AnimatePacket animatePacket = new AnimatePacket();
 		animatePacket.setAction(AnimatePacket.Action.SWING_ARM);
 		animatePacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());

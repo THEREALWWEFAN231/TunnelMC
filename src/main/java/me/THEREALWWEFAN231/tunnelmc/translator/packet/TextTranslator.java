@@ -19,17 +19,17 @@ public class TextTranslator extends PacketTranslator<TextPacket> {
 				System.out.println("Falling back to raw translation for " + packet.toString());
 			}
 			case RAW: {
-				GameMessageS2CPacket gameMessageS2CPacket = new GameMessageS2CPacket(new LiteralText(packet.getMessage()),
-						MessageType.CHAT, new UUID(0, 0));
-
+				GameMessageS2CPacket gameMessageS2CPacket = new GameMessageS2CPacket(new LiteralText(packet.getMessage()), MessageType.CHAT, new UUID(0, 0));
 				Client.instance.javaConnection.processServerToClientPacket(gameMessageS2CPacket);
 				break;
 			}
 			case CHAT: {
-				String formattedChatMessage = "<" + packet.getSourceName() + "> " + packet.getMessage();
-				GameMessageS2CPacket gameMessageS2CPacket = new GameMessageS2CPacket(new LiteralText(formattedChatMessage),
-						MessageType.CHAT, null);
+				String formattedChatMessage = packet.getMessage();
+				if (packet.getSourceName().length() > 0) {
+					formattedChatMessage = "<" + packet.getSourceName() + "> " + formattedChatMessage;
+				}
 
+				GameMessageS2CPacket gameMessageS2CPacket = new GameMessageS2CPacket(new LiteralText(formattedChatMessage), MessageType.CHAT, null);
 				Client.instance.javaConnection.processServerToClientPacket(gameMessageS2CPacket);
 				break;
 			}
@@ -40,4 +40,5 @@ public class TextTranslator extends PacketTranslator<TextPacket> {
 	public Class<?> getPacketClass() {
 		return TextPacket.class;
 	}
+
 }

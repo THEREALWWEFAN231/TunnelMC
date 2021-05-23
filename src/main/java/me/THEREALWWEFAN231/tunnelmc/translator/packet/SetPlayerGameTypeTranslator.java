@@ -7,6 +7,7 @@ import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.world.GameMode;
 
 public class SetPlayerGameTypeTranslator extends PacketTranslator<SetPlayerGameTypePacket> {
+
     @Override
     public void translate(SetPlayerGameTypePacket packet) {
         GameMode javaGameMode;
@@ -21,7 +22,7 @@ public class SetPlayerGameTypeTranslator extends PacketTranslator<SetPlayerGameT
                 javaGameMode = GameMode.ADVENTURE;
                 break;
             default:
-                System.out.println("Don't know how to process " + packet.toString());
+                System.out.println("Couldn't find the Java game mode for: " + packet.getGamemode());
                 return;
         }
 
@@ -34,4 +35,5 @@ public class SetPlayerGameTypeTranslator extends PacketTranslator<SetPlayerGameT
     public Class<?> getPacketClass() {
         return SetPlayerGameTypePacket.class;
     }
+
 }

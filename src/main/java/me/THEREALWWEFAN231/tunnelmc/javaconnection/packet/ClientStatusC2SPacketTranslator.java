@@ -13,22 +13,16 @@ public class ClientStatusC2SPacketTranslator extends PacketTranslator<ClientStat
 
 	@Override
 	public void translate(ClientStatusC2SPacket packet) {
-		
-		switch (packet.getMode()) {
-		case PERFORM_RESPAWN:
-			
-			//when the player clicks respawn send the client_ready respawn packet
+		if (TunnelMC.mc.player == null) {
+			return;
+		}
+		if (packet.getMode() == ClientStatusC2SPacket.Mode.PERFORM_RESPAWN) {
 			RespawnPacket respawnPacket = new RespawnPacket();
 			respawnPacket.setPosition(Vector3f.ZERO);
 			respawnPacket.setState(State.CLIENT_READY);
 			respawnPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
-			
-			Client.instance.sendPacket(respawnPacket);
-			
-			break;
 
-		default:
-			break;
+			Client.instance.sendPacket(respawnPacket);
 		}
 		
 	}

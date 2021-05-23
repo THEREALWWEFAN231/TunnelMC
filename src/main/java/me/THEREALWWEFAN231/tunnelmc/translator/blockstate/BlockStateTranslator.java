@@ -83,7 +83,7 @@ public class BlockStateTranslator {
 
 		}
 
-		InputStream stream = FileManagement.class.getClassLoader().getResourceAsStream("tunnelmc/blockpalette.nbt");
+		InputStream stream = FileManagement.class.getClassLoader().getResourceAsStream("tunnel/block_palette.nbt");
 		if (stream == null) {
 			throw new RuntimeException("Could not find the block palette file!");
 		}

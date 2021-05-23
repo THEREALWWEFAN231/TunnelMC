@@ -22,7 +22,7 @@ public final class LegacyBlockPaletteManager {
 
     static {
         NbtList<NbtMap> legacyBlockStates;
-        try (InputStream stream = FileManagement.class.getClassLoader().getResourceAsStream("tunnelmc/runtime_block_states.dat")) {
+        try (InputStream stream = FileManagement.class.getClassLoader().getResourceAsStream("tunnel/runtime_block_states.dat")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state tag!");
             }
