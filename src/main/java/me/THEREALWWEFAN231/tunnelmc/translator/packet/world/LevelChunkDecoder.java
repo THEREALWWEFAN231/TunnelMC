@@ -90,7 +90,7 @@ public class LevelChunkDecoder {
     }
 
     /**
-     * Version zero is a chunk format used on PocketMine (3.0.0) and Nukkit (1.0) servers.
+     * Version zero is a chunk format used on PocketMine (3.0.0) servers.
      * It is a legacy format that most third party servers use.
      */
     public static void networkDecodeVersionZero(ByteBuf byteBuf, ChunkSection chunkSection) {
