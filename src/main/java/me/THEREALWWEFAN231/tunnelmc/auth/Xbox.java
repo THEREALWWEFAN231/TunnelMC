@@ -28,7 +28,7 @@ import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 public class Xbox {
 
 	/**
-	 * To generate your own access token (for now), login at the following linK:
+	 * To generate your own access token (for now), login at the following link:
 	 * https://login.live.com/oauth20_authorize.srf?client_id=00000000441cc96b&redirect_uri=https://login.live.com/oauth20_desktop.srf&response_type=token&display=touch&scope=service::user.auth.xboxlive.com::MBI_SSL&locale=en
 	 * When you're redirected to the blank page, check the URL parameters. Look for the one that says access token, and then set
 	 * the "XBOX_ACCESS_TOKEN" environment variable to your access token.
