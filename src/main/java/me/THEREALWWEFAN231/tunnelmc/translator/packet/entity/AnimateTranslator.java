@@ -8,21 +8,21 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.EntityAnimationS2CPacket;
 
 public class AnimateTranslator extends PacketTranslator<AnimatePacket> {
+
     @Override
     public void translate(AnimatePacket packet) {
         if (TunnelMC.mc.world == null) {
             return;
         }
+
         Entity entity = TunnelMC.mc.world.getEntityById((int) packet.getRuntimeEntityId());
         if (entity == null) {
             return;
         }
 
-        switch (packet.getAction()) {
-            case SWING_ARM:
-                EntityAnimationS2CPacket swingArmPacket = new EntityAnimationS2CPacket(entity, 0);
-                Client.instance.javaConnection.processServerToClientPacket(swingArmPacket);
-                break;
+        if (packet.getAction() == AnimatePacket.Action.SWING_ARM) {
+            EntityAnimationS2CPacket swingArmPacket = new EntityAnimationS2CPacket(entity, 0);
+            Client.instance.javaConnection.processServerToClientPacket(swingArmPacket);
         }
     }
 
@@ -30,4 +30,5 @@ public class AnimateTranslator extends PacketTranslator<AnimatePacket> {
     public Class<?> getPacketClass() {
         return AnimatePacket.class;
     }
+
 }

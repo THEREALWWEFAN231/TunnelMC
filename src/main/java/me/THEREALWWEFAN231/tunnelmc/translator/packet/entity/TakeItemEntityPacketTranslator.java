@@ -10,10 +10,9 @@ public class TakeItemEntityPacketTranslator extends PacketTranslator<TakeItemEnt
 
 	@Override
 	public void translate(TakeItemEntityPacket packet) {
-
 		int entityId = (int) packet.getItemRuntimeEntityId();
 		int collectorId = (int) packet.getRuntimeEntityId();
-		int stackAmount = 1;//this probably actually needs the correct value, ill test that later, we can probably get the value from the item entity in the world
+		int stackAmount = 1; // TODO: This needs the correct value but we can probably get the value from the item entity in the world.
 
 		ItemPickupAnimationS2CPacket itemPickupAnimationS2CPacket = new ItemPickupAnimationS2CPacket(entityId, collectorId, stackAmount);
 

@@ -23,13 +23,17 @@ public class AddPlayerTranslator extends PacketTranslator<AddPlayerPacket> {
 
 	@Override
 	public void translate(AddPlayerPacket packet) {
+		if (TunnelMC.mc.world == null) {
+			return;
+		}
+
 		int id = (int) packet.getRuntimeEntityId();
 		UUID uuid = packet.getUuid();
 		String name = packet.getUsername();
 		double x = packet.getPosition().getX();
 		double y = packet.getPosition().getY();
 		double z = packet.getPosition().getZ();
-		float pitch = packet.getRotation().getX();//TODO: not sure about these
+		float pitch = packet.getRotation().getX();
 		float yaw = packet.getRotation().getY();
 		Vec3d velocity = new Vec3d(packet.getMotion().getX(), packet.getMotion().getY(), packet.getMotion().getZ());
 
@@ -49,6 +53,7 @@ public class AddPlayerTranslator extends PacketTranslator<AddPlayerPacket> {
 					Collections.singletonList(itemStackPair));
 			Client.instance.javaConnection.processServerToClientPacket(equipmentUpdatePacket);
 		};
+
 		if (TunnelMC.mc.world != null) {
 			runnable.run();
 		} else {

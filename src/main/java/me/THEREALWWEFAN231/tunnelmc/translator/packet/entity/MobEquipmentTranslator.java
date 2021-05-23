@@ -12,13 +12,11 @@ import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 
 import java.util.Collections;
 
-/**
- * Sent when an entity changes their main hand or offhand
- */
 public class MobEquipmentTranslator extends PacketTranslator<MobEquipmentPacket> {
+
     @Override
     public void translate(MobEquipmentPacket packet) {
-        EquipmentSlot equipmentSlot = null;
+        EquipmentSlot equipmentSlot;
         switch (packet.getContainerId()) {
             case ContainerId.INVENTORY:
                 equipmentSlot = EquipmentSlot.MAINHAND;
@@ -26,20 +24,20 @@ public class MobEquipmentTranslator extends PacketTranslator<MobEquipmentPacket>
             case ContainerId.OFFHAND:
                 equipmentSlot = EquipmentSlot.OFFHAND;
                 break;
+            default:
+                System.out.println("Not sure how to handle MobEquipmentPacket: " + packet.toString());
+                return;
         }
 
-        if (equipmentSlot != null) {
-            Pair<EquipmentSlot, ItemStack> itemStackPair = new Pair<>(equipmentSlot, ItemTranslator.itemDataToItemStack(packet.getItem()));
-            EntityEquipmentUpdateS2CPacket equipmentUpdatePacket = new EntityEquipmentUpdateS2CPacket((int) packet.getRuntimeEntityId(),
-                    Collections.singletonList(itemStackPair));
-            Client.instance.javaConnection.processServerToClientPacket(equipmentUpdatePacket);
-        } else {
-            System.out.println("Not sure how to handle MobEquipmentPacket: " + packet.toString());
-        }
+        Pair<EquipmentSlot, ItemStack> itemStackPair = new Pair<>(equipmentSlot, ItemTranslator.itemDataToItemStack(packet.getItem()));
+        EntityEquipmentUpdateS2CPacket equipmentUpdatePacket = new EntityEquipmentUpdateS2CPacket((int) packet.getRuntimeEntityId(),
+                Collections.singletonList(itemStackPair));
+        Client.instance.javaConnection.processServerToClientPacket(equipmentUpdatePacket);
     }
 
     @Override
     public Class<?> getPacketClass() {
         return MobEquipmentPacket.class;
     }
+
 }

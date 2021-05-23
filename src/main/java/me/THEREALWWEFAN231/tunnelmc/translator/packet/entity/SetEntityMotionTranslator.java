@@ -13,7 +13,6 @@ public class SetEntityMotionTranslator extends PacketTranslator<SetEntityMotionP
 	@Override
 	public void translate(SetEntityMotionPacket packet) {
 		if (TunnelMC.mc.world == null) {
-			// Stack trace thrown otherwise
 			return;
 		}
 		int id = (int) packet.getRuntimeEntityId();

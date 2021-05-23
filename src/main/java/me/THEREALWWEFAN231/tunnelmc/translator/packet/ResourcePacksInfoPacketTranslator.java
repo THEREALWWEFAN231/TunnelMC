@@ -3,7 +3,6 @@ package me.THEREALWWEFAN231.tunnelmc.translator.packet;
 import com.nukkitx.protocol.bedrock.packet.ClientCacheStatusPacket;
 import com.nukkitx.protocol.bedrock.packet.ResourcePackClientResponsePacket;
 import com.nukkitx.protocol.bedrock.packet.ResourcePacksInfoPacket;
-
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslator;
 

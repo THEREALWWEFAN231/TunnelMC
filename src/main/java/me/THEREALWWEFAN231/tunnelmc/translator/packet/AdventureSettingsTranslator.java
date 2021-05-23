@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.network.packet.s2c.play.PlayerAbilitiesS2CPacket;
 
 public class AdventureSettingsTranslator extends PacketTranslator<AdventureSettingsPacket> {
+
     @Override
     public void translate(AdventureSettingsPacket packet) {
         PlayerAbilities abilities = new PlayerAbilities();
@@ -24,4 +25,5 @@ public class AdventureSettingsTranslator extends PacketTranslator<AdventureSetti
     public Class<?> getPacketClass() {
         return AdventureSettingsPacket.class;
     }
+
 }

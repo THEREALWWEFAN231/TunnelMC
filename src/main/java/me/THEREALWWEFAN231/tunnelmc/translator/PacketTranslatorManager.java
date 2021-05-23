@@ -19,14 +19,13 @@ import me.THEREALWWEFAN231.tunnelmc.translator.packet.world.*;
 public class PacketTranslatorManager {
 
 	private final Map<Class<?>, PacketTranslator<?>> packetTranslatorsByPacketClass = new HashMap<>();
-
-	private final CopyOnWriteArrayList<IdleThing> idlePackets = new CopyOnWriteArrayList<>();//I didn't actually check if I need CopyOnWriteArrayList, but I assume so
+	private final CopyOnWriteArrayList<IdlePacket> idlePackets = new CopyOnWriteArrayList<>();
 
 	public PacketTranslatorManager() {
 		this.addTranslator(new StartGameTranslator());
 		this.addTranslator(new ChunkRadiusUpdatedTranslator());
 		this.addTranslator(new LevelChunkTranslator());
-		this.addTranslator(new PlayStatusPacketTranslator());
+		this.addTranslator(new NetworkStackLatencyPacketTranslator());
 		this.addTranslator(new ResourcePacksInfoPacketTranslator());
 		this.addTranslator(new ResourcePackStackPacketTranslator());
 		this.addTranslator(new AddPlayerTranslator());
@@ -73,36 +72,37 @@ public class PacketTranslatorManager {
 	public void translatePacket(BedrockPacket bedrockPacket) {
 		PacketTranslator<BedrockPacket> packetTranslator = (PacketTranslator<BedrockPacket>) this.packetTranslatorsByPacketClass.get(bedrockPacket.getClass());
 		if (packetTranslator != null) {
-			if (!packetTranslator.idleUntil()) {//if false we have to wait
-				this.idlePackets.add(new IdleThing(packetTranslator, bedrockPacket));
+			if (packetTranslator.idleUntil()) {
+				this.idlePackets.add(new IdlePacket(packetTranslator, bedrockPacket));
 				return;
 			}
 
 			packetTranslator.translate(bedrockPacket);
 		} else {
-			//System.out.println("Could not find a packet translator for the packet: " + bedrockPacket.getClass());
+			System.out.println("Couldn't find a packet translator for the packet: " + bedrockPacket.getClass());
 		}
 	}
 
 	@EventTarget
 	public void onEvent(EventPlayerTick event) {
 		for (int i = 0; i < this.idlePackets.size(); i++) {
-			IdleThing idleThing = this.idlePackets.get(i);
-			if (!idleThing.packetTranslator.idleUntil()) {//still need to wait
+			IdlePacket idlePacket = this.idlePackets.get(i);
+			if (idlePacket.packetTranslator.idleUntil()) {
 				continue;
 			}
 
-			idleThing.getPacketTranslator().translate(idleThing.getBedrockPacket());
+			idlePacket.getPacketTranslator().translate(idlePacket.getBedrockPacket());
 			this.idlePackets.remove(i);
 			i--;
 		}
 	}
 
-	private static class IdleThing {
+	private static class IdlePacket {
+
 		private final PacketTranslator<BedrockPacket> packetTranslator;
 		private final BedrockPacket bedrockPacket;
 
-		public IdleThing(PacketTranslator<BedrockPacket> packetTranslator, BedrockPacket bedrockPacket) {
+		public IdlePacket(PacketTranslator<BedrockPacket> packetTranslator, BedrockPacket bedrockPacket) {
 			this.packetTranslator = packetTranslator;
 			this.bedrockPacket = bedrockPacket;
 		}

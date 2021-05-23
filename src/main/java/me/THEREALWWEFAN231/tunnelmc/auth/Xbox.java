@@ -21,18 +21,20 @@ import com.google.gson.JsonParser;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 import me.THEREALWWEFAN231.tunnelmc.bedrockconnection.Client;
 
-/*
- * This note refers to all auth/JWT related classes, I know there are JWT parsing dependencies(already built into the protocol
- * dependence) but I want to to be "up front", meaning I/we see everything that is going on, meaning we can see exactly how
- * the header, payload and signature are formed, rather then using some library that make take a couple minutes to understand(how
- * it works), I also do know, at some points it would be easier to use the JWT dependence but my stance above still applies,
- * maybe ill make my own simple class :shrug:
+/**
+ * Referenced from the resource below:
+ * https://github.com/Sandertv/gophertunnel/tree/master/minecraft/auth
  */
-//based off https://github.com/Sandertv/gophertunnel/tree/master/minecraft/auth
 public class Xbox {
 
-	//go here, log in, and in the redirected url you will have your access token, https://login.live.com/oauth20_authorize.srf?client_id=00000000441cc96b&redirect_uri=https://login.live.com/oauth20_desktop.srf&response_type=token&display=touch&scope=service::user.auth.xboxlive.com::MBI_SSL&locale=en
-	//then add -DXboxAccessToken=YOURS to your jvm arguments
+	/**
+	 * To generate your own access token (for now), login at the following linK:
+	 * https://login.live.com/oauth20_authorize.srf?client_id=00000000441cc96b&redirect_uri=https://login.live.com/oauth20_desktop.srf&response_type=token&display=touch&scope=service::user.auth.xboxlive.com::MBI_SSL&locale=en
+	 * When you're redirected to the blank page, check the URL parameters. Look for the one that says access token, and then add
+	 * the "-DXboxAccessToken" flag to your startup arguments set to your access token.
+	 *
+	 * This will be changed and simplified later on.
+	 */
 	private final String accessToken;
 
 	private static final String xboxUserAuthURL = "https://user.auth.xboxlive.com/user/authenticate";
@@ -48,7 +50,6 @@ public class Xbox {
 	}
 
 	public String getUserToken(ECPublicKey publicKey, ECPrivateKey privateKey) throws Exception {
-
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("RelyingParty", "http://auth.xboxlive.com");
 		jsonObject.addProperty("TokenType", "JWT");
@@ -85,7 +86,6 @@ public class Xbox {
 	}
 
 	public String getDeviceToken(ECPublicKey publicKey, ECPrivateKey privateKey) throws Exception {
-
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("RelyingParty", "http://auth.xboxlive.com");
 		jsonObject.addProperty("TokenType", "JWT");
@@ -124,7 +124,6 @@ public class Xbox {
 	}
 
 	public String getTitleToken(ECPublicKey publicKey, ECPrivateKey privateKey, String deviceToken) throws Exception {
-
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("RelyingParty", "http://auth.xboxlive.com");
 		jsonObject.addProperty("TokenType", "JWT");
@@ -162,7 +161,6 @@ public class Xbox {
 	}
 
 	public String getXstsToken(String userToken, String deviceToken, String titleToken, ECPublicKey publicKey, ECPrivateKey privateKey) throws Exception {
-
 		JsonObject jsonObject = new JsonObject();
 
 		jsonObject.addProperty("RelyingParty", "https://multiplayer.minecraft.net/");
@@ -227,7 +225,7 @@ public class Xbox {
 		connection.setDoOutput(true);
 
 		DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-		dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.normalGson.toJson(jsonObject));
+		dataOutputStream.writeBytes(TunnelMC.instance.fileManagement.gJson.toJson(jsonObject));
 		dataOutputStream.flush();
 	}
 
@@ -261,7 +259,7 @@ public class Xbox {
 		}
 		bytesToSign.write(authorization.getBytes());
 		bytesToSign.write(new byte[] { 0 });
-		bytesToSign.write(TunnelMC.instance.fileManagement.normalGson.toJson(postData).getBytes());
+		bytesToSign.write(TunnelMC.instance.fileManagement.gJson.toJson(postData).getBytes());
 		bytesToSign.write(new byte[] { 0 });
 
 		Signature signature = Signature.getInstance("SHA256withECDSA");

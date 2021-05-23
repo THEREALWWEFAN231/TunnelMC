@@ -11,7 +11,6 @@ public class BlockEntityDataPacketTranslator extends PacketTranslator<BlockEntit
 
 	@Override
 	public void translate(BlockEntityDataPacket packet) {
-		
 		Vector3i blockPosition = packet.getBlockPosition();
 		NbtMap blockEntityData = packet.getData();
 		

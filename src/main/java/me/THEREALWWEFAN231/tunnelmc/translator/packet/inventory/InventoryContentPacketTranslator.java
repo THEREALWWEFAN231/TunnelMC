@@ -18,18 +18,20 @@ public class InventoryContentPacketTranslator extends PacketTranslator<Inventory
 
 	@Override
 	public void translate(InventoryContentPacket packet) {
+		if (TunnelMC.mc.player == null) {
+			return;
+		}
 
 		int syncId = packet.getContainerId();
 		int javaContainerSize = packet.getContents().size();
 
-		BedrockContainer containerAffected = Client.instance.containers.getContainers().get(syncId);//player container, armor container, etc
+		BedrockContainer containerAffected = Client.instance.containers.getContainers().get(syncId);
 		if (containerAffected == null) {
 			containerAffected = Client.instance.containers.getCurrentlyOpenContainer();
 		}
 
 		switch (syncId) {
 		case BedrockContainers.PLAYER_INVENTORY_COTNAINER_ID:
-
 			for (int i = 0; i < javaContainerSize; i++) {
 				ItemData bedrockItemStack = packet.getContents().get(i);
 				ItemStack translatedStack = ItemTranslator.itemDataToItemStack(bedrockItemStack);
@@ -39,7 +41,6 @@ public class InventoryContentPacketTranslator extends PacketTranslator<Inventory
 				containerAffected.setItemBedrock(i, bedrockItemStack);
 				TunnelMC.mc.player.playerScreenHandler.getSlot(javaSlotId).setStack(translatedStack);
 			}
-
 			break;
 
 		case BedrockContainers.PLAYER_ARMOR_COTNAINER_ID:
@@ -60,8 +61,7 @@ public class InventoryContentPacketTranslator extends PacketTranslator<Inventory
 			TunnelMC.mc.player.playerScreenHandler.getSlot(45).setStack(translatedStack);
 			break;
 		}
-		default://basically TODO: currently works when opening a single chest but yeah..
-
+		default:
 			DefaultedList<ItemStack> javaContents = DefaultedList.ofSize(packet.getContents().size(), ItemStack.EMPTY);
 
 			for (int i = 0; i < javaContainerSize; i++) {
@@ -74,7 +74,6 @@ public class InventoryContentPacketTranslator extends PacketTranslator<Inventory
 
 			InventoryS2CPacket inventoryS2CPacket = new InventoryS2CPacket(syncId, javaContents);
 			Client.instance.javaConnection.processServerToClientPacket(inventoryS2CPacket);
-
 			break;
 		}
 

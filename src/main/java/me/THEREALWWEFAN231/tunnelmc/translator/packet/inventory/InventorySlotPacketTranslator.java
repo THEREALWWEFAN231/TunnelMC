@@ -52,7 +52,7 @@ public class InventorySlotPacketTranslator extends PacketTranslator<InventorySlo
 
 	@Override
 	public boolean idleUntil() {
-		return TunnelMC.mc.player != null;
+		return TunnelMC.mc.player == null;
 	}
 
 }

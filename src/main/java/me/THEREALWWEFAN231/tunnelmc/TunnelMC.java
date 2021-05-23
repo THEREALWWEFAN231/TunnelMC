@@ -3,7 +3,6 @@ package me.THEREALWWEFAN231.tunnelmc;
 import me.THEREALWWEFAN231.tunnelmc.translator.EntityTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.PacketTranslatorManager;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockentity.BlockEntityRegistry;
-import me.THEREALWWEFAN231.tunnelmc.translator.blockentity.BlockEntityTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.blockstate.BlockStateTranslator;
 import me.THEREALWWEFAN231.tunnelmc.translator.container.screenhandler.ScreenHandlerTranslatorManager;
 import me.THEREALWWEFAN231.tunnelmc.translator.enchantment.EnchantmentTranslator;

@@ -22,7 +22,7 @@ public class SetTimePacketTranslator extends PacketTranslator<SetTimePacket> {
 	
 	@Override
 	public boolean idleUntil() {
-		return TunnelMC.mc.world != null;
+		return TunnelMC.mc.world == null;
 	}
 
 }

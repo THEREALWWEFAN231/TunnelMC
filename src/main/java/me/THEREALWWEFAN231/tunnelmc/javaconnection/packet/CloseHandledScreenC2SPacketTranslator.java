@@ -11,9 +11,14 @@ public class CloseHandledScreenC2SPacketTranslator extends PacketTranslator<Clos
 
 	@Override
 	public void translate(CloseHandledScreenC2SPacket packet) {
-
+		byte id = (byte) ((IMixinCloseHandledScreenC2SPacket) packet).getSyncId();
+		if (id == 0) {
+			// The main inventory being closed does not send a container close packet.
+			// Sending this on PocketMine servers also crashes the client.
+			return;
+		}
 		ContainerClosePacket containerClosePacket = new ContainerClosePacket();
-		containerClosePacket.setId((byte) ((IMixinCloseHandledScreenC2SPacket) packet).getSyncId());
+		containerClosePacket.setId(id);
 		
 		Client.instance.sendPacket(containerClosePacket);
 	}

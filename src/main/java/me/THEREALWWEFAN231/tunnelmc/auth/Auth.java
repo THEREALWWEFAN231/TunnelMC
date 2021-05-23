@@ -20,7 +20,10 @@ import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
 
-//based off https://github.com/Sandertv/gophertunnel/tree/master/minecraft/auth
+/**
+ * Referenced from the resource below:
+ * https://github.com/Sandertv/gophertunnel/tree/master/minecraft/auth
+ */
 public class Auth {
 
 	private ECPublicKey publicKey;
@@ -30,34 +33,28 @@ public class Auth {
 	private String displayName;
 
 	public String getOnlineChainData() throws Exception {
-		Gson gson = TunnelMC.instance.fileManagement.normalGson;
+		Gson gson = TunnelMC.instance.fileManagement.gJson;
 
-		KeyPair ecdsa256KeyPair = Auth.createKeyPair();//for xbox live, xbox live requests use, ES256, ECDSA256
+		KeyPair ecdsa256KeyPair = Auth.createKeyPair();
 		this.publicKey = (ECPublicKey) ecdsa256KeyPair.getPublic();
 		this.privateKey = (ECPrivateKey) ecdsa256KeyPair.getPrivate();
-
-		Xbox xbox = new Xbox(System.getProperty("XboxAccessToken"));
+		
+		Xbox xbox = new Xbox(System.getenv("XBOX_ACCESS_TOKEN"));
 		String userToken = xbox.getUserToken(this.publicKey, this.privateKey);
 		String deviceToken = xbox.getDeviceToken(this.publicKey, this.privateKey);
 		String titleToken = xbox.getTitleToken(this.publicKey, this.privateKey, deviceToken);
 		String xsts = xbox.getXstsToken(userToken, deviceToken, titleToken, this.publicKey, this.privateKey);
 
-		KeyPair ecdsa384KeyPair = EncryptionUtils.createKeyPair();//use ES384, ECDSA384
+		KeyPair ecdsa384KeyPair = EncryptionUtils.createKeyPair();
 		this.publicKey = (ECPublicKey) ecdsa384KeyPair.getPublic();
 		this.privateKey = (ECPrivateKey) ecdsa384KeyPair.getPrivate();
 
-		/*
-		 * So we get a "chain"(json array with info(that has 2 objects)) from minecraft.net using our xsts token
-		 * from there we have to add our own chain at the beginning of the chain(json array that minecraft.net sent us),
-		 * When is all said and done, we have 3 chains(they are jwt objects, header.payload.signature)
-		 * which we send to the server to check
-		 */
 		String chainData = xbox.requestMinecraftChain(xsts, this.publicKey);
 		JsonObject chainDataObject = TunnelMC.instance.fileManagement.jsonParser.parse(chainData).getAsJsonObject();
 		JsonArray minecraftNetChain = chainDataObject.get("chain").getAsJsonArray();
 		String firstChainHeader = minecraftNetChain.get(0).getAsString();
-		firstChainHeader = firstChainHeader.split("\\.")[0];//get the jwt header(base64)
-		firstChainHeader = new String(Base64.getDecoder().decode(firstChainHeader.getBytes()));//decode the jwt base64 header
+		firstChainHeader = firstChainHeader.split("\\.")[0];
+		firstChainHeader = new String(Base64.getDecoder().decode(firstChainHeader.getBytes()));
 		String firstKeyx5u = TunnelMC.instance.fileManagement.jsonParser.parse(firstChainHeader).getAsJsonObject().get("x5u").getAsString();
 
 		JsonObject newFirstChain = new JsonObject();
@@ -66,35 +63,30 @@ public class Auth {
 		newFirstChain.addProperty("identityPublicKey", firstKeyx5u);
 		newFirstChain.addProperty("nbf", Instant.now().getEpochSecond() - TimeUnit.HOURS.toSeconds(6));
 
-		{
-			String publicKeyBase64 = Base64.getEncoder().encodeToString(this.publicKey.getEncoded());
-			JsonObject jwtHeader = new JsonObject();
-			jwtHeader.addProperty("alg", "ES384");
-			jwtHeader.addProperty("x5u", publicKeyBase64);
+		String publicKeyBase64 = Base64.getEncoder().encodeToString(this.publicKey.getEncoded());
+		JsonObject jwtHeader = new JsonObject();
+		jwtHeader.addProperty("alg", "ES384");
+		jwtHeader.addProperty("x5u", publicKeyBase64);
 
-			String header = Base64.getUrlEncoder().withoutPadding().encodeToString(gson.toJson(jwtHeader).getBytes());
-			String payload = Base64.getUrlEncoder().withoutPadding().encodeToString(gson.toJson(newFirstChain).getBytes());
+		String header = Base64.getUrlEncoder().withoutPadding().encodeToString(gson.toJson(jwtHeader).getBytes());
+		String payload = Base64.getUrlEncoder().withoutPadding().encodeToString(gson.toJson(newFirstChain).getBytes());
 
-			byte[] dataToSign = (header + "." + payload).getBytes();
-			String signatureString = this.signBytes(dataToSign);
+		byte[] dataToSign = (header + "." + payload).getBytes();
+		String signatureString = this.signBytes(dataToSign);
 
-			String jwt = header + "." + payload + "." + signatureString;
+		String jwt = header + "." + payload + "." + signatureString;
 
-			chainDataObject.add("chain", this.addChainToBeginning(jwt, minecraftNetChain));//replace the chain with our new chain
-		}
+		chainDataObject.add("chain", this.addChainToBeginning(jwt, minecraftNetChain));
 
-		{
-			//we are now going to get some data from a chain minecraft sent us(the last chain)
-			String lastChain = minecraftNetChain.get(minecraftNetChain.size() - 1).getAsString();
-			String lastChainPayload = lastChain.split("\\.")[1];//get the middle(payload) jwt thing
-			lastChainPayload = new String(Base64.getDecoder().decode(lastChainPayload.getBytes()));//decode the base64
+		String lastChain = minecraftNetChain.get(minecraftNetChain.size() - 1).getAsString();
+		String lastChainPayload = lastChain.split("\\.")[1];
+		lastChainPayload = new String(Base64.getDecoder().decode(lastChainPayload.getBytes()));
 
-			JsonObject payloadObject = TunnelMC.instance.fileManagement.jsonParser.parse(lastChainPayload).getAsJsonObject();
-			JsonObject extraData = payloadObject.get("extraData").getAsJsonObject();
-			this.xuid = extraData.get("XUID").getAsString();
-			this.identity = UUID.fromString(extraData.get("identity").getAsString());
-			this.displayName = extraData.get("displayName").getAsString();
-		}
+		JsonObject payloadObject = TunnelMC.instance.fileManagement.jsonParser.parse(lastChainPayload).getAsJsonObject();
+		JsonObject extraData = payloadObject.get("extraData").getAsJsonObject();
+		this.xuid = extraData.get("XUID").getAsString();
+		this.identity = UUID.fromString(extraData.get("identity").getAsString());
+		this.displayName = extraData.get("displayName").getAsString();
 
 		return gson.toJson(chainDataObject);
 	}
@@ -105,7 +97,7 @@ public class Auth {
 		UUID offlineUUID = UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8));
 		String xuid = Long.toString(offlineUUID.getLeastSignificantBits());
 
-		Gson gson = TunnelMC.instance.fileManagement.normalGson;
+		Gson gson = TunnelMC.instance.fileManagement.gJson;
 		//KeyPair ecdsa256KeyPair = Auth.createKeyPair();//for xbox live, xbox live requests use, ES256, ECDSA256
 		KeyPair ecdsa256KeyPair = EncryptionUtils.createKeyPair();
 		this.publicKey = (ECPublicKey) ecdsa256KeyPair.getPublic();
@@ -197,7 +189,7 @@ public class Auth {
 	static {
 		try {
 			KEY_PAIR_GEN = KeyPairGenerator.getInstance("EC");
-			KEY_PAIR_GEN.initialize(new ECGenParameterSpec("secp256r1"));//use P-256
+			KEY_PAIR_GEN.initialize(new ECGenParameterSpec("secp256r1"));
 		} catch (Exception e) {
 			throw new AssertionError("Unable to initialize required encryption", e);
 		}

@@ -14,7 +14,9 @@ public class ClientCommandC2SPacketTranslator extends PacketTranslator<ClientCom
 
 	@Override
 	public void translate(ClientCommandC2SPacket packet) {
-
+		if (TunnelMC.mc.player == null) {
+			return;
+		}
 		if (packet.getMode() == Mode.PRESS_SHIFT_KEY) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
 			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());

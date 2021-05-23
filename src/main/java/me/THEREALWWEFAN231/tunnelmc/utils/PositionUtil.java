@@ -5,6 +5,7 @@ import com.nukkitx.math.vector.Vector3i;
 import net.minecraft.util.math.BlockPos;
 
 public class PositionUtil {
+
     public static BlockPos toBlockPos(Vector3i vector) {
         return new BlockPos(vector.getX(), vector.getY(), vector.getZ());
     }
@@ -13,6 +14,7 @@ public class PositionUtil {
         return new BlockPos(vector.getX(), vector.getY(), vector.getZ());
     }
 
+    @SuppressWarnings("unused")
     public static Vector3i toBedrockVector3i(BlockPos blockPos) {
         return Vector3i.from(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
@@ -20,4 +22,5 @@ public class PositionUtil {
     public static Vector3f toBedrockVector3f(BlockPos blockPos) {
         return Vector3f.from(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
+
 }

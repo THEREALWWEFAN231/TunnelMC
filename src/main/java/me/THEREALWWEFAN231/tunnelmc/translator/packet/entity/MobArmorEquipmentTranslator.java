@@ -14,6 +14,7 @@ import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import java.util.List;
 
 public class MobArmorEquipmentTranslator extends PacketTranslator<MobArmorEquipmentPacket> {
+
     @Override
     public void translate(MobArmorEquipmentPacket packet) {
         List<Pair<EquipmentSlot, ItemStack>> javaArmorSlots = new ObjectArrayList<>(4);
@@ -35,4 +36,5 @@ public class MobArmorEquipmentTranslator extends PacketTranslator<MobArmorEquipm
     private Pair<EquipmentSlot, ItemStack> translateArmorSlot(ItemData bedrockItem, EquipmentSlot slot) {
         return new Pair<>(slot, ItemTranslator.itemDataToItemStack(bedrockItem));
     }
+
 }

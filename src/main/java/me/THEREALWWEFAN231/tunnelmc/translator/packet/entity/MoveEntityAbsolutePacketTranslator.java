@@ -13,7 +13,6 @@ public class MoveEntityAbsolutePacketTranslator extends PacketTranslator<MoveEnt
 
 	@Override
 	public void translate(MoveEntityAbsolutePacket packet) {
-		
 		int id = (int) packet.getRuntimeEntityId();
 		double x = packet.getPosition().getX();
 		double y = packet.getPosition().getY();
@@ -45,7 +44,6 @@ public class MoveEntityAbsolutePacketTranslator extends PacketTranslator<MoveEnt
 		iMixinEntitySetHeadYawS2CPacket.setYaw(yaw);
 
 		Client.instance.javaConnection.processServerToClientPacket(entitySetHeadYawS2CPacket);
-		
 	}
 
 	@Override
