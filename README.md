@@ -6,7 +6,7 @@ TunnelMC allows Minecraft Java Edition Players to join and play Minecraft Bedroc
 Firstly, TunnelMC is a [Fabric Mod](https://fabricmc.net/). What we do is we open a connection to a Minecraft Bedrock server and translate any incoming and outgoing packets, so they can be read by both editions.
 
 # Why a Fabric Mod and not a Proxy
-Well, we love fabric ❤️. Also making it a mod instead of a proxy allows us to do some stuff we normally could not do. Such as skins, we read the skins from the bedrock server instead of [Minecraft.net](https://minecraft.net/) this would not be possible without some sort of mod. Also *technically* we could add emotes and other stuff Minecraft Java Edition does not have. Granted we probably won't add emotes but we *could*.
+Well, we love fabric ❤️. Also, making it a mod instead of a proxy allows us to do some stuff we normally could not do. Such as skins, we read the skins from the bedrock server instead of [Minecraft.net](https://minecraft.net/) this would not be possible without some sort of mod. Also *technically* we could add emotes and other stuff Minecraft Java Edition does not have. Granted we probably won't add emotes but we *could*.
 
 # What is left to add
 Yeah, well, that's not the correct question to ask, we just recently started development and the real question is what have we added.
