@@ -1,11 +1,11 @@
 plugins {
-	id 'fabric-loom' version '0.4-SNAPSHOT'
+	id 'fabric-loom' version '0.9-SNAPSHOT'
 	id 'maven-publish'
-	id 'com.github.johnrengelman.shadow' version '6.0.0' //https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow
+	id 'com.github.johnrengelman.shadow' version '7.0.0' //https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -27,16 +27,10 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	
+
 	//compile group: 'com.nukkitx.protocol', name: 'bedrock-v408', version: '2.6.0-SNAPSHOT'
-	compile("com.nukkitx.protocol:bedrock-v448:2.9.0-SNAPSHOT") {
-		exclude group: 'com.nukkitx.fastutil'
-		exclude group: 'io.netty'
-	}
-	shadow ('com.nukkitx.protocol:bedrock-v448:2.9.0-SNAPSHOT') {
-		exclude group: 'com.nukkitx.fastutil'
-		exclude group: 'io.netty'
-	}
+	implementation  'com.nukkitx.protocol:bedrock-v448:2.9.0-SNAPSHOT'
+	implementation  'com.nukkitx.protocol:bedrock-v448:2.9.0-SNAPSHOT'
 }
 
 processResources {
