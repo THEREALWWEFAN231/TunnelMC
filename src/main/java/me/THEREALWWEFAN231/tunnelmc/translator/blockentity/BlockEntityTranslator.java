@@ -1,19 +1,19 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.blockentity;
 
 import com.nukkitx.nbt.NbtMap;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 public abstract class BlockEntityTranslator {
-    public CompoundTag translateTag(NbtMap bedrockNbt) {
+    public NbtCompound translateTag(NbtMap bedrockNbt) {
         return translateTag(bedrockNbt, getBaseCompoundTag(bedrockNbt));
     }
 
-    public abstract CompoundTag translateTag(NbtMap bedrockNbt, CompoundTag newTag);
+    public abstract NbtCompound translateTag(NbtMap bedrockNbt, NbtCompound newTag);
 
     public abstract int getJavaId();
 
-    protected CompoundTag getBaseCompoundTag(NbtMap bedrockNbt) {
-        CompoundTag tag = new CompoundTag();
+    protected NbtCompound getBaseCompoundTag(NbtMap bedrockNbt) {
+        NbtCompound tag = new NbtCompound();
         tag.putInt("x", bedrockNbt.getInt("x"));
         tag.putInt("y", bedrockNbt.getInt("y"));
         tag.putInt("z", bedrockNbt.getInt("z"));
