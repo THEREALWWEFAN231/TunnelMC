@@ -32,9 +32,9 @@ public class MovePlayerPacketTranslator extends PacketTranslator<MovePlayerPacke
 		byte pitch = (byte) ((int) (realPitch * 256.0F / 360.0F));
 		boolean onGround = packet.isOnGround();
 
-		if (id == TunnelMC.mc.player.getEntityId()) {
+		if (id == TunnelMC.mc.player.getId()) {
 			// This works best
-			PlayerPositionLookS2CPacket positionPacket = new PlayerPositionLookS2CPacket(x, y, z, yaw, pitch, Collections.emptySet(), teleportId.getAndIncrement());
+			PlayerPositionLookS2CPacket positionPacket = new PlayerPositionLookS2CPacket(x, y, z, yaw, pitch, Collections.emptySet(), teleportId.getAndIncrement(), false);
 			Client.instance.javaConnection.processServerToClientPacket(positionPacket);
 			return;
 		}

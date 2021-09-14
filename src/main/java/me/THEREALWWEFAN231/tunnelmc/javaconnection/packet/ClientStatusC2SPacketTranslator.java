@@ -21,7 +21,7 @@ public class ClientStatusC2SPacketTranslator extends PacketTranslator<ClientStat
 			RespawnPacket respawnPacket = new RespawnPacket();
 			respawnPacket.setPosition(Vector3f.ZERO);
 			respawnPacket.setState(State.CLIENT_READY);
-			respawnPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+			respawnPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 			
 			Client.instance.sendPacket(respawnPacket);
 			

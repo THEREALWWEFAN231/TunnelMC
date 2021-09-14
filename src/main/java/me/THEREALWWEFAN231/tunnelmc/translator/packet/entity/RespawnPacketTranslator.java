@@ -26,7 +26,7 @@ public class RespawnPacketTranslator extends PacketTranslator<RespawnPacket> {
 		if (packet.getState() == State.SERVER_READY) {
 
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
-			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 			playerActionPacket.setAction(PlayerActionType.RESPAWN);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			playerActionPacket.setFace(-1);

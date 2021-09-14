@@ -28,7 +28,7 @@ public class UpdateSelectedSlotC2SPacketTranslator extends PacketTranslator<Upda
 			return;
 		}
 		
-		long runtimeEntityId = TunnelMC.mc.player.getEntityId();
+		long runtimeEntityId = TunnelMC.mc.player.getId();
 		BedrockContainer container = Client.instance.containers.getPlayerInventory();
 		
 		ItemData item = container.getItemFromSlot(hotbarSlot);

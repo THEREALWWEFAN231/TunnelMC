@@ -21,7 +21,7 @@ public class PlayerInteractEntityC2SPacketTranslator extends PacketTranslator<Pl
 		InventoryTransactionPacket inventoryTransactionPacket = new InventoryTransactionPacket();
 		inventoryTransactionPacket.setTransactionType(TransactionType.ITEM_USE_ON_ENTITY);
 		inventoryTransactionPacket.setActionType(1);
-		inventoryTransactionPacket.setRuntimeEntityId(packet.getEntity(TunnelMC.mc.world).getEntityId());
+		inventoryTransactionPacket.setRuntimeEntityId(packet.getEntity(TunnelMC.mc.world).getId());
 		inventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
 		inventoryTransactionPacket.setItemInHand(holdingItem);
 		inventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y + TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING), TunnelMC.mc.player.getPos().z));

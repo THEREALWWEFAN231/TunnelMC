@@ -9,6 +9,6 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 public interface IMixinPlayerInteractEntityC2SPacket {
 	
 	@Accessor("entityId")
-	public int getEntityId();
+	public int getId();
 	
 }

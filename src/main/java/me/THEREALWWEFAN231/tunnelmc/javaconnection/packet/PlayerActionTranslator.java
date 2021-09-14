@@ -27,7 +27,7 @@ public class PlayerActionTranslator extends PacketTranslator<PlayerActionC2SPack
 	@Override
 	public void translate(PlayerActionC2SPacket packet) {
 
-		int runtimeId = TunnelMC.mc.player.getEntityId();
+		int runtimeId = TunnelMC.mc.player.getId();
 
 		Vector3i blockPosition = Vector3i.from(packet.getPos().getX(), packet.getPos().getY(), packet.getPos().getZ());
 		if (packet.getAction() == Action.START_DESTROY_BLOCK) {
@@ -102,7 +102,7 @@ public class PlayerActionTranslator extends PacketTranslator<PlayerActionC2SPack
 
 	@EventTarget
 	public void event(EventPlayerTick event) {
-		int runtimeId = TunnelMC.mc.player.getEntityId();
+		int runtimeId = TunnelMC.mc.player.getId();
 		PlayerActionType action = PlayerActionType.CONTINUE_BREAK;
 
 		PlayerActionPacket playerActionPacket = new PlayerActionPacket();

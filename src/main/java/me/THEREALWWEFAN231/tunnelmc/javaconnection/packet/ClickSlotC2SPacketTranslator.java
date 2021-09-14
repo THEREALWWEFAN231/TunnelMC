@@ -35,7 +35,7 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 
 		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
 		inventoryTransactionPacket.setActionType(0);//I have no idea
-		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 
 		{
 			BedrockContainer cursorContainer = Client.instance.containers.getPlayerContainerCursorContainer();
@@ -82,7 +82,7 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 
 		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
 		inventoryTransactionPacket.setActionType(0);//I have no idea
-		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 
 		{
 			BedrockContainer cursorContainer = Client.instance.containers.getPlayerContainerCursorContainer();
@@ -120,7 +120,7 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 
 		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
 		inventoryTransactionPacket.setActionType(0);//I have no idea
-		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 
 		BedrockContainer containerForClickedSlot = ScreenHandlerTranslatorManager.getBedrockContainerFromJava(screenHandler, clickedSlotId);
 
@@ -166,7 +166,7 @@ public class ClickSlotC2SPacketTranslator extends PacketTranslator<ClickSlotC2SP
 		
 		inventoryTransactionPacket.setTransactionType(TransactionType.NORMAL);
 		inventoryTransactionPacket.setActionType(0);//I have no idea
-		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+		inventoryTransactionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 		
 		BedrockContainer containerForClickedSlot = JavaContainerFinder.getContainerFromJava(screenHandler, clickedSlotId);
 		

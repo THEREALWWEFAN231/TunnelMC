@@ -13,7 +13,7 @@ public class HandSwingC2SPacketTranslator extends PacketTranslator<HandSwingC2SP
 	public void translate(HandSwingC2SPacket packet) {
 		AnimatePacket animatePacket = new AnimatePacket();
 		animatePacket.setAction(AnimatePacket.Action.SWING_ARM);
-		animatePacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+		animatePacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 		Client.instance.sendPacket(animatePacket);
 	}
 
