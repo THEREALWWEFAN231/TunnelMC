@@ -72,8 +72,8 @@ public class PlayerActionTranslator extends PacketTranslator<PlayerActionC2SPack
 			inventoryTransactionPacket.setActionType(2);
 			inventoryTransactionPacket.setBlockPosition(blockPosition);
 			inventoryTransactionPacket.setBlockFace(packet.getDirection().ordinal());
-			inventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
-			inventoryTransactionPacket.setItemInHand(Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.inventory.selectedSlot));
+			inventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.getInventory().selectedSlot);
+			inventoryTransactionPacket.setItemInHand(Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.getInventory().selectedSlot));
 			inventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y, TunnelMC.mc.player.getPos().z));
 			inventoryTransactionPacket.setClickPosition(Vector3f.ZERO);
 
