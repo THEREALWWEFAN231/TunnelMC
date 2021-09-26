@@ -34,15 +34,15 @@ public class PlayerMoveTranslator extends PacketTranslator<PlayerMoveC2SPacket> 
 		double currentPosX = playerMoveC2SPacket.getX(TunnelMC.mc.player.getPos().x);
 		double currentPosY = playerMoveC2SPacket.getY(TunnelMC.mc.player.getPos().y) + TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING);
 		double currentPosZ = playerMoveC2SPacket.getZ(TunnelMC.mc.player.getPos().z);
-		float currentYaw = playerMoveC2SPacket.getYaw(TunnelMC.mc.player.yaw);
-		float currentPitch = playerMoveC2SPacket.getPitch(TunnelMC.mc.player.pitch);
+		float currentYaw = playerMoveC2SPacket.getYaw(TunnelMC.mc.player.getYaw());
+		float currentPitch = playerMoveC2SPacket.getPitch(TunnelMC.mc.player.getPitch());
 		boolean currentlyOnGround = playerMoveC2SPacket.isOnGround();
 
 		if (PlayerMoveTranslator.lastPosX == currentPosX && PlayerMoveTranslator.lastPosY == currentPosY && PlayerMoveTranslator.lastPosZ == currentPosZ && PlayerMoveTranslator.lastYaw == currentYaw && PlayerMoveTranslator.lastPitch == currentPitch && PlayerMoveTranslator.lastOnGround == currentlyOnGround) {
 			return;
 		}
 
-		int runtimeId = TunnelMC.mc.player.getEntityId();
+		int runtimeId = TunnelMC.mc.player.getId();
 
 		MovePlayerPacket movePlayerPacket = new MovePlayerPacket();
 		movePlayerPacket.setRuntimeEntityId(runtimeId);

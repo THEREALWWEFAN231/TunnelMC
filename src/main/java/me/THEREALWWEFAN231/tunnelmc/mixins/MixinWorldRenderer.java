@@ -30,7 +30,7 @@ public class MixinWorldRenderer {
 
     @Inject(method = "setBlockBreakingInfo", at = @At("HEAD"), cancellable = true)
     public void cancelBlockBreakingInfo(int entityId, BlockPos pos, int stage, CallbackInfo ci) {
-        if (Client.instance.isConnectionOpen() && entityId == this.client.player.getEntityId()) {
+        if (Client.instance.isConnectionOpen() && entityId == this.client.player.getId()) {
             // Don't let the client set this - let the server
             ci.cancel();
         }

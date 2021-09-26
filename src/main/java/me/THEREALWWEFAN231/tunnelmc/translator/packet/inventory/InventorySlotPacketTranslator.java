@@ -39,7 +39,7 @@ public class InventorySlotPacketTranslator extends PacketTranslator<InventorySlo
 		containerToChange.setItemBedrock(packet.getSlot(), packet.getItem());
 
 		//not fully sure if "vanilla" bedrock does it like this, but for example, we could be at slot 0, and get a new item in that slot, and we are still holding nothing, so we have to update our held item, this is stupid though, it should be server side
-		if (packetSlot == TunnelMC.mc.player.inventory.selectedSlot) {
+		if (packetSlot == TunnelMC.mc.player.getInventory().selectedSlot) {
 			UpdateSelectedSlotC2SPacketTranslator.updateHotbarItem(packetSlot);
 		}
 

@@ -40,7 +40,7 @@ public class MixinMinecraftClient {
 			
 			InteractPacket interactPacket = new InteractPacket();
 			interactPacket.setAction(Action.OPEN_INVENTORY);
-			interactPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+			interactPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 
 			Client.instance.sendPacket(interactPacket);
 		}

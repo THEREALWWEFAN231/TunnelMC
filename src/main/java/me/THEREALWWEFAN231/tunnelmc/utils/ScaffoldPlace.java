@@ -14,7 +14,7 @@ public class ScaffoldPlace {
 
 	//so this isn't exactly like bedrock, but for now it gets the job down, but we need to make it so the players cant break blocks, only place(or add a option for this at a later time), which would call for a whole new technique
 	public static void setRaycastResult() {
-		if (TunnelMC.mc.crosshairTarget.getType() == HitResult.Type.MISS && MathHelper.wrapDegrees(TunnelMC.mc.player.pitch) > 50) {
+		if (TunnelMC.mc.crosshairTarget.getType() == HitResult.Type.MISS && MathHelper.wrapDegrees(TunnelMC.mc.player.getPitch()) > 50) {
 
 			BlockPos belowThePlayer = TunnelMC.mc.player.getBlockPos().down();
 			Block blockUnderThePlayer = TunnelMC.mc.world.getBlockState(belowThePlayer).getBlock();
@@ -22,7 +22,7 @@ public class ScaffoldPlace {
 				return;
 			}
 
-			Direction direction = Direction.fromRotation(TunnelMC.mc.player.yaw);
+			Direction direction = Direction.fromRotation(TunnelMC.mc.player.getYaw());
 			//+0.5 for the middle of the block, because why not
 			TunnelMC.mc.crosshairTarget = new BlockHitResult(new Vec3d(belowThePlayer.getX() + 0.5, belowThePlayer.getY() + 0.5, belowThePlayer.getZ() + 0.5), direction, belowThePlayer, false);
 		}

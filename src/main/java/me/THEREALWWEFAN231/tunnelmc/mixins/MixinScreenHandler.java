@@ -33,7 +33,7 @@ public class MixinScreenHandler {
 		ClickSlotC2SPacketTranslator translator = Client.instance.javaConnection.packetTranslatorManager.clickSlotTranslator;
 
 		ItemStack itemStack6 = ItemStack.EMPTY;
-		PlayerInventory playerInventory = playerEntity.inventory;
+		PlayerInventory playerInventory = playerEntity.getInventory();
 		if (actionType == SlotActionType.QUICK_CRAFT) {
 			int integer8 = this.quickCraftButton;
 			this.quickCraftButton = ScreenHandler.unpackQuickCraftStage(clickData);

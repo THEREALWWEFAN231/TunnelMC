@@ -46,7 +46,7 @@ public class StartGameTranslator extends PacketTranslator<StartGamePacket> {
 
 		DEFAULT_GAME_TYPE = packet.getLevelGameType();
 		GameMode gameMode = GameModeTranslator.bedrockToJava(packet.getPlayerGameType(), packet.getLevelGameType());
-		GameMode previousGameMode = GameMode.NOT_SET;
+		GameMode previousGameMode = GameMode.SURVIVAL;
 		long sha256Seed = packet.getSeed();
 		boolean hardcore = false;
 		Set<RegistryKey<World>> dimensionIds = new HashSet<>();//im not quite sure if it needs to be linked, it would appear not as ClientPlayNetworkHandler shuffles them
@@ -85,7 +85,7 @@ public class StartGameTranslator extends PacketTranslator<StartGamePacket> {
 		float yaw = packet.getRotation().getX();
 		float pitch = packet.getRotation().getY();
 		int teleportId = 0;
-		PlayerPositionLookS2CPacket playerPositionLookS2CPacket = new PlayerPositionLookS2CPacket(x, y, z, yaw, pitch, Collections.emptySet(), teleportId);
+		PlayerPositionLookS2CPacket playerPositionLookS2CPacket = new PlayerPositionLookS2CPacket(x, y, z, yaw, pitch, Collections.emptySet(), teleportId, false);
 		Client.instance.javaConnection.processServerToClientPacket(playerPositionLookS2CPacket);
 
 		int chunkX = MathHelper.floor(x) >> 4;

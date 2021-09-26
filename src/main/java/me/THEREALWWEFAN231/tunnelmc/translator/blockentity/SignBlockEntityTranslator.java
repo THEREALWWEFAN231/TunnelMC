@@ -1,13 +1,13 @@
 package me.THEREALWWEFAN231.tunnelmc.translator.blockentity;
 
 import com.nukkitx.nbt.NbtMap;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 public class SignBlockEntityTranslator extends BlockEntityTranslator {
     @Override
-    public CompoundTag translateTag(NbtMap bedrockNbt, CompoundTag newTag) {
+    public NbtCompound translateTag(NbtMap bedrockNbt, NbtCompound newTag) {
         String text = bedrockNbt.getString("Text");
         int textCount = 0;
         String[] javaText = {"", "", "", ""};

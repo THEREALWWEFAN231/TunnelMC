@@ -17,28 +17,28 @@ public class ClientCommandC2SPacketTranslator extends PacketTranslator<ClientCom
 
 		if (packet.getMode() == Mode.PRESS_SHIFT_KEY) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
-			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 			playerActionPacket.setAction(PlayerActionType.START_SNEAK);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
 			Client.instance.sendPacket(playerActionPacket);
 		} else if (packet.getMode() == Mode.RELEASE_SHIFT_KEY) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
-			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 			playerActionPacket.setAction(PlayerActionType.STOP_SNEAK);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
 			Client.instance.sendPacket(playerActionPacket);
 		} else if (packet.getMode() == Mode.START_SPRINTING) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
-			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 			playerActionPacket.setAction(PlayerActionType.START_SPRINT);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
 			Client.instance.sendPacket(playerActionPacket);
 		} else if (packet.getMode() == Mode.STOP_SPRINTING) {
 			PlayerActionPacket playerActionPacket = new PlayerActionPacket();
-			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getEntityId());
+			playerActionPacket.setRuntimeEntityId(TunnelMC.mc.player.getId());
 			playerActionPacket.setAction(PlayerActionType.STOP_SPRINT);
 			playerActionPacket.setBlockPosition(Vector3i.ZERO);
 			
