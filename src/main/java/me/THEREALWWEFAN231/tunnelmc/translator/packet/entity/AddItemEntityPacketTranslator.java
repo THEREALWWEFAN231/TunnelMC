@@ -31,7 +31,7 @@ public class AddItemEntityPacketTranslator extends PacketTranslator<AddItemEntit
 		
 		EntityType<ItemEntity> entityType = EntityType.ITEM;
 		ItemEntity itemEntity = entityType.create(TunnelMC.mc.world);
-		itemEntity.setEntityId(id);
+		itemEntity.setId(id);
 		itemEntity.setPos(x, y, z);
 		itemEntity.setVelocity(motionX, motionY, motionZ);
 		itemEntity.setStack(ItemTranslator.itemDataToItemStack(packet.getItemInHand()));

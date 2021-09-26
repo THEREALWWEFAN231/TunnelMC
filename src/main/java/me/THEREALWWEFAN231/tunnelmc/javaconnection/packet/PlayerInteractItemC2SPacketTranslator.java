@@ -24,7 +24,7 @@ public class PlayerInteractItemC2SPacketTranslator extends PacketTranslator<Play
 	@Override
 	public void translate(PlayerInteractItemC2SPacket packet) {
 		
-		ItemData usingItem = Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.inventory.selectedSlot);
+		ItemData usingItem = Client.instance.containers.getPlayerInventory().getItemFromSlot(TunnelMC.mc.player.getInventory().selectedSlot);
 
 		if (TunnelMC.mc.crosshairTarget.getType() == HitResult.Type.BLOCK) {
 			BlockPos blockPos = ((BlockHitResult) TunnelMC.mc.crosshairTarget).getBlockPos();
@@ -37,7 +37,7 @@ public class PlayerInteractItemC2SPacketTranslator extends PacketTranslator<Play
 			useInventoryTransactionPacket.setActionType(0);
 			useInventoryTransactionPacket.setBlockPosition(blockPosition);
 			useInventoryTransactionPacket.setBlockFace(((BlockHitResult) TunnelMC.mc.crosshairTarget).getSide().ordinal());
-			useInventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
+			useInventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.getInventory().selectedSlot);
 			useInventoryTransactionPacket.setItemInHand(usingItem);
 			useInventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y + TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING), TunnelMC.mc.player.getPos().z));
 			useInventoryTransactionPacket.setClickPosition(Vector3f.from(sideHitOffset.x, sideHitOffset.y, sideHitOffset.z));
@@ -52,7 +52,7 @@ public class PlayerInteractItemC2SPacketTranslator extends PacketTranslator<Play
 			inventoryTransactionPacket.setActionType(1);
 			inventoryTransactionPacket.setBlockPosition(Vector3i.ZERO);
 			inventoryTransactionPacket.setBlockFace(255);
-			inventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.inventory.selectedSlot);
+			inventoryTransactionPacket.setHotbarSlot(TunnelMC.mc.player.getInventory().selectedSlot);
 			inventoryTransactionPacket.setItemInHand(usingItem);
 			inventoryTransactionPacket.setPlayerPosition(Vector3f.from(TunnelMC.mc.player.getPos().x, TunnelMC.mc.player.getPos().y + TunnelMC.mc.player.getEyeHeight(EntityPose.STANDING), TunnelMC.mc.player.getPos().z));
 			inventoryTransactionPacket.setClickPosition(Vector3f.ZERO);

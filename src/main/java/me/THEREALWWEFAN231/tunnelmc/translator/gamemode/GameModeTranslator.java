@@ -21,7 +21,7 @@ public class GameModeTranslator {
 				return GameModeTranslator.bedrockToJava(worldDefaultGameType, worldDefaultGameType);
 		}
 
-		return GameMode.NOT_SET;
+		return GameMode.SURVIVAL;
 	}
 
 }
