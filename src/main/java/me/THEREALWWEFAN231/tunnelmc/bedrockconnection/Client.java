@@ -12,7 +12,7 @@ import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockSession;
 import com.nukkitx.protocol.bedrock.packet.LoginPacket;
-import com.nukkitx.protocol.bedrock.v431.Bedrock_v431;
+import com.nukkitx.protocol.bedrock.v527.Bedrock_v527;
 
 import io.netty.util.AsciiString;
 import me.THEREALWWEFAN231.tunnelmc.TunnelMC;
@@ -30,7 +30,7 @@ public class Client {
 
 	public static Client instance = new Client();
 	private final Logger logger = LogManager.getLogger(ClientBatchHandler.class);
-	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v431.V431_CODEC;
+	public BedrockPacketCodec bedrockPacketCodec = Bedrock_v527.V527_CODEC;
 	private String ip;
 	private int port;
 	private boolean onlineMode;

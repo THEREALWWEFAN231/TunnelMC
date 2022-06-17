@@ -3,25 +3,21 @@
   "id": "tunnelmc",
   "version": "${version}",
   "name": "TunnelMC",
-  "description": "This is an example description! Tell everyone what your mod is about!",
-  "authors": [
-    "Me!"
-  ],
+  "description": "Connect to Minecraft Bedrock Edition servers from Minecraft Java Edition.",
+  "authors": ["THEREALWWEFAN231", "Camotoy", "Cy4Shot", "JustTalDevelops"],
   "contact": {
-    "homepage": "https://fabricmc.net/",
+    "homepage": "https://github.com/THEREALWWEFAN231/TunnelMC",
     "sources": "https://github.com/THEREALWWEFAN231/TunnelMC"
   },
-  "icon": "assets/modid/icon.png",
+  "license": "GPL-3.0",
   "environment": "client",
   "entrypoints": {
-    "main": [
-    ]
+    "main": []
   },
-  "mixins": [
-    "tunnelmc.mixins.json"
-  ],
+  "mixins": ["tunnelmc.mixins.json"],
   "depends": {
-    "fabricloader": ">=0.7.4",
-    "minecraft": "1.16.x"
+    "fabricloader": ">=0.14.6",
+    "minecraft": "~1.19",
+    "java": ">=17"
   }
 }
