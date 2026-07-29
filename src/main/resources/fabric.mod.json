@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "id": "tunnelmc",
+  "id": "funnelmc",
   "version": "${version}",
-  "name": "TunnelMC",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "FunnelMC",
+  "description": "Lets Minecraft Java Edition clients connect to Bedrock Edition servers by translating packets between the two protocols.",
   "authors": [
-    "Me!"
+    "THEREALWWEFAN231"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/THEREALWWEFAN231/TunnelMC"
+    "homepage": "https://github.com/Imnot-Ha3kin6/FunnelMC",
+    "sources": "https://github.com/Imnot-Ha3kin6/FunnelMC"
   },
   "icon": "assets/modid/icon.png",
   "environment": "client",
@@ -18,10 +18,12 @@
     ]
   },
   "mixins": [
-    "tunnelmc.mixins.json"
+    "funnelmc.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.7.4",
-    "minecraft": "1.16.x"
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
   }
 }

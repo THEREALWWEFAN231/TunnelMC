@@ -1,63 +1,82 @@
-# TunnelMC
+# FunnelMC
 
-TunnelMC allows Minecraft Java Edition Players to join and play Minecraft Bedrock Edition servers
+FunnelMC is a [Fabric](https://fabricmc.net/) mod that lets Minecraft **Java Edition** players
+connect to Minecraft **Bedrock Edition** servers and worlds. It opens a Bedrock protocol
+connection and translates packets in both directions so the two editions can talk to each other,
+without needing a separate proxy process.
 
-# How does it work
-Firstly TunnelMC is a [Fabric Mod](https://fabricmc.net/). What we do is we open a connection to a Minecraft Bedrock server and translate any incoming and outgoing packets, so they can be read by both Editions.
+## Status
 
-# Why a Fabric Mod and not a Proxy
-Well we love fabric ❤️, also making it a mod instead of a proxy allows us to do some stuff we normally could not do. Such as skins, we read the skins from the bedrock server instead of [Minecraft.net](https://minecraft.net/) this would not be possible without some sort of mod. Also *technically* we could add emotes and other stuff Minecraft Java Edition does not have. Granted we probably wont add emotes but we *could*.
+This project is currently being modernized from its original 1.16.5-era codebase up to
+**Minecraft 26.2** (Fabric Loom 1.17, Java 25) against the latest
+[CloudburstMC Protocol](https://github.com/CloudburstMC/Protocol) library.
 
-# What is left to add
-Yeah well, thats not the correct question to ask, we just recently started development and the real question is what have we added.
-- Offline server authentication(does not work with bedrock dedicated server, but does with nukkit)
-- Basic chunk translation
-- Block translation(thanks to [Geysers' mappings](https://github.com/GeyserMC/mappings), still needs a little work, but its generally there
-- Spawning of players
-- Skins(generally working, layers seem to not work)
-- Chat
-- Swinging animation
+- ✅ Builds against MC 26.2 / Loom 1.17 / Java 25 — `./gradlew compileJava` is clean.
+- ✅ Bedrock protocol dependency updated to `org.cloudburstmc.protocol` (the library GeyserMC
+  itself builds against), replacing the old `com.nukkitx.protocol:bedrock-v431`.
+- 🚧 Runtime correctness against the new protocol/API surface is still being verified — several
+  translators carry `TODO`s where modern Minecraft's registry-driven systems (dimensions,
+  enchantments, block entities, world height) need real backing data that hasn't been wired up
+  yet. Nothing is silently faked; gaps are flagged in place in the code.
+- 🚧 End-to-end connection testing (actually joining a Bedrock server/world) is in progress.
 
-# Contributing
-I'd like to help or try to help, where do I start? Setting up the project is just like any other [Fabric Mod](https://fabricmc.net/) for eclipse you need to run the gradlew genSources command, then gradlew eclipse, then import it as an existing project into eclipse, if your using another IDE please look at the [Fabric Wiki](https://fabricmc.net/wiki/tutorial:setup).
+Previously working features from before the rewrite (chunk translation, block translation via
+[Geyser's mappings](https://github.com/GeyserMC/mappings), player spawning, skins, chat, swing
+animation, offline-server authentication) are being re-verified as part of the modernization —
+see the status above for where things currently stand.
 
-Also it would be appreciated if you coded in this style
-```java
-if(x) {
-  doSomething();
-}
-x.forEach(new Consumer<X>() {
+## How does it work
 
-  @Override
-  public void accept(X x) {
-    doSomething();
-  }
-});
+FunnelMC is a Fabric mod, not a standalone proxy. When you connect, it opens a Bedrock client
+connection to the target server and translates incoming/outgoing packets so both the Bedrock
+server and your (unmodified, vanilla-protocol) Java client can understand each other.
+
+## Why a mod and not a proxy
+
+Being a mod instead of an external proxy lets us do things a proxy can't easily do — for example,
+reading skins directly from the Bedrock server instead of from [minecraft.net](https://minecraft.net/).
+It also leaves room to support Bedrock-only features (emotes, etc.) that don't otherwise exist on
+Java Edition, though we're not promising those anytime soon.
+
+## Building
+
+Standard Fabric mod setup:
+
 ```
-rather then
-```java
-if(x)
-  doSomething();
-x.forEach((x) -> {
-  doSomething();
-});
+./gradlew build
 ```
-Also if you have any knowledge on xbox live/the api it would be cool if you added xbox live authentication and or joining worlds from invites.😎
 
-# Credits
-This generally would not be possible without some open source projects, wheather its just looking how thing works inorder to reverse translate them, looking at their code to see how thing work, and or copying a little bit of their code. We apperiate all these projects.
+Requires JDK 25. For IDE setup, see the [Fabric Wiki](https://fabricmc.net/wiki/tutorial:setup).
+
+## Contributing
+
+Contributions are welcome, especially around:
+- Verifying/fixing packet translators against the current CloudburstMC Protocol version
+- Wiring up the registry-backed data (dimensions, enchantments, biomes, block entities) that the
+  MC 26.2 rewrite still stubs out with `TODO`s
+- Xbox Live authentication / joining worlds from invites 😎
+
+Please try to match the existing code style (explicit braces, no single-line `if`s).
+
+## Credits
+
+This project wouldn't be possible without these open source projects — whether we referenced
+their code to understand the protocol, or borrowed pieces outright:
 - [Protocol](https://github.com/CloudburstMC/Protocol)
-- [Nukkit](https://github.com/CloudburstMC/Nukkit)
 - [Geyser](https://github.com/GeyserMC/Geyser)
+- [Nukkit](https://github.com/CloudburstMC/Nukkit)
 - [gophertunnel](https://github.com/Sandertv/gophertunnel)
 
-# How can I try it
-You currently can not, we are still in development and a lot has not been added yet.
+## Can I try it
 
-# [Discord](https://discord.gg/qH6GqxW)
-We might post some screen shots or information about TunnelMC in there, or if you'd like to help out, you can join and we can see whats crackin.
+Not yet — the modernization to MC 26.2 is still in progress and the connection pipeline hasn't
+been verified end-to-end. Check the Status section above.
 
-# Pictures
+## [Discord](https://discord.gg/qH6GqxW)
+We might post screenshots or updates about FunnelMC there, or if you'd like to help out, feel
+free to join.
+
+## Pictures
 This is a picture of the Java Edition on a Bedrock Edition server
 ![](/pictures/JavaEdition.png)
 This is a picture of what it looks like on the Bedrock Edition

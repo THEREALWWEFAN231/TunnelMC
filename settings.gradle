@@ -1,11 +1,11 @@
 pluginManagement {
     repositories {
-        jcenter()
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
+        mavenCentral()
         gradlePluginPortal()
     }
 }
-rootProject.name = "TunnelMC"
+rootProject.name = "FunnelMC"
